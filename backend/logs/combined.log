@@ -269,3 +269,6 @@
     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
     at Readable.push (node:internal/streams/readable:392:5)
     at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2025-05-06 15:11:58 [INFO]  DB connected successfully
+2025-05-06 15:11:58 [INFO] Server running on port 5000
+2025-05-06 15:12:16 [INFO] login success
