@@ -5,6 +5,7 @@ import { Employee } from "../models/Employees.js";
 import { LeaveRequest } from "../models/LeaveRequest.js";
 import { Auth } from "../models/Auth.js";
 dotenv.config();
+console.log(process.env.PWD);
 
 export const AppDataSource = new DataSource({
   type: process.env.TYPE,
