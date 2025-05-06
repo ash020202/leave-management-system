@@ -254,57 +254,59 @@ const LeaveList = ({ onUpdate }: LeaveListProps) => {
             <p className="text-muted-foreground">No leave records found</p>
           </div>
         ) : (
-          // <div className=" h-[300px] overflow-y-auto w-full">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Type</TableHead>
-                <TableHead>From</TableHead>
-                <TableHead>To</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody className=" max-h-[300px] overflow-y-auto w-full">
-              {filteredLeaves.map((leave) => (
-                <TableRow key={leave.leave_req_id}>
-                  <TableCell>{getLeaveTypeBadge(leave.leave_type)}</TableCell>
-                  <TableCell>
-                    {format(parseISO(leave.from_date), "MMM dd, yyyy")}
-                  </TableCell>
-                  <TableCell>
-                    {format(parseISO(leave.to_date), "MMM dd, yyyy")}
-                  </TableCell>
-                  <TableCell>{getStatusBadge(leave.status)}</TableCell>
-                  <TableCell>
-                    {leave &&
-                      (leave.status === "CANCELLED" ||
-                        leave.status === "PENDING") && (
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          disabled={leave.status === "CANCELLED"}
-                          className={`${
-                            leave.status === "CANCELLED" ? "bg-gray-500" : ""
-                          }`}
-                          onClick={() => handleCancelLeave(leave?.leave_req_id)}
-                        >
-                          Cancel
-                        </Button>
-                      )}
-                    {leave.status === "REJECTED" && leave.rejection_reason && (
-                      <span className="text-sm text-muted-foreground">
-                        Reason: {leave.rejection_reason}
-                      </span>
-                    )}
-                  </TableCell>
+          <div className=" max-h-[300px] overflow-y-auto w-full">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Type</TableHead>
+                  <TableHead>From</TableHead>
+                  <TableHead>To</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
 
-          // </div>
+              <TableBody>
+                {filteredLeaves.map((leave) => (
+                  <TableRow key={leave.leave_req_id}>
+                    <TableCell>{getLeaveTypeBadge(leave.leave_type)}</TableCell>
+                    <TableCell>
+                      {format(parseISO(leave.from_date), "MMM dd, yyyy")}
+                    </TableCell>
+                    <TableCell>
+                      {format(parseISO(leave.to_date), "MMM dd, yyyy")}
+                    </TableCell>
+                    <TableCell>{getStatusBadge(leave.status)}</TableCell>
+                    <TableCell>
+                      {leave &&
+                        (leave.status === "CANCELLED" ||
+                          leave.status === "PENDING") && (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            disabled={leave.status === "CANCELLED"}
+                            className={`${
+                              leave.status === "CANCELLED" ? "bg-gray-500" : ""
+                            }`}
+                            onClick={() =>
+                              handleCancelLeave(leave?.leave_req_id)
+                            }
+                          >
+                            Cancel
+                          </Button>
+                        )}
+                      {leave.status === "REJECTED" &&
+                        leave.rejection_reason && (
+                          <span className="text-sm text-muted-foreground">
+                            Reason: {leave.rejection_reason}
+                          </span>
+                        )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </CardContent>
     </Card>
