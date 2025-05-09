@@ -5,12 +5,11 @@ import { Employee } from "../models/Employees.js";
 import { LeaveRequest } from "../models/LeaveRequest.js";
 import { Auth } from "../models/Auth.js";
 dotenv.config();
-console.log(process.env.PWD);
 
 export const AppDataSource = new DataSource({
-  type: process.env.TYPE,
-  host: process.env.HOST,
-  port: process.env.PORT,
+  type: process.env.DB_TYPE,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
   username: process.env.DB_USER,
   password: process.env.DB_PWD,
   database: process.env.DB_NAME,

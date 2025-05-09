@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 
-const API_URL = "http://localhost:5000/api"; // Replace with your actual API URL
+// const API_URL = "http://localhost:5000/api"; // Replace with your actual API URL
+const API_URL = "https://leave-management-system-h1jv.onrender.com/api";
 
 // Types
 export interface User {
