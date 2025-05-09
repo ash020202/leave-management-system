@@ -34,141 +34,141 @@ interface LeaveListProps {
 const LeaveList = ({ onUpdate }: LeaveListProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([
-    // {
-    //   leave_req_id: "1",
-    //   emp_id: "EMP001",
-    //   leave_type: "sick_leave",
-    //   from_date: "2025-05-01",
-    //   to_date: "2025-05-02",
-    //   reason: "Fever",
-    //   status: "PENDING",
-    //   created_at: "2025-04-25T10:00:00Z",
-    //   emp_name: "Vimal",
-    // },
-    // {
-    //   leave_req_id: "2",
-    //   emp_id: "EMP001",
-    //   leave_type: "earned_leave",
-    //   from_date: "2025-04-10",
-    //   to_date: "2025-04-12",
-    //   reason: "Family function",
-    //   status: "APPROVED",
-    //   created_at: "2025-04-01T10:00:00Z",
-    //   emp_name: "Vimal",
-    // },
-    // {
-    //   leave_req_id: "3",
-    //   emp_id: "EMP001",
-    //   leave_type: "floater_leave",
-    //   from_date: "2025-03-15",
-    //   to_date: "2025-03-15",
-    //   reason: "Festival",
-    //   status: "REJECTED",
-    //   rejection_reason: "Insufficient balance",
-    //   created_at: "2025-03-10T10:00:00Z",
-    //   emp_name: "Vimal",
-    // },
-    // {
-    //   leave_req_id: "4",
-    //   emp_id: "EMP001",
-    //   leave_type: "loss_of_pay",
-    //   from_date: "2025-02-01",
-    //   to_date: "2025-02-03",
-    //   reason: "Emergency leave",
-    //   status: "CANCELLED",
-    //   created_at: "2025-01-30T10:00:00Z",
-    //   emp_name: "Vimal",
-    // },
-    // {
-    //   leave_req_id: "4",
-    //   emp_id: "EMP001",
-    //   leave_type: "loss_of_pay",
-    //   from_date: "2025-02-01",
-    //   to_date: "2025-02-03",
-    //   reason: "Emergency leave",
-    //   status: "CANCELLED",
-    //   created_at: "2025-01-30T10:00:00Z",
-    //   emp_name: "Vimal",
-    // },
-    // {
-    //   leave_req_id: "4",
-    //   emp_id: "EMP001",
-    //   leave_type: "loss_of_pay",
-    //   from_date: "2025-02-01",
-    //   to_date: "2025-02-03",
-    //   reason: "Emergency leave",
-    //   status: "CANCELLED",
-    //   created_at: "2025-01-30T10:00:00Z",
-    //   emp_name: "Vimal",
-    // },
-    // {
-    //   leave_req_id: "4",
-    //   emp_id: "EMP001",
-    //   leave_type: "loss_of_pay",
-    //   from_date: "2025-02-01",
-    //   to_date: "2025-02-03",
-    //   reason: "Emergency leave",
-    //   status: "CANCELLED",
-    //   created_at: "2025-01-30T10:00:00Z",
-    //   emp_name: "Vimal",
-    // },
-    // {
-    //   leave_req_id: "4",
-    //   emp_id: "EMP001",
-    //   leave_type: "loss_of_pay",
-    //   from_date: "2025-02-01",
-    //   to_date: "2025-02-03",
-    //   reason: "Emergency leave",
-    //   status: "CANCELLED",
-    //   created_at: "2025-01-30T10:00:00Z",
-    //   emp_name: "Vimal",
-    // },
-    // {
-    //   leave_req_id: "4",
-    //   emp_id: "EMP001",
-    //   leave_type: "loss_of_pay",
-    //   from_date: "2025-02-01",
-    //   to_date: "2025-02-03",
-    //   reason: "Emergency leave",
-    //   status: "CANCELLED",
-    //   created_at: "2025-01-30T10:00:00Z",
-    //   emp_name: "Vimal",
-    // },
+    {
+      leave_req_id: "1",
+      emp_id: "EMP001",
+      leave_type: "sick_leave",
+      from_date: "2025-05-01",
+      to_date: "2025-05-02",
+      reason: "Fever",
+      status: "PENDING",
+      created_at: "2025-04-25T10:00:00Z",
+      emp_name: "Vimal",
+    },
+    {
+      leave_req_id: "2",
+      emp_id: "EMP001",
+      leave_type: "earned_leave",
+      from_date: "2025-04-10",
+      to_date: "2025-04-12",
+      reason: "Family function",
+      status: "APPROVED",
+      created_at: "2025-04-01T10:00:00Z",
+      emp_name: "Vimal",
+    },
+    {
+      leave_req_id: "3",
+      emp_id: "EMP001",
+      leave_type: "floater_leave",
+      from_date: "2025-03-15",
+      to_date: "2025-03-15",
+      reason: "Festival",
+      status: "REJECTED",
+      rejection_reason: "Insufficient balance",
+      created_at: "2025-03-10T10:00:00Z",
+      emp_name: "Vimal",
+    },
+    {
+      leave_req_id: "4",
+      emp_id: "EMP001",
+      leave_type: "loss_of_pay",
+      from_date: "2025-02-01",
+      to_date: "2025-02-03",
+      reason: "Emergency leave",
+      status: "CANCELLED",
+      created_at: "2025-01-30T10:00:00Z",
+      emp_name: "Vimal",
+    },
+    {
+      leave_req_id: "4",
+      emp_id: "EMP001",
+      leave_type: "loss_of_pay",
+      from_date: "2025-02-01",
+      to_date: "2025-02-03",
+      reason: "Emergency leave",
+      status: "CANCELLED",
+      created_at: "2025-01-30T10:00:00Z",
+      emp_name: "Vimal",
+    },
+    {
+      leave_req_id: "4",
+      emp_id: "EMP001",
+      leave_type: "loss_of_pay",
+      from_date: "2025-02-01",
+      to_date: "2025-02-03",
+      reason: "Emergency leave",
+      status: "CANCELLED",
+      created_at: "2025-01-30T10:00:00Z",
+      emp_name: "Vimal",
+    },
+    {
+      leave_req_id: "4",
+      emp_id: "EMP001",
+      leave_type: "loss_of_pay",
+      from_date: "2025-02-01",
+      to_date: "2025-02-03",
+      reason: "Emergency leave",
+      status: "CANCELLED",
+      created_at: "2025-01-30T10:00:00Z",
+      emp_name: "Vimal",
+    },
+    {
+      leave_req_id: "4",
+      emp_id: "EMP001",
+      leave_type: "loss_of_pay",
+      from_date: "2025-02-01",
+      to_date: "2025-02-03",
+      reason: "Emergency leave",
+      status: "CANCELLED",
+      created_at: "2025-01-30T10:00:00Z",
+      emp_name: "Vimal",
+    },
+    {
+      leave_req_id: "4",
+      emp_id: "EMP001",
+      leave_type: "loss_of_pay",
+      from_date: "2025-02-01",
+      to_date: "2025-02-03",
+      reason: "Emergency leave",
+      status: "CANCELLED",
+      created_at: "2025-01-30T10:00:00Z",
+      emp_name: "Vimal",
+    },
   ]);
   // console.log(leaves);
 
   const [filter, setFilter] = useState<string>("all");
   const user = getCurrentUser();
 
-  const fetchLeaves = async () => {
-    if (user?.empId) {
-      setIsLoading(true);
-      try {
-        const data = await getUserLeaves(user.empId);
-        setLeaves(data);
-      } catch (error) {
-        console.error("Error fetching leaves:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
+  // const fetchLeaves = async () => {
+  //   if (user?.empId) {
+  //     setIsLoading(true);
+  //     try {
+  //       const data = await getUserLeaves(user.empId);
+  //       setLeaves(data);
+  //     } catch (error) {
+  //       console.error("Error fetching leaves:", error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchLeaves();
-  }, [user?.empId]);
+  // useEffect(() => {
+  //   fetchLeaves();
+  // }, [user?.empId]);
 
   const handleCancelLeave = async (leaveId: string) => {
     if (!user?.empId) return;
 
-    try {
-      console.log(leaveId);
-      await cancelLeave(user.empId, leaveId);
-      fetchLeaves();
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      console.error("Error canceling leave:", error);
-    }
+    // try {
+    //   console.log(leaveId);
+    //   await cancelLeave(user.empId, leaveId);
+    //   fetchLeaves();
+    //   if (onUpdate) onUpdate();
+    // } catch (error) {
+    //   console.error("Error canceling leave:", error);
+    // }
   };
 
   const filteredLeaves = leaves.filter((leave) => {
@@ -254,58 +254,109 @@ const LeaveList = ({ onUpdate }: LeaveListProps) => {
             <p className="text-muted-foreground">No leave records found</p>
           </div>
         ) : (
-          <div className=" max-h-[300px] overflow-y-auto w-full">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Type</TableHead>
-                  <TableHead>From</TableHead>
-                  <TableHead>To</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
+          // <Table className="w-full ">
+          //   <TableHeader>
+          //     <TableRow>
+          //       <TableHead>Type</TableHead>
+          //       <TableHead>From</TableHead>
+          //       <TableHead>To</TableHead>
+          //       <TableHead>Status</TableHead>
+          //       <TableHead>Actions</TableHead>
+          //     </TableRow>
+          //   </TableHeader>
 
-              <TableBody>
-                {filteredLeaves.map((leave) => (
-                  <TableRow key={leave.leave_req_id}>
-                    <TableCell>{getLeaveTypeBadge(leave.leave_type)}</TableCell>
-                    <TableCell>
-                      {format(parseISO(leave.from_date), "MMM dd, yyyy")}
-                    </TableCell>
-                    <TableCell>
-                      {format(parseISO(leave.to_date), "MMM dd, yyyy")}
-                    </TableCell>
-                    <TableCell>{getStatusBadge(leave.status)}</TableCell>
-                    <TableCell>
-                      {leave &&
-                        (leave.status === "CANCELLED" ||
-                          leave.status === "PENDING") && (
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            disabled={leave.status === "CANCELLED"}
-                            className={`${
-                              leave.status === "CANCELLED" ? "bg-gray-500" : ""
-                            }`}
-                            onClick={() =>
-                              handleCancelLeave(leave?.leave_req_id)
-                            }
-                          >
-                            Cancel
-                          </Button>
-                        )}
-                      {leave.status === "REJECTED" &&
-                        leave.rejection_reason && (
-                          <span className="text-sm text-muted-foreground">
-                            Reason: {leave.rejection_reason}
-                          </span>
-                        )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          //   <TableBody>
+          //     {filteredLeaves.map((leave) => (
+          //       <TableRow key={leave.leave_req_id}>
+          //         <TableCell>{getLeaveTypeBadge(leave.leave_type)}</TableCell>
+          //         <TableCell>
+          //           {format(parseISO(leave.from_date), "MMM dd, yyyy")}
+          //         </TableCell>
+          //         <TableCell>
+          //           {format(parseISO(leave.to_date), "MMM dd, yyyy")}
+          //         </TableCell>
+          //         <TableCell>{getStatusBadge(leave.status)}</TableCell>
+          //         <TableCell>
+          //           {leave &&
+          //             (leave.status === "CANCELLED" ||
+          //               leave.status === "PENDING") && (
+          //               <Button
+          //                 variant="destructive"
+          //                 size="sm"
+          //                 disabled={leave.status === "CANCELLED"}
+          //                 className={`${
+          //                   leave.status === "CANCELLED" ? "bg-gray-500" : ""
+          //                 }`}
+          //                 onClick={() => handleCancelLeave(leave?.leave_req_id)}
+          //               >
+          //                 Cancel
+          //               </Button>
+          //             )}
+          //           {leave.status === "REJECTED" && leave.rejection_reason && (
+          //             <span className="text-sm text-muted-foreground">
+          //               Reason: {leave.rejection_reason}
+          //             </span>
+          //           )}
+          //         </TableCell>
+          //       </TableRow>
+          //     ))}
+          //   </TableBody>
+          // </Table>
+          <div className="w-full">
+            {/* Header */}
+            <div className="flex font-medium border-b py-2">
+              <div className=" flex-1">Type</div>
+              <div className=" flex-1 ">From</div>
+              <div className=" flex-1">To</div>
+              <div className=" flex-1">Status</div>
+              <div className=" flex-1">Actions</div>
+            </div>
+
+            {/* Body */}
+            <div className=" flex flex-col w-full max-h-[350px] overflow-y-auto">
+              {filteredLeaves.map((leave) => (
+                <div
+                  key={leave.leave_req_id}
+                  className="flex items-center border-b py-2 text-sm min-h-[80px]"
+                >
+                  <div className=" flex-1">
+                    {getLeaveTypeBadge(leave.leave_type)}
+                  </div>
+
+                  <div className=" flex-1">
+                    {format(parseISO(leave.from_date), "MMM dd, yyyy")}
+                  </div>
+
+                  <div className=" flex-1">
+                    {format(parseISO(leave.to_date), "MMM dd, yyyy")}
+                  </div>
+
+                  <div className=" flex-1">{getStatusBadge(leave.status)}</div>
+
+                  <div className=" flex-1  flex-col gap-1">
+                    {(leave.status === "CANCELLED" ||
+                      leave.status === "PENDING") && (
+                      <button
+                        className={`text-white text-xs px-3 py-1 rounded ${
+                          leave.status === "CANCELLED"
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-red-600 hover:bg-red-700"
+                        }`}
+                        disabled={leave.status === "CANCELLED"}
+                        onClick={() => handleCancelLeave(leave?.leave_req_id)}
+                      >
+                        Cancel
+                      </button>
+                    )}
+                    {leave.status === "REJECTED" && leave.rejection_reason && (
+                      <span className="text-muted-foreground text-xs">
+                        Reason: {leave.rejection_reason}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </CardContent>

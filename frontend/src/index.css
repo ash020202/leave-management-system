@@ -105,7 +105,9 @@ body {
     @apply bg-red-50 text-red-700 border border-red-200;
   }
 } */
-
+.fix {
+  max-height: 300px !important;
+}
 .leave-sick {
   background-color: #f2fce2;
   color: #15803d; /* Tailwind's green-700 */

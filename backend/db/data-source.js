@@ -11,8 +11,8 @@ export const AppDataSource = new DataSource({
   type: process.env.TYPE,
   host: process.env.HOST,
   port: process.env.PORT,
-  username: process.env.USER,
-  password: process.env.PWD,
+  username: process.env.DB_USER,
+  password: process.env.DB_PWD,
   database: process.env.DB_NAME,
   synchronize: false, // use migrations in production
   logging: false,
