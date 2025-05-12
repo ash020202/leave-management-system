@@ -90,20 +90,7 @@ export const submitLeave = async (req, res) => {
   }
 };
 
-// export const getManagerLeaveRequests = async (req, res) => {
-//   const { emp_id } = req.params;
 
-//   try {
-//     const leaveRequests = await getLeaveRequests(emp_id);
-//     if (leaveRequests.length == 0) {
-//       return res.status(200).json({ message: "No Pending Leave Request" });
-//     }
-//     return res.json(leaveRequests);
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).send("Error fetching leave requests");
-//   }
-// };
 export const getManagerLeaveRequests = async (req, res) => {
   const { emp_id } = req.params;
   const manager_id = Number(emp_id);
@@ -121,7 +108,6 @@ export const getManagerLeaveRequests = async (req, res) => {
 };
 
 export const changeLeaveStatus = async (req, res) => {
-  // const { manager_id } = req.params;
   const { emp_id } = req.params;
 
   const { newStatus, leave_req_id, rejection_reason } = req.body;
@@ -139,16 +125,13 @@ export const changeLeaveStatus = async (req, res) => {
       return res.status(404).json({ message: "Approver not found" });
     }
 
-    // Check if the employee is a Manager or Senior Manager
     if (employee.role === "MANAGER" || employee.role === "SENIOR_MANAGER") {
-      // If the new status is 'REJECTED', we need to ensure rejection_reason is provided
       if (newStatus === "REJECTED" && !rejection_reason) {
         return res
           .status(400)
           .json({ message: "Rejection reason is required" });
       }
 
-      // Call your function to update the leave request status in the database
       try {
         await leaveReqApproval(leave_req_id, newStatus, rejection_reason);
 
@@ -160,8 +143,6 @@ export const changeLeaveStatus = async (req, res) => {
           if (!leaveRequest) {
             throw new Error("Leave request not found");
           }
-          // console.log();
-          // const employee = await findEmpById(leaveRequest.emp_id);
           const leave_type = leaveRequest.leave_type;
           const num_of_days = leaveRequest.num_of_days;
           // console.log("leave controller", leave_type, num_of_days);
@@ -173,11 +154,7 @@ export const changeLeaveStatus = async (req, res) => {
           );
         }
 
-        // const updateleave = await updateLeaveBalance(
-        //   emp_id,
-        //   leave_type,
-        //   totalDays
-        // );
+   
 
         return res.status(200).json({
           message: `Leave status updated to ${newStatus} successfully by ${approver_name}`,
@@ -191,7 +168,6 @@ export const changeLeaveStatus = async (req, res) => {
       }
     }
 
-    // If the user is not a manager or senior manager, return a 403 Forbidden error
     return res.status(403).json({
       message: "Only managers or senior managers can approve or reject leaves.",
     });
@@ -205,7 +181,7 @@ export const changeLeaveStatus = async (req, res) => {
 
 export const cancelLeave = async (req, res) => {
   const { emp_id } = req.params;
-  const { leave_req_id } = req.body; // Make sure emp_id is sent from frontend
+  const { leave_req_id } = req.body; 
 
   try {
     const result = await cancelLeaveHelper(leave_req_id, emp_id);

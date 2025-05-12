@@ -1,4 +1,3 @@
-// src/models/Auth.js
 import { EntitySchema } from "typeorm";
 import { Employee } from "../models/Employees.js";
 

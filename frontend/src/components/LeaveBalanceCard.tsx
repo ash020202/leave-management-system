@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import Loader from "./Loader";
 
 const LeaveBalanceCard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -58,9 +59,7 @@ const LeaveBalanceCard = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         {isLoading ? (
-          <div className="flex justify-center">
-            <p>Loading leave balances...</p>
-          </div>
+          <Loader />
         ) : (
           <>
             <div className="space-y-2 ">

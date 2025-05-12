@@ -41,6 +41,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import Loader from "./Loader";
 
 interface LeaveApprovalListProps {
   onUpdate?: () => void;
@@ -49,7 +50,7 @@ interface LeaveApprovalListProps {
 const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
-  const [filter, setFilter] = useState<string>("pending");
+  const [filter, setFilter] = useState<string>("all");
   const [rejectionReason, setRejectionReason] = useState("");
   const [selectedLeave, setSelectedLeave] = useState<LeaveRequest | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -122,13 +123,6 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
     setIsDialogOpen(true);
   };
 
-  // const filteredLeaves = leaves?.filter((leave) => {
-  //   if (filter === "all") return true;
-  //   if (filter === "pending") return leave?.status === "PENDING";
-  //   if (filter === "approved") return leave?.status === "APPROVED";
-  //   if (filter === "rejected") return leave?.status === "REJECTED";
-  //   return true;
-  // });
   const filteredLeaves = Array.isArray(leaves)
     ? leaves.filter((leave) => {
         if (filter === "all") return true;
@@ -197,9 +191,7 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="flex justify-center py-6">
-              <p>Loading leave requests...</p>
-            </div>
+            <Loader />
           ) : filteredLeaves.length === 0 ? (
             <div className="flex justify-center py-6">
               <p className="text-muted-foreground">No leave requests found</p>

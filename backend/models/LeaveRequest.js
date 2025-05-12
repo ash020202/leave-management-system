@@ -1,4 +1,3 @@
-// src/models/LeaveRequest.js
 import { EntitySchema } from "typeorm";
 import { Employee } from "../models/Employees.js";
 

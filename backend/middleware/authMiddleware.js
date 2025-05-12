@@ -9,7 +9,7 @@ export const authenticate = (req, res, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     // console.log(decoded);
 
-    req.user = decoded; // { empId, role }
+    req.user = decoded;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
@@ -29,7 +29,6 @@ export const checkOwnership = (req, res, next) => {
   const { emp_id } = req.params;
   const { empId, role } = req.user;
 
-  // Convert both to string or number to avoid type mismatch
   if (
     parseInt(emp_id) !== empId &&
     (role !== "SENIOR_MANAGER" || role !== "MANAGER")

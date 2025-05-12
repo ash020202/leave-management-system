@@ -1,4 +1,3 @@
-// src/models/Employee.js
 import { EntitySchema } from "typeorm";
 
 export const Employee = new EntitySchema({

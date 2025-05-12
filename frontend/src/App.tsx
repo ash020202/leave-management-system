@@ -13,6 +13,7 @@ import ManagerDashboard from "./pages/ManagerDashboard";
 import CalendarView from "./pages/CalendarView";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
+import LeaveApprovalList from "./components/LeaveApprovalList";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,14 @@ const App = () => (
             }
           />
           <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/my-team-leaves"
+            element={
+              <ProtectedRoute requiredRoles={["MANAGER", "SENIOR_MANAGER"]}>
+                <LeaveApprovalList />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

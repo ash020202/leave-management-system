@@ -1,4 +1,3 @@
-// import db from "../db/database.js";
 import { findEmpById, insertEmpHelper } from "../utils/Helper.js";
 import { AppDataSource } from "../db/data-source.js";
 import { Employee } from "../models/Employees.js";
@@ -54,18 +53,6 @@ export const insertEmployees = async (req, res) => {
     return res.json({ message: "error in insert helper" });
   }
 };
-
-// export const bulkInsertEmployees = async (req, res) => {
-//   const { employees } = req.body;
-//   try {
-//     await bulkInsertEmpHelper(employees);
-//     logger.info("success bulk inserted");
-//     return res.status(200).json({ message: "success bulk inserted" });
-//   } catch (error) {
-//     logger.error("error in bulk insert helper");
-//     return res.json({ message: "error in bulk insert helper" });
-//   }
-// };
 
 export const deleteEmployee = async (req, res) => {
   const { emp_id } = req.body;
