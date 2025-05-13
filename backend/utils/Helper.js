@@ -1,5 +1,14 @@
 import { getEmployeeRepo } from "../repositories/EmployeeRepo.js";
 import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
+import CryptoJS from "crypto-js";
+export const decryptPassword = (encryptedPassword) => {
+  const secretKey = process.env.PWD_SECRET_KEY;
+  const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey);
+  const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+  // console.log(originalPassword);
+
+  return originalPassword;
+};
 
 export const findEmpById = async (emp_id) => {
   try {

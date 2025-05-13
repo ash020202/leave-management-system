@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-
+import CryptoJS from "crypto-js";
 interface DecodedToken {
   emp_name: string;
   department: string;
@@ -60,4 +60,16 @@ export const hasRole = (requiredRoles: string[]): boolean => {
   if (!user) return false;
 
   return requiredRoles.includes(user.role);
+};
+
+export const encryptPassword = (password: string) => {
+  const secretKey = import.meta.env.VITE_PWD_SECRET_KEY;
+
+  const encryptedPassword = CryptoJS.AES.encrypt(
+    password,
+    secretKey
+  ).toString();
+  // console.log(encryptedPassword);
+
+  return encryptedPassword;
 };

@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { getAuthRepo } from "../repositories/AuthRepo.js";
 import { getEmployeeRepo } from "../repositories/EmployeeRepo.js";
 import logger from "../utils/logger.js";
+import { decryptPassword } from "../utils/Helper.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -31,13 +32,15 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
+  const decryptPwd = decryptPassword(password);
+
   try {
     const user = await getAuthRepo.findOne({
       where: { email },
       relations: ["employee"],
     });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user || !(await bcrypt.compare(decryptPwd, user.password))) {
       logger.warn("Invalid credentials attempted");
       return res.status(401).json({ message: "Invalid credentials" });
     }
