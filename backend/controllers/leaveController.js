@@ -1,5 +1,6 @@
 import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
 import {
+  calculateWorkingDays,
   cancelLeaveHelper,
   findEmpById,
   getEmpLeaveHistory,
@@ -9,23 +10,67 @@ import {
   leaveReqApproval,
   updateLeaveBalance,
 } from "../utils/Helper.js";
+import {
+  fetchIndianHolidays,
+  fetchPublicHolidays,
+} from "../utils/calendarHoliday.js";
+
+export const getPublicHolidays = async (req, res) => {
+  const year = new Date().getFullYear();
+  if (!year) {
+    return res.status(400).json({ error: "Year is required" });
+  }
+  try {
+    const holidays = await fetchPublicHolidays(year);
+    if (holidays.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No holidays found for this year" });
+    }
+    return res.status(200).json(holidays.response.holidays);
+  } catch (error) {
+    console.error("Error fetching public holidays:", error);
+    return res.status(500).json({ error: "Failed to fetch public holidays" });
+  }
+};
 
 export const submitLeave = async (req, res) => {
   const { emp_id, leave_type, from_date, to_date, reason } = req.body;
 
   try {
     const employee = await findEmpById(emp_id);
-    // console.log(employee);
-
     const leaveCount = employee[leave_type];
+    // console.log(calculateWorkingDays("2024-12-24", "2024-12-26"));
 
-    // console.log(leaveCount);
+    const fromYear = new Date(from_date).getFullYear();
+    const toYear = new Date(to_date).getFullYear();
+    const years = new Set();
+    for (let year = fromYear; year <= toYear; year++) years.add(year);
 
-    const totalDays =
-      Math.ceil(
-        (new Date(to_date) - new Date(from_date)) / (1000 * 60 * 60 * 24)
-      ) + 1;
-    // console.log(totalDays);
+    // Fetch holidays for all years
+    let allHolidays = [];
+    for (let year of years) {
+      const holidays = await fetchIndianHolidays(year);
+      const formattedHolidays = holidays.map(
+        (h) => new Date(h).toISOString().split("T")[0]
+      );
+      allHolidays.push(...formattedHolidays);
+    }
+    // console.log("Final Holiday List:", allHolidays);
+
+    const { totalDays, allDaysInvalid } = calculateWorkingDays(
+      from_date,
+      to_date,
+      allHolidays
+    );
+
+    if (allDaysInvalid || totalDays === 0) {
+      return res.status(400).send({
+        error: "Leave cannot be applied for weekends or public holidays only.",
+      });
+    }
+
+    // console.log("total days counted", totalDays);
 
     let assignedManagerId, assignedManagerName, leaveStatus;
 
@@ -90,7 +135,6 @@ export const submitLeave = async (req, res) => {
   }
 };
 
-
 export const getManagerLeaveRequests = async (req, res) => {
   const { emp_id } = req.params;
   const manager_id = Number(emp_id);
@@ -154,8 +198,6 @@ export const changeLeaveStatus = async (req, res) => {
           );
         }
 
-   
-
         return res.status(200).json({
           message: `Leave status updated to ${newStatus} successfully by ${approver_name}`,
         });
@@ -181,7 +223,7 @@ export const changeLeaveStatus = async (req, res) => {
 
 export const cancelLeave = async (req, res) => {
   const { emp_id } = req.params;
-  const { leave_req_id } = req.body; 
+  const { leave_req_id } = req.body;
 
   try {
     const result = await cancelLeaveHelper(leave_req_id, emp_id);

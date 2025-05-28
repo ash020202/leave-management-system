@@ -20,3 +20,23 @@
     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
     at Readable.push (node:internal/streams/readable:392:5)
     at TCP.onStreamRead (node:internal/stream_base_commons:189:23)
+2025-05-28 08:37:56 [ERROR] Error: The server does not support SSL connections
+    at Socket.<anonymous> (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\pg\lib\connection.js:76:37)
+    at Object.onceWrapper (node:events:632:26)
+    at Socket.emit (node:events:517:28)
+    at addChunk (node:internal/streams/readable:368:12)
+    at readableAddChunk (node:internal/streams/readable:341:9)
+    at Readable.push (node:internal/streams/readable:278:10)
+    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+2025-05-28 08:38:21 [ERROR] error: password authentication failed for user "postgres"
+    at Parser.parseErrorMessage (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\pg-protocol\dist\parser.js:285:98)
+    at Parser.handlePacket (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\pg-protocol\dist\parser.js:122:29)
+    at Parser.parse (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\pg-protocol\dist\parser.js:35:38)
+    at Socket.<anonymous> (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\pg-protocol\dist\index.js:11:42)
+    at Socket.emit (node:events:517:28)
+    at addChunk (node:internal/streams/readable:368:12)
+    at readableAddChunk (node:internal/streams/readable:341:9)
+    at Readable.push (node:internal/streams/readable:278:10)
+    at TCP.onStreamRead (node:internal/stream_base_commons:190:23)
+2025-05-28 12:05:18 [ERROR] Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:217:20)

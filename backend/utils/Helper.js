@@ -1,6 +1,40 @@
 import { getEmployeeRepo } from "../repositories/EmployeeRepo.js";
 import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
 import CryptoJS from "crypto-js";
+
+// holidays.js
+// utils/workingDays.js
+
+export const calculateWorkingDays = (from_date, to_date, holidays = []) => {
+  const start = new Date(from_date);
+  const end = new Date(to_date);
+
+  // Format all holidays to 'YYYY-MM-DD' and use a Set for faster lookup
+  const holidaySet = new Set(
+    holidays.map((date) => new Date(date).toISOString().split("T")[0])
+  );
+
+  let totalDays = 0;
+  let allDaysInvalid = true;
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const day = d.getDay(); // 0 = Sunday, 6 = Saturday
+    const dateStr = d.toISOString().split("T")[0];
+
+    const isWeekend = day === 0 || day === 6;
+    const isHoliday = holidaySet.has(dateStr);
+
+    // console.log("Checking date:", dateStr, "is holiday:", isHoliday);
+
+    if (!isWeekend && !isHoliday) {
+      totalDays++;
+      allDaysInvalid = false;
+    }
+  }
+
+  return { totalDays, allDaysInvalid };
+};
+
 export const decryptPassword = (encryptedPassword) => {
   const secretKey = process.env.PWD_SECRET_KEY;
   const bytes = CryptoJS.AES.decrypt(encryptedPassword, secretKey);

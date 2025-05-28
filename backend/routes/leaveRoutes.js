@@ -5,6 +5,7 @@ import {
   checkLeaveBalance,
   getLeaveHistory,
   getManagerLeaveRequests,
+  getPublicHolidays,
   submitLeave,
 } from "../controllers/leaveController.js";
 import {
@@ -54,6 +55,13 @@ router.get(
   authenticate,
   authorize("INTERN", "EMPLOYEE", "SENIOR_MANAGER", "MANAGER"),
   getLeaveHistory
+);
+
+router.get(
+  "/get-public-holidays",
+  authenticate,
+  authorize("INTERN", "EMPLOYEE", "SENIOR_MANAGER", "MANAGER"),
+  getPublicHolidays
 );
 
 export default router;
