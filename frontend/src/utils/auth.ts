@@ -64,6 +64,7 @@ export const hasRole = (requiredRoles: string[]): boolean => {
 
 export const encryptPassword = (password: string) => {
   const secretKey = import.meta.env.VITE_PWD_SECRET_KEY;
+  // console.log("Secret Key:", secretKey);
 
   const encryptedPassword = CryptoJS.AES.encrypt(
     password,

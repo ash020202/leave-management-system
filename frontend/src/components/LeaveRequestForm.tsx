@@ -113,7 +113,7 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
   };
 
   return (
-    <Card className="w-[50%]">
+    <Card className="">
       <CardHeader>
         <CardTitle>Request Leave</CardTitle>
         <CardDescription>

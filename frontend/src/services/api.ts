@@ -133,6 +133,30 @@ const getAuthHeader = () => {
 };
 
 // Leave Functions
+export const getHolidays = async () => {
+  try {
+    const response = await fetch(`${API_URL}/leave/get-public-holidays`, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch holidays");
+    }
+
+    return data;
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "An error occurred fetching holidays";
+    toast.error(message);
+    throw error;
+  }
+};
 export const requestLeave = async (leaveData: {
   emp_id: string;
   leave_type: string;

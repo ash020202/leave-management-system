@@ -38,7 +38,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import Loader from "./Loader";
@@ -74,7 +73,7 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
 
   useEffect(() => {
     fetchLeaves();
-  }, [user?.empId]);
+  }, []);
 
   const handleApprove = async (leave: LeaveRequest) => {
     if (!user?.empId) return;
@@ -232,22 +231,21 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
                     <TableCell>
                       {leave.status === "PENDING" ? (
                         <div className="flex space-x-2">
-                          <Button
-                            variant="default"
-                            size="sm"
+                          <button
+                            // variant="default"
+                            className="bg-green-600 px-3 py-1 rounded text-white"
                             onClick={() => handleApprove(leave)}
                             disabled={isProcessing}
                           >
                             Approve
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
+                          </button>
+                          <button
+                            className="bg-red-600 px-3 py-1 rounded text-white"
                             onClick={() => openRejectDialog(leave)}
                             disabled={isProcessing}
                           >
                             Reject
-                          </Button>
+                          </button>
                         </div>
                       ) : (
                         leave.status === "REJECTED" &&

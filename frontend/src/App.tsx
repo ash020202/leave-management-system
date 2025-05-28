@@ -14,8 +14,13 @@ import CalendarView from "./pages/CalendarView";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import LeaveApprovalList from "./components/LeaveApprovalList";
+import LeaveList from "./components/LeaveList";
+import Layout from "./components/Layout";
 
 const queryClient = new QueryClient();
+const handleLeaveRequestSuccess = () => {
+  // Refresh leave list when a new request is submitted
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -56,8 +61,18 @@ const App = () => (
             path="/my-team-leaves"
             element={
               <ProtectedRoute requiredRoles={["MANAGER", "SENIOR_MANAGER"]}>
-                <LeaveApprovalList />
+                <Layout>
+                  <LeaveApprovalList />
+                </Layout>
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="leave-history"
+            element={
+              <Layout>
+                <LeaveList onUpdate={handleLeaveRequestSuccess} />
+              </Layout>
             }
           />
           <Route path="*" element={<NotFound />} />
