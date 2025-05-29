@@ -22,7 +22,7 @@ const LeaveBalanceCard = () => {
       if (user?.empId) {
         try {
           const data = await getLeaveBalance(user.empId);
-          // console.log(data);
+          console.log(data);
 
           setLeaveBalance(data);
         } catch (error) {

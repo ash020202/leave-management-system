@@ -41,10 +41,10 @@ import {
 } from "@/components/ui/card";
 
 const leaveTypes = [
-  { value: "sick_leave", label: "Sick Leave" },
-  { value: "earned_leave", label: "Earned Leave" },
-  { value: "floater_leave", label: "Floater Leave" },
-  { value: "loss_of_pay", label: "Loss of Pay" },
+  { id: 1, value: "sick_leave", label: "Sick Leave" },
+  { id: 3, value: "earned_leave", label: "Earned Leave" },
+  { id: 4, value: "floater_leave", label: "Floater Leave" },
+  { id: 2, value: "loss_of_pay", label: "Loss of Pay" },
 ];
 const internLeaveTypes = [{ value: "loss_of_pay", label: "Loss Of Pay" }];
 const formSchema = z
@@ -93,9 +93,19 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
 
     setIsSubmitting(true);
     try {
+      const selectedLeaveType = leaveTypes.find(
+        (type) => type.value === values.leave_type
+      );
+      if (!selectedLeaveType) {
+        toast.error("Invalid leave type selected");
+        return;
+      }
+      console.log("Submitting leave request with values:", values);
+      console.log("Selected leave type:", selectedLeaveType.id);
+
       const leaveData = {
         emp_id: user.empId,
-        leave_type: values.leave_type,
+        leave_type_id: selectedLeaveType.id,
         from_date: format(values.from_date, "yyyy-MM-dd"),
         to_date: format(values.to_date, "yyyy-MM-dd"),
         reason: values.reason,

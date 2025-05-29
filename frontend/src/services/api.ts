@@ -1,8 +1,8 @@
 import { encryptPassword } from "@/utils/auth";
 import { toast } from "sonner";
 
-// const API_URL = "http://localhost:5000/api"; // Replace with your actual API URL
-const API_URL = "https://leave-management-system-h1jv.onrender.com/api";
+const API_URL = "http://localhost:5000/api"; // Replace with your actual API URL
+// const API_URL = "https://leave-management-system-h1jv.onrender.com/api";
 
 // Types
 export interface User {
@@ -67,7 +67,7 @@ export const signUp = async (
 };
 
 export const login = async (email: string, password: string) => {
-  const encryptPwd = encryptPassword(password);
+  // const encryptPwd = encryptPassword(password);
 
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
@@ -75,7 +75,7 @@ export const login = async (email: string, password: string) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password: encryptPwd }),
+      body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();
@@ -159,7 +159,7 @@ export const getHolidays = async () => {
 };
 export const requestLeave = async (leaveData: {
   emp_id: string;
-  leave_type: string;
+  leave_type_id: number;
   from_date: string;
   to_date: string;
   reason: string;
@@ -233,6 +233,7 @@ export const getLeaveBalance = async (emp_id: string) => {
 
     const data = await response.json();
     // console.log(data);
+    console.log("Leave Balance Data:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "Failed to fetch leave balance");

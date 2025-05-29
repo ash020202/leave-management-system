@@ -1,6 +1,8 @@
 import { getEmployeeRepo } from "../repositories/EmployeeRepo.js";
+import { getLeaveBalanceRepo } from "../repositories/LeaveBalanceRepo.js";
 import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
 import CryptoJS from "crypto-js";
+import { getLeaveTypeRepo } from "../repositories/LeaveTypeRepo.js";
 
 // holidays.js
 // utils/workingDays.js
@@ -44,91 +46,151 @@ export const decryptPassword = (encryptedPassword) => {
   return originalPassword;
 };
 
+// export const findEmpById = async (emp_id) => {
+//   try {
+//     const getEmp = await getEmployeeRepo.findOneBy({ emp_id });
+//     // console.log(getEmp);
+
+//     return getEmp;
+//   } catch (error) {
+//     console.log("error in employee repo");
+//     throw new Error("emp fetch failed");
+//   }
+// };
+
+// export const insertLeaveRequest = async (
+//   emp_id,
+//   leave_type_id,
+//   from_date,
+//   to_date,
+//   reason,
+//   leaveStatus,
+//   assignedManagerId,
+//   totalDays
+// ) => {
+//   try {
+//     // Check for duplicate leave requests
+//     const checkDuplicate = await getLeaveReqRepo.findOne({
+//       where: {
+//         employee: { emp_id },
+//         from_date,
+//         to_date,
+//       },
+//     });
+
+//     if (checkDuplicate) {
+//       return {
+//         duplicate: true,
+//         message: `Leave already exists for the selected date range (${from_date} to ${to_date}).`,
+//       };
+//     }
+
+//     // Create the leave request entity
+//     const leave = getLeaveReqRepo.create({
+//       employee: { emp_id }, // Reference the employee entity
+//       leaveType: { leave_type_id }, // Reference the leave type entity
+//       from_date,
+//       to_date,
+//       reason,
+//       status: leaveStatus,
+//       num_of_days: totalDays,
+//       manager_id: assignedManagerId,
+//     });
+
+//     // Save the leave request
+//     await getLeaveReqRepo.save(leave);
+//     return { duplicate: false, message: "Leave request inserted successfully" };
+//   } catch (error) {
+//     console.error("Insert Leave Error:", error);
+//     throw new Error("Failed to insert leave request");
+//   }
+// };
 export const findEmpById = async (emp_id) => {
   try {
-    const getEmp = await getEmployeeRepo.findOneBy({ emp_id });
-    // console.log(getEmp);
-
-    return getEmp;
-  } catch (error) {
-    console.log("error in employee repo");
-    throw new Error("emp fetch failed");
-  }
-};
-
-export const insertLeaveRequest = async (
-  emp_id,
-  leave_type,
-  from_date,
-  to_date,
-  reason,
-  leaveStatus,
-  assignedManagerId,
-  totalDays
-) => {
-  try {
-    const checkDuplicate = await getLeaveReqRepo.findOneBy({
-      emp_id,
-      from_date,
-      to_date,
+    const employee = await getEmployeeRepo.findOne({
+      where: { emp_id },
+      relations: ["manager", "manager.manager"], // Load manager and senior manager relations
     });
 
-    if (
-      checkDuplicate &&
-      from_date === checkDuplicate.from_date &&
-      to_date === checkDuplicate.to_date
-    ) {
-      return {
-        duplicate: true,
-        message: `Leave already exists for the selected date range (${from_date} to ${to_date}).`,
-      };
-    }
-
-    const leave = getLeaveReqRepo.create({
-      emp_id,
-      leave_type,
-      from_date,
-      to_date,
-      reason,
-      status: leaveStatus,
-      num_of_days: totalDays,
-      manager_id: assignedManagerId,
-    });
-
-    await getLeaveReqRepo.save(leave);
-    return { duplicate: false, message: "Leave inserted with repo" };
+    return employee;
   } catch (error) {
-    console.error("Insert Leave Error:", error);
-    return { message: "Leave insert failed", error };
+    console.error("Error fetching employee:", error);
+    throw new Error("Failed to fetch employee");
   }
 };
+// export const insertLeaveRequest = async (
+//   emp_id,
+//   leave_type_id,
+//   from_date,
+//   to_date,
+//   reason,
+//   leaveStatus,
+//   assignedManagerId,
+//   totalDays
+// ) => {
+//   try {
+//     // Check for duplicate leave requests
+//     const checkDuplicate = await getLeaveReqRepo.findOne({
+//       where: {
+//         employee: { emp_id },
+//         from_date,
+//         to_date,
+//       },
+//     });
 
-export const updateLeaveBalance = async (emp_id, leave_type, totalDays) => {
-  try {
-    const employee = await findEmpById(emp_id);
+//     if (checkDuplicate) {
+//       return {
+//         duplicate: true,
+//         message: `Leave already exists for the selected date range (${from_date} to ${to_date}).`,
+//       };
+//     }
 
-    if (!employee) {
-      throw new Error("Employee not found");
-    }
-    // console.log(employee[leave_type]);
+//     // Create the leave request entity
+//     const leave = getLeaveReqRepo.create({
+//       employee: { emp_id }, // Reference the employee entity
+//       leaveType: { leave_type_id }, // Reference the leave type entity
+//       from_date,
+//       to_date,
+//       reason,
+//       status: leaveStatus,
+//       num_of_days: totalDays,
+//       manager_id: assignedManagerId,
+//     });
 
-    // Decrease the specific leave type and total balance
+//     // Save the leave request
+//     await getLeaveReqRepo.save(leave);
+//     return { duplicate: false, message: "Leave request inserted successfully" };
+//   } catch (error) {
+//     console.error("Insert Leave Error:", error);
+//     throw new Error("Failed to insert leave request");
+//   }
+// };
+// export const updateLeaveBalance = async (emp_id, leave_type, totalDays) => {
+//   try {
+//     const employee = await findEmpById(emp_id);
 
-    employee[leave_type] = employee[leave_type] - totalDays;
-    employee.total_leave_balance = employee.total_leave_balance - totalDays;
+//     if (!employee) {
+//       throw new Error("Employee not found");
+//     }
+//     // console.log(employee[leave_type]);
 
-    await getEmployeeRepo.save(employee);
+//     // Decrease the specific leave type and total balance
 
-    // Return updated leave values
-    return {
-      [leave_type]: employee[leave_type],
-      total_leave_balance: employee.total_leave_balance,
-    };
-  } catch (error) {
-    console.error("Error in updateLeaveBalance:", error);
-    throw new Error("Failed to update leave balance");
-  }
-};
+//     employee[leave_type] = employee[leave_type] - totalDays;
+//     employee.total_leave_balance = employee.total_leave_balance - totalDays;
+
+//     await getEmployeeRepo.save(employee);
+
+//     // Return updated leave values
+//     return {
+//       [leave_type]: employee[leave_type],
+//       total_leave_balance: employee.total_leave_balance,
+//     };
+//   } catch (error) {
+//     console.error("Error in updateLeaveBalance:", error);
+//     throw new Error("Failed to update leave balance");
+//   }
+// };
 
 //for manager to see what leave req came
 // export const getLeaveRequests = async (manager_id) => {
@@ -163,56 +225,180 @@ export const updateLeaveBalance = async (emp_id, leave_type, totalDays) => {
 //     created_at: lr.created_at,
 //   }));
 // };
-export const getLeaveRequests = async (manager_id) => {
-  const leaveRequests = await getLeaveReqRepo.find({
-    where: {
-      employee: {
-        manager_id: manager_id,
+export const insertLeaveRequest = async (
+  emp_id,
+  leave_type_id,
+  from_date,
+  to_date,
+  reason,
+  leaveStatus,
+  assignedManagerId,
+  totalDays
+) => {
+  try {
+    console.log("Assigned Manager ID being saved:", assignedManagerId);
+
+    const leave = getLeaveReqRepo.create({
+      employee: { emp_id }, // Reference the employee entity
+      leaveType: { leave_type_id }, // Reference the leave type entity
+      from_date,
+      to_date,
+      reason,
+      status: leaveStatus,
+      num_of_days: totalDays,
+      manager_id: assignedManagerId, // Save the assigned manager ID
+    });
+
+    await getLeaveReqRepo.save(leave);
+    return { duplicate: false, message: "Leave request inserted successfully" };
+  } catch (error) {
+    console.error("Insert Leave Error:", error);
+    throw new Error("Failed to insert leave request");
+  }
+};
+export const updateLeaveBalance = async (emp_id, leave_type_id, totalDays) => {
+  try {
+    // Fetch the leave balance for the employee and leave type
+    const leaveBalance = await getLeaveBalanceRepo.findOne({
+      where: {
+        employee: { emp_id },
+        leaveType: { leave_type_id },
       },
-    },
-    relations: {
-      employee: true,
-    },
-    order: {
-      created_at: "DESC",
-    },
-  });
+      relations: ["employee", "leaveType"],
+    });
 
-  // console.log("Leave Requests Count:", leaveRequests.length);
-  // leaveRequests.forEach((lr) => {
-  //   console.log({
-  //     leave_req_id: lr.leave_req_id,
-  //     emp_id: lr.emp_id,
-  //     manager_id: lr.employee.manager_id,
-  //     emp_name: lr.employee.emp_name,
-  //   });
-  // });
+    if (!leaveBalance) {
+      throw new Error("Leave balance not found for the specified leave type");
+    }
 
-  return leaveRequests.map((lr) => ({
-    leave_req_id: lr.leave_req_id,
-    emp_id: lr.emp_id,
-    emp_name: lr.employee.emp_name,
-    leave_type: lr.leave_type,
-    from_date: lr.from_date,
-    to_date: lr.to_date,
-    reason: lr.reason,
-    status: lr.status,
-    num_of_days: lr.num_of_days,
-    created_at: lr.created_at,
-  }));
+    // Deduct the leave days from the balance
+    leaveBalance.balance -= totalDays;
+
+    if (leaveBalance.balance < 0) {
+      throw new Error("Insufficient leave balance");
+    }
+
+    // Save the updated leave balance
+    await getLeaveBalanceRepo.save(leaveBalance);
+
+    return leaveBalance.balance; // Return the updated balance
+  } catch (error) {
+    console.error("Error in updateLeaveBalance:", error);
+    throw new Error("Failed to update leave balance");
+  }
 };
 
+// export const getLeaveRequests = async (manager_id) => {
+//   const leaveRequests = await getLeaveReqRepo.find({
+//     where: {
+//       employee: {
+//         manager_id: manager_id,
+//       },
+//     },
+//     relations: {
+//       employee: true,
+//     },
+//     order: {
+//       created_at: "DESC",
+//     },
+//   });
+
+//   // console.log("Leave Requests Count:", leaveRequests.length);
+//   // leaveRequests.forEach((lr) => {
+//   //   console.log({
+//   //     leave_req_id: lr.leave_req_id,
+//   //     emp_id: lr.emp_id,
+//   //     manager_id: lr.employee.manager_id,
+//   //     emp_name: lr.employee.emp_name,
+//   //   });
+//   // });
+
+//   return leaveRequests.map((lr) => ({
+//     leave_req_id: lr.leave_req_id,
+//     emp_id: lr.emp_id,
+//     emp_name: lr.employee.emp_name,
+//     leave_type: lr.leave_type,
+//     from_date: lr.from_date,
+//     to_date: lr.to_date,
+//     reason: lr.reason,
+//     status: lr.status,
+//     num_of_days: lr.num_of_days,
+//     created_at: lr.created_at,
+//   }));
+// };
+
 //for all emp leave history
+export const getLeaveRequests = async (manager_id) => {
+  try {
+    const leaveRequests = await getLeaveReqRepo.find({
+      where: {
+        manager_id: manager_id, // Match manager_id directly
+        status: "PENDING", // Fetch only pending leave requests
+      },
+      relations: ["employee", "leaveType"], // Include employee and leaveType relations
+      order: {
+        created_at: "DESC", // Order by creation date
+      },
+    });
+
+    // Map the results to include necessary details
+    return leaveRequests.map((lr) => ({
+      leave_req_id: lr.leave_req_id,
+      emp_id: lr.employee.emp_id,
+      emp_name: lr.employee.emp_name,
+      leave_type: lr.leaveType.name, // Use leave type name
+      from_date: lr.from_date,
+      to_date: lr.to_date,
+      reason: lr.reason,
+      status: lr.status,
+      num_of_days: lr.num_of_days,
+      created_at: lr.created_at,
+    }));
+  } catch (error) {
+    console.error("Error fetching leave requests:", error);
+    throw new Error("Failed to fetch leave requests");
+  }
+};
+// export const getEmpLeaveHistory = async (emp_id) => {
+//   try {
+//     const leaveHistory = await getLeaveReqRepo.find({
+//       where: { emp_id },
+//     });
+
+//     // console.log(leaveHistory);
+//     return leaveHistory;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 export const getEmpLeaveHistory = async (emp_id) => {
   try {
     const leaveHistory = await getLeaveReqRepo.find({
-      where: { emp_id },
+      where: {
+        employee: { emp_id }, // Match the employee's emp_id
+      },
+      relations: ["employee", "leaveType"], // Include relations to fetch employee and leaveType details
+      order: {
+        created_at: "DESC", // Order by creation date (most recent first)
+      },
     });
 
-    // console.log(leaveHistory);
-    return leaveHistory;
+    // Map the results to match the desired response format
+    return leaveHistory.map((leave) => ({
+      leave_req_id: leave.leave_req_id,
+      emp_id: leave.employee.emp_id,
+      leave_type: leave.leaveType.name, // Use leave type name
+      from_date: leave.from_date,
+      to_date: leave.to_date,
+      reason: leave.reason,
+      status: leave.status,
+      rejection_reason: leave.rejection_reason,
+      created_at: leave.created_at,
+      emp_name: leave.employee.emp_name, // Include employee name
+    }));
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching leave history:", error);
+    throw new Error("Failed to fetch leave history");
   }
 };
 
@@ -235,13 +421,16 @@ export const leaveReqApproval = async (
 };
 
 export const cancelLeaveHelper = async (leave_req_id, emp_id) => {
-  const leave = await getLeaveReqRepo.findOneBy({ leave_req_id });
-
+  const leave = await getLeaveReqRepo.findOne({
+    where: { leave_req_id },
+    relations: ["employee", "leaveType"], // Include relations to fetch employee and leaveType
+  });
   if (!leave) {
     throw { code: 404, message: "Leave request not found" };
   }
+  console.log(leave.employee.emp_id, emp_id);
 
-  if (leave.emp_id !== parseInt(emp_id)) {
+  if (leave.employee.emp_id !== parseInt(emp_id)) {
     throw {
       code: 403,
       message: "You are not authorized to cancel this leave",
@@ -260,19 +449,39 @@ export const cancelLeaveHelper = async (leave_req_id, emp_id) => {
   }
 };
 
+// export const leaveBalanceHelper = async (emp_id) => {
+//   try {
+//     const employee = await findEmpById(emp_id);
+//     if (!employee) {
+//       return { code: 500, message: "Employee not found" };
+//     }
+//     const { sick_leave, floater_leave, earned_leave, loss_of_pay } = employee;
+//     return { sick_leave, floater_leave, earned_leave, loss_of_pay };
+//   } catch (error) {
+//     throw {
+//       code: 400,
+//       message: error,
+//     };
+//   }
+// };
+
 export const leaveBalanceHelper = async (emp_id) => {
   try {
-    const employee = await findEmpById(emp_id);
-    if (!employee) {
-      return { code: 500, message: "Employee not found" };
-    }
-    const { sick_leave, floater_leave, earned_leave, loss_of_pay } = employee;
-    return { sick_leave, floater_leave, earned_leave, loss_of_pay };
+    const leaveBalances = await getLeaveBalanceRepo.find({
+      where: { employee: { emp_id } },
+      relations: ["leaveType"],
+    });
+
+    const balances = {};
+    leaveBalances.forEach((lb) => {
+      balances[lb.leaveType.name] = lb.balance; // Map leave type name to balance
+    });
+    console.log("Leave Balances:", balances);
+
+    return balances;
   } catch (error) {
-    throw {
-      code: 400,
-      message: error,
-    };
+    console.error("Error in leaveBalanceHelper:", error);
+    throw new Error("Failed to fetch leave balances");
   }
 };
 
@@ -281,32 +490,30 @@ export const insertEmpHelper = async (
   department,
   role,
   manager_id,
-  manager_name,
-  sr_manager_id,
-  sr_manager_name,
-  total_leave_balance,
-  sick_leave,
-  floater_leave,
-  earned_leave,
-  loss_of_pay
+  total_leave_balance
 ) => {
   try {
+    // Find the manager entity if a manager_id is provided
+    const manager = manager_id
+      ? await getEmployeeRepo.findOneBy({ emp_id: manager_id })
+      : null;
+
+    if (manager_id && !manager) {
+      throw new Error("Manager not found");
+    }
+
+    // Create the employee entity
     const employee = getEmployeeRepo.create({
       emp_name,
       department,
       role,
-      manager_id,
-      manager_name,
-      sr_manager_id,
-      sr_manager_name,
+      manager, // Assign the manager entity
       total_leave_balance,
-      sick_leave,
-      floater_leave,
-      earned_leave,
-      loss_of_pay,
     });
+
+    // Save the employee
     const insertEmp = await getEmployeeRepo.save(employee);
-    return { message: "Inserted success" };
+    return { message: "Inserted successfully", employee: insertEmp };
   } catch (error) {
     console.error("Error inserting employee:", error);
     throw new Error("Insert failed");

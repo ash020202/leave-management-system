@@ -1,4 +1,6 @@
+import { getLeaveBalanceRepo } from "../repositories/LeaveBalanceRepo.js";
 import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
+import { getLeaveTypeRepo } from "../repositories/LeaveTypeRepo.js";
 import {
   calculateWorkingDays,
   cancelLeaveHelper,
@@ -7,7 +9,6 @@ import {
   getLeaveRequests,
   insertLeaveRequest,
   leaveBalanceHelper,
-  leaveReqApproval,
   updateLeaveBalance,
 } from "../utils/Helper.js";
 import {
@@ -35,13 +36,28 @@ export const getPublicHolidays = async (req, res) => {
 };
 
 export const submitLeave = async (req, res) => {
-  const { emp_id, leave_type, from_date, to_date, reason } = req.body;
+  const { emp_id, leave_type_id, from_date, to_date, reason } = req.body;
 
   try {
+    // Fetch the employee
     const employee = await findEmpById(emp_id);
-    const leaveCount = employee[leave_type];
-    // console.log(calculateWorkingDays("2024-12-24", "2024-12-26"));
+    // console.log("Manager:", employee.manager);
+    // console.log("Senior Manager:", employee.manager?.manager);
+    if (!employee) {
+      return res.status(404).json({ error: "Employee not found" });
+    }
 
+    // Fetch the leave type
+    const leaveType = await getLeaveTypeRepo.findOneBy({ leave_type_id });
+    if (!leaveType) {
+      return res.status(404).json({ error: "Leave type not found" });
+    }
+
+    // Fetch leave balance for the employee
+    const leaveBalance = await leaveBalanceHelper(emp_id);
+    const leaveCount = leaveBalance[leaveType.name]; // Use leave type name to get the balance
+
+    // Calculate working days
     const fromYear = new Date(from_date).getFullYear();
     const toYear = new Date(to_date).getFullYear();
     const years = new Set();
@@ -56,7 +72,6 @@ export const submitLeave = async (req, res) => {
       );
       allHolidays.push(...formattedHolidays);
     }
-    // console.log("Final Holiday List:", allHolidays);
 
     const { totalDays, allDaysInvalid } = calculateWorkingDays(
       from_date,
@@ -70,65 +85,66 @@ export const submitLeave = async (req, res) => {
       });
     }
 
-    // console.log("total days counted", totalDays);
-
-    let assignedManagerId, assignedManagerName, leaveStatus;
+    let assignedManagerId, leaveStatus;
 
     if (leaveCount >= totalDays) {
-      // Sufficient leave
-      assignedManagerId = employee.manager_id;
-      assignedManagerName = employee.manager_name;
-      leaveStatus = leave_type === "sick_leave" ? "APPROVED" : "PENDING";
+      // Sufficient leave balance
+      assignedManagerId = employee.manager?.emp_id;
+      leaveStatus = leaveType.name === "sick_leave" ? "APPROVED" : "PENDING";
     } else {
-      // Insufficient leave
-      assignedManagerId = employee.sr_manager_id;
-      assignedManagerName = employee.sr_manager_name;
+      // Insufficient leave balance
+      assignedManagerId = employee.manager?.manager?.emp_id; // Senior manager
+      console.log("Assigned Senior Manager ID:", assignedManagerId);
+
       leaveStatus = "PENDING";
     }
-    // console.log(leaveStatus);
 
-    try {
-      const insertResult = await insertLeaveRequest(
-        emp_id,
-        leave_type,
-        from_date,
-        to_date,
-        reason,
-        leaveStatus,
-        assignedManagerId,
-        totalDays
-      );
+    // Insert the leave request
+    const insertResult = await insertLeaveRequest(
+      emp_id,
+      leaveType.leave_type_id, // Use leave_type_id
+      from_date,
+      to_date,
+      reason,
+      leaveStatus,
+      assignedManagerId,
+      totalDays
+    );
 
-      if (
-        insertResult.message?.toLowerCase().includes("already exists") ||
-        insertResult.duplicate
-      ) {
-        return res.status(400).send({ error: insertResult.message });
-      }
+    if (
+      insertResult.message?.toLowerCase().includes("already exists") ||
+      insertResult.duplicate
+    ) {
+      return res.status(400).send({ error: insertResult.message });
+    }
 
-      let remainingLeave = 0;
-      if (leaveCount >= totalDays && leave_type == "sick_leave") {
-        const updateleave = await updateLeaveBalance(
+    let remainingLeave = 0;
+    if (leaveCount >= totalDays && leaveType.name === "sick_leave") {
+      try {
+        const updatedBalance = await updateLeaveBalance(
           emp_id,
-          leave_type,
+          leaveType.leave_type_id,
           totalDays
         );
-        remainingLeave = updateleave;
+        console.log("Updated Leave Balance:", updatedBalance);
+
+        remainingLeave = updatedBalance;
+      } catch (error) {
+        console.error("Error updating leave balance:", error);
+        return res
+          .status(500)
+          .send({ error: "Failed to update leave balance" });
       }
-
-      const message =
-        leaveCount >= totalDays
-          ? leave_type === "sick_leave"
-            ? `${leave_type} leave approved and ${totalDays} days deducted from balance.`
-            : `${leave_type} leave request sent to ${assignedManagerName} and ${totalDays} days deducted from balance.`
-          : `${leave_type} leave balance insufficient. Leave request forwarded to Senior Manager ${assignedManagerName}`;
-
-      return res.status(200).send({ message, remainingLeave });
-    } catch (insertErr) {
-      return res
-        .status(insertErr.code || 500)
-        .send({ error: insertErr.message });
     }
+
+    const message =
+      leaveCount >= totalDays
+        ? leaveType.name === "sick_leave"
+          ? `${leaveType.name} leave approved and ${totalDays} days deducted from balance.`
+          : `${leaveType.name} leave request sent to manager and ${totalDays} days deducted from balance.`
+        : `${leaveType.name} leave balance insufficient. Leave request forwarded to Senior Manager.`;
+
+    return res.status(200).send({ message, remainingLeave });
   } catch (err) {
     console.error("Error processing leave request:", err);
     return res.status(500).send({ error: "Unexpected server error" });
@@ -152,75 +168,96 @@ export const getManagerLeaveRequests = async (req, res) => {
 };
 
 export const changeLeaveStatus = async (req, res) => {
-  const { emp_id } = req.params;
-
+  const { emp_id } = req.params; // Approver's emp_id
   const { newStatus, leave_req_id, rejection_reason } = req.body;
 
   try {
-    // console.log(emp_id);
-
-    const employee = await findEmpById(emp_id);
-    // console.log(employee);
-
-    const approver_name = employee.emp_name;
-    // console.log(approver_name);
-
-    if (!employee) {
+    // Fetch the approver's details
+    const approver = await findEmpById(emp_id);
+    if (!approver) {
       return res.status(404).json({ message: "Approver not found" });
     }
 
-    if (employee.role === "MANAGER" || employee.role === "SENIOR_MANAGER") {
-      if (newStatus === "REJECTED" && !rejection_reason) {
+    // Ensure only managers or senior managers can approve/reject
+    if (approver.role !== "MANAGER" && approver.role !== "SENIOR_MANAGER") {
+      return res.status(403).json({
+        message:
+          "Only managers or senior managers can approve or reject leaves.",
+      });
+    }
+
+    // Fetch the leave request
+    const leaveRequest = await getLeaveReqRepo.findOne({
+      where: { leave_req_id },
+      relations: ["employee", "leaveType"], // Include relations to fetch employee and leaveType
+    });
+
+    if (!leaveRequest) {
+      return res.status(404).json({ message: "Leave request not found" });
+    }
+
+    // Handle rejection
+    if (newStatus === "REJECTED") {
+      if (!rejection_reason) {
         return res
           .status(400)
           .json({ message: "Rejection reason is required" });
       }
 
-      try {
-        await leaveReqApproval(leave_req_id, newStatus, rejection_reason);
+      leaveRequest.status = "REJECTED";
+      leaveRequest.rejection_reason = rejection_reason;
+      await getLeaveReqRepo.save(leaveRequest);
 
-        if (newStatus == "APPROVED") {
-          const leaveRequest = await getLeaveReqRepo.findOne({
-            where: { leave_req_id },
-          });
-
-          if (!leaveRequest) {
-            throw new Error("Leave request not found");
-          }
-          const leave_type = leaveRequest.leave_type;
-          const num_of_days = leaveRequest.num_of_days;
-          // console.log("leave controller", leave_type, num_of_days);
-
-          await updateLeaveBalance(
-            leaveRequest.emp_id,
-            leave_type,
-            num_of_days
-          );
-        }
-
-        return res.status(200).json({
-          message: `Leave status updated to ${newStatus} successfully by ${approver_name}`,
-        });
-      } catch (error) {
-        console.log(error);
-
-        return res
-          .status(500)
-          .json({ message: `Error in Leave Request Approval ` }, error);
-      }
+      return res.status(200).json({
+        message: `Leave request rejected successfully by ${approver.emp_name}`,
+      });
     }
 
-    return res.status(403).json({
-      message: "Only managers or senior managers can approve or reject leaves.",
-    });
+    // Handle approval
+    if (newStatus === "APPROVED") {
+      leaveRequest.status = "APPROVED";
+      leaveRequest.rejection_reason = null;
+
+      // Update leave balance
+      const leaveBalance = await getLeaveBalanceRepo.findOne({
+        where: {
+          employee: { emp_id: leaveRequest.employee.emp_id },
+          leaveType: { leave_type_id: leaveRequest.leaveType.leave_type_id },
+        },
+        relations: ["employee", "leaveType"],
+      });
+
+      if (!leaveBalance) {
+        return res.status(404).json({
+          message: "Leave balance not found for the specified leave type",
+        });
+      }
+
+      if (leaveBalance.balance < leaveRequest.num_of_days) {
+        return res.status(400).json({
+          message: "Insufficient leave balance to approve this request",
+        });
+      }
+
+      leaveBalance.balance -= leaveRequest.num_of_days;
+      await getLeaveBalanceRepo.save(leaveBalance);
+
+      await getLeaveReqRepo.save(leaveRequest);
+
+      return res.status(200).json({
+        message: `Leave request approved successfully by ${approver.emp_name}`,
+      });
+    }
+
+    // Invalid status
+    return res.status(400).json({ message: "Invalid status provided" });
   } catch (error) {
-    console.log("Error in controller:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while processing the request." });
+    console.error("Error in changeLeaveStatus:", error);
+    return res.status(500).json({
+      error: "An error occurred while processing the leave status change.",
+    });
   }
 };
-
 export const cancelLeave = async (req, res) => {
   const { emp_id } = req.params;
   const { leave_req_id } = req.body;

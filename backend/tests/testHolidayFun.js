@@ -26,25 +26,42 @@
 
 // console.log("\n✅ Final formatted holiday dates:\n", holidays);
 
-const fetchPublicHolidays = async (year) => {
-  const API_KEY = "2FAB4XeIiVUO0n7MBMM6YeVVwyXqtVSY";
-  const url = `https://calendarific.com/api/v2/holidays?api_key=${API_KEY}&country=IN&year=${year}`;
+// const fetchPublicHolidays = async (year) => {
+//   const API_KEY = "2FAB4XeIiVUO0n7MBMM6YeVVwyXqtVSY";
+//   const url = `https://calendarific.com/api/v2/holidays?api_key=${API_KEY}&country=IN&year=${year}`;
 
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
+//   try {
+//     const response = await fetch(url);
+//     const data = await response.json();
 
-    // Ensure all dates are in ISO format
-    console.log("Fetched Public Holidays:", data.response.holidays);
+//     // Ensure all dates are in ISO format
+//     console.log("Fetched Public Holidays:", data.response.holidays);
 
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch public holidays:", error);
-    return [];
-  }
-};
+//     return data;
+//   } catch (error) {
+//     console.error("Failed to fetch public holidays:", error);
+//     return [];
+//   }
+// };
 // const holidays = await fetchPublicHolidays(2025);
 // console.log(
 //   "\n✅ Final formatted public holiday dates:\n",
 //   holidays.response.holidays
 // );
+
+import { getEmployeeRepo } from "../repositories/employeeRepository.js";
+export const findManagerHierarchy = async (emp_id) => {
+  const employee = await getEmployeeRepo.findOne({
+    where: { emp_id },
+    relations: ["manager", "manager.manager"],
+  });
+
+  if (!employee) throw new Error("Employee not found");
+
+  return {
+    manager: employee.manager,
+    seniorManager: employee.manager?.manager || null,
+  };
+};
+const managerHierarchy = await findManagerHierarchy(1);
+console.log("Manager Hierarchy:", managerHierarchy);

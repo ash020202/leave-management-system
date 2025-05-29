@@ -18,32 +18,21 @@ export const Employee = new EntitySchema({
     role: {
       type: "varchar",
     },
-    manager_id: {
-      type: "int",
-    },
-    manager_name: {
-      type: "varchar",
-    },
-    sr_manager_id: {
-      type: "int",
-    },
-    sr_manager_name: {
-      type: "varchar",
-    },
     total_leave_balance: {
       type: "int",
     },
-    sick_leave: {
-      type: "int",
+  },
+  relations: {
+    manager: {
+      type: "many-to-one",
+      target: "Employee",
+      joinColumn: { name: "manager_id" },
+      nullable: true,
     },
-    floater_leave: {
-      type: "int",
-    },
-    earned_leave: {
-      type: "int",
-    },
-    loss_of_pay: {
-      type: "int",
+    subordinates: {
+      type: "one-to-many",
+      target: "Employee",
+      inverseSide: "manager",
     },
   },
 });

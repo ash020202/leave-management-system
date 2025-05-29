@@ -16,44 +16,63 @@ export const getAllEmployees = async (req, res) => {
   }
 };
 
+// export const insertEmployees = async (req, res) => {
+//   const {
+//     emp_name,
+//     department,
+//     role,
+//     manager_id,
+//     manager_name,
+//     sr_manager_id,
+//     sr_manager_name,
+//     total_leave_balance,
+//     sick_leave,
+//     floater_leave,
+//     earned_leave,
+//     loss_of_pay,
+//   } = req.body;
+//   try {
+//     await insertEmpHelper(
+//       emp_name,
+//       department,
+//       role,
+//       manager_id,
+//       manager_name,
+//       sr_manager_id,
+//       sr_manager_name,
+//       total_leave_balance,
+//       sick_leave,
+//       floater_leave,
+//       earned_leave,
+//       loss_of_pay
+//     );
+//     logger.info("leave inserted successfully");
+//     return res.status(200).json({ message: "success inserted" });
+//   } catch (error) {
+//     logger.error("error in insert helper");
+//     return res.json({ message: "error in insert helper" });
+//   }
+// };
 export const insertEmployees = async (req, res) => {
-  const {
-    emp_name,
-    department,
-    role,
-    manager_id,
-    manager_name,
-    sr_manager_id,
-    sr_manager_name,
-    total_leave_balance,
-    sick_leave,
-    floater_leave,
-    earned_leave,
-    loss_of_pay,
-  } = req.body;
+  const { emp_name, department, role, manager_id, total_leave_balance } =
+    req.body;
+
   try {
-    await insertEmpHelper(
+    const result = await insertEmpHelper(
       emp_name,
       department,
       role,
       manager_id,
-      manager_name,
-      sr_manager_id,
-      sr_manager_name,
-      total_leave_balance,
-      sick_leave,
-      floater_leave,
-      earned_leave,
-      loss_of_pay
+      total_leave_balance
     );
-    logger.info("leave inserted successfully");
-    return res.status(200).json({ message: "success inserted" });
+
+    logger.info("Employee inserted successfully");
+    return res.status(200).json(result);
   } catch (error) {
-    logger.error("error in insert helper");
-    return res.json({ message: "error in insert helper" });
+    logger.error("Error in insert helper:", error);
+    return res.status(500).json({ message: "Error inserting employee" });
   }
 };
-
 export const deleteEmployee = async (req, res) => {
   const { emp_id } = req.body;
   try {

@@ -33,7 +33,7 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
-  const decryptPwd = decryptPassword(password);
+  // const decryptPwd = decryptPassword(password);
 
   try {
     const user = await getAuthRepo.findOne({
@@ -41,7 +41,7 @@ export const login = async (req, res) => {
       relations: ["employee"],
     });
 
-    if (!user || !(await bcrypt.compare(decryptPwd, user.password))) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       logger.warn("Invalid credentials attempted");
       return res.status(401).json({ message: "Invalid credentials" });
     }

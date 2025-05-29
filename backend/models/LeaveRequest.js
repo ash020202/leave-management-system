@@ -1,15 +1,15 @@
 import { EntitySchema } from "typeorm";
-import { Employee } from "../models/Employees.js";
+import { Employee } from "./Employees.js";
+import { LeaveType } from "./LeaveType.js";
 
 export const LeaveRequest = new EntitySchema({
   name: "LeaveRequest",
   tableName: "leave_requests",
   columns: {
-    emp_id: {
+    leave_req_id: {
+      primary: true,
       type: "int",
-    },
-    leave_type: {
-      type: "varchar",
+      generated: true,
     },
     from_date: {
       type: "date",
@@ -22,10 +22,12 @@ export const LeaveRequest = new EntitySchema({
     },
     status: {
       type: "varchar",
+      default: "PENDING", // PENDING, APPROVED, REJECTED
+      enum: ["PENDING", "APPROVED", "REJECTED"],
     },
-    cancelled: {
-      type: "int",
-      default: 0,
+    rejection_reason: {
+      type: "text",
+      nullable: true,
     },
     num_of_days: {
       type: "int",
@@ -33,19 +35,9 @@ export const LeaveRequest = new EntitySchema({
     created_at: {
       type: "timestamp",
       createDate: true,
-      default: () => "CURRENT_TIMESTAMP",
     },
     manager_id: {
-      type: "int",
-    },
-    leave_req_id: {
-      primary: true,
-      type: "int",
-      generated: true,
-    },
-    rejection_reason: {
-      type: "text",
-      nullable: true,
+      type: "int", // Add this column to store the assigned manager's ID
     },
   },
   relations: {
@@ -53,6 +45,11 @@ export const LeaveRequest = new EntitySchema({
       type: "many-to-one",
       target: Employee,
       joinColumn: { name: "emp_id" },
+    },
+    leaveType: {
+      type: "many-to-one",
+      target: LeaveType,
+      joinColumn: { name: "leave_type_id" },
     },
   },
 });
