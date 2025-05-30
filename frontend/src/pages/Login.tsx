@@ -65,7 +65,7 @@ const Login = () => {
       // Check user role and redirect accordingly
       const user = getCurrentUser();
       const userInfo = await userProfile(user.empId);
-      // console.log(userInfo);
+      console.log(userInfo);
       localStorage.setItem("user-info", JSON.stringify(userInfo));
 
       if (user) {

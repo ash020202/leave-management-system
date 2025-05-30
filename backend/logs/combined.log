@@ -715,3 +715,186 @@
 2025-05-29 09:59:30 [INFO] login success
 2025-05-29 09:59:57 [INFO] login success
 2025-05-29 10:00:10 [INFO] login success
+2025-05-29 11:10:21 [INFO]  DB connected successfully
+2025-05-29 11:10:21 [INFO] Server running on port 5000
+2025-05-29 11:10:36 [INFO] login success
+2025-05-29 11:11:28 [INFO]  DB connected successfully
+2025-05-29 11:11:28 [INFO] Server running on port 5000
+2025-05-29 11:16:50 [INFO] login success
+2025-05-29 11:25:08 [INFO]  DB connected successfully
+2025-05-29 11:25:08 [INFO] Server running on port 5000
+2025-05-29 11:25:38 [INFO]  DB connected successfully
+2025-05-29 11:25:38 [INFO] Server running on port 5000
+2025-05-29 11:26:21 [INFO]  DB connected successfully
+2025-05-29 11:26:21 [INFO] Server running on port 5000
+2025-05-29 11:26:36 [INFO]  DB connected successfully
+2025-05-29 11:26:36 [INFO] Server running on port 5000
+2025-05-29 11:26:48 [INFO]  DB connected successfully
+2025-05-29 11:26:48 [INFO] Server running on port 5000
+2025-05-29 11:27:13 [INFO]  DB connected successfully
+2025-05-29 11:27:13 [INFO] Server running on port 5000
+2025-05-29 11:28:24 [INFO]  DB connected successfully
+2025-05-29 11:28:24 [INFO] Server running on port 5000
+2025-05-29 11:29:51 [INFO] login success
+2025-05-29 11:32:29 [INFO] login success
+2025-05-29 11:53:25 [INFO]  DB connected successfully
+2025-05-29 11:53:25 [INFO] Server running on port 5000
+2025-05-29 11:54:31 [INFO] login success
+2025-05-29 11:55:39 [INFO] login success
+2025-05-29 11:56:19 [INFO]  DB connected successfully
+2025-05-29 11:56:19 [INFO] Server running on port 5000
+2025-05-29 12:10:11 [INFO]  DB connected successfully
+2025-05-29 12:10:11 [INFO] Server running on port 5000
+2025-05-29 12:12:15 [INFO] login success
+2025-05-29 12:13:36 [INFO] login success
+2025-05-29 12:16:04 [INFO]  DB connected successfully
+2025-05-29 12:16:04 [INFO] Server running on port 5000
+2025-05-29 12:16:56 [INFO] login success
+2025-05-29 12:18:46 [INFO] login success
+2025-05-29 12:19:12 [INFO] login success
+2025-05-29 12:19:26 [INFO] login success
+2025-05-29 12:20:45 [INFO]  DB connected successfully
+2025-05-29 12:20:45 [INFO] Server running on port 5000
+2025-05-29 12:30:35 [ERROR] Employee not found for emp_id: 4
+2025-05-29 12:31:11 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:24:5)
+2025-05-29 12:32:02 [ERROR] Employee not found for emp_id: 4
+2025-05-29 12:32:08 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:24:5)
+2025-05-29 12:33:44 [ERROR] Employee not found for emp_id: 4
+2025-05-29 12:33:49 [ERROR] Employee not found for emp_id: 5
+2025-05-29 12:33:54 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:24:5)
+2025-05-29 12:38:28 [INFO]  DB connected successfully
+2025-05-29 12:38:28 [INFO] Server running on port 5000
+2025-05-29 12:39:03 [WARN] Employee already signed up for emp_id: 2
+2025-05-29 12:39:08 [ERROR] Employee not found for emp_id: 4
+2025-05-29 12:39:18 [WARN] Employee already signed up for emp_id: 2
+2025-05-29 12:41:39 [INFO]  DB connected successfully
+2025-05-29 12:41:39 [INFO] Server running on port 5000
+2025-05-29 12:41:56 [ERROR] Employee not found for emp_id: 4
+2025-05-29 12:44:00 [INFO]  DB connected successfully
+2025-05-29 12:44:00 [INFO] Server running on port 5000
+2025-05-29 12:44:25 [WARN] Employee already signed up for emp_id: 2
+2025-05-29 12:46:27 [INFO]  DB connected successfully
+2025-05-29 12:46:27 [INFO] Server running on port 5000
+2025-05-29 12:47:03 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:83:5)
+2025-05-29 12:48:55 [INFO]  DB connected successfully
+2025-05-29 12:48:55 [INFO] Server running on port 5000
+2025-05-29 12:49:17 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:24:5)
+2025-05-29 12:50:59 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:24:5)
+2025-05-29 12:53:39 [INFO]  DB connected successfully
+2025-05-29 12:53:39 [INFO] Server running on port 5000
+2025-05-29 12:53:52 [INFO]  DB connected successfully
+2025-05-29 12:53:52 [INFO] Server running on port 5000
+2025-05-29 12:54:03 [INFO]  DB connected successfully
+2025-05-29 12:54:03 [INFO] Server running on port 5000
+2025-05-29 12:55:44 [INFO] sign up success
+2025-05-29 12:56:56 [INFO]  DB connected successfully
+2025-05-29 12:56:56 [INFO] Server running on port 5000
+2025-05-29 12:57:08 [INFO]  DB connected successfully
+2025-05-29 12:57:08 [INFO] Server running on port 5000
+2025-05-29 13:02:37 [INFO]  DB connected successfully
+2025-05-29 13:02:37 [INFO] Server running on port 5000
+2025-05-29 13:02:40 [INFO] Employee inserted successfully
+2025-05-29 13:02:59 [INFO] login success
+2025-05-29 13:03:40 [WARN] Invalid credentials attempted
+2025-05-29 13:03:47 [INFO] login success
+2025-05-29 13:04:28 [INFO] login success
+2025-05-29 13:34:20 [INFO]  DB connected successfully
+2025-05-29 13:34:20 [INFO] Server running on port 5000
+2025-05-29 13:37:09 [INFO]  DB connected successfully
+2025-05-29 13:37:09 [INFO] Server running on port 5000
+2025-05-29 13:37:26 [INFO]  DB connected successfully
+2025-05-29 13:37:26 [INFO] Server running on port 5000
+2025-05-29 13:37:40 [INFO] login success
+2025-05-29 13:38:42 [INFO] login success
+2025-05-29 13:39:05 [INFO]  DB connected successfully
+2025-05-29 13:39:05 [INFO] Server running on port 5000
+2025-05-29 13:39:15 [INFO]  DB connected successfully
+2025-05-29 13:39:15 [INFO] Server running on port 5000
+2025-05-29 13:39:52 [INFO] login success
+2025-05-29 13:40:01 [WARN] Invalid credentials attempted
+2025-05-29 13:40:01 [WARN] Invalid credentials attempted
+2025-05-29 13:40:07 [INFO] login success
+2025-05-29 13:40:35 [INFO] login success
+2025-05-29 13:42:03 [INFO]  DB connected successfully
+2025-05-29 13:42:03 [INFO] Server running on port 5000
+2025-05-29 13:43:32 [ERROR] TypeError: Cannot read properties of null (reading 'emp_id')
+    at login (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:51:30)
+2025-05-29 13:43:34 [ERROR] TypeError: Cannot read properties of null (reading 'emp_id')
+    at login (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:51:30)
+2025-05-29 13:43:51 [INFO]  DB connected successfully
+2025-05-29 13:43:51 [INFO] Server running on port 5000
+2025-05-29 13:44:12 [INFO] login success
+2025-05-29 13:44:29 [INFO] login success
+2025-05-29 13:45:19 [INFO]  DB connected successfully
+2025-05-29 13:45:19 [INFO] Server running on port 5000
+2025-05-29 13:48:14 [INFO] login success
+2025-05-29 13:50:03 [INFO] login success
+2025-05-29 13:50:34 [INFO] login success
+2025-05-29 13:55:48 [INFO] login success
+2025-05-29 14:54:55 [INFO] login success
+2025-05-29 14:57:32 [INFO] login success
+2025-05-30 08:25:59 [INFO]  DB connected successfully
+2025-05-30 08:25:59 [INFO] Server running on port 5000
+2025-05-30 08:26:33 [INFO]  DB connected successfully
+2025-05-30 08:26:33 [INFO] Server running on port 5000
+2025-05-30 08:30:18 [INFO]  DB connected successfully
+2025-05-30 08:30:18 [INFO] Server running on port 5000
+2025-05-30 08:32:42 [INFO] sign up success
+2025-05-30 08:39:55 [ERROR] TypeError: Cannot read properties of null (reading 'emp_id')
+    at login (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:51:30)
+2025-05-30 08:40:37 [INFO] login success
+2025-05-30 08:41:46 [INFO] sign up success
+2025-05-30 08:42:26 [INFO] sign up success
+2025-05-30 08:42:56 [INFO]  DB connected successfully
+2025-05-30 08:42:56 [INFO] Server running on port 5000
+2025-05-30 08:43:12 [INFO] login success
+2025-05-30 08:44:08 [INFO] sign up success
+2025-05-30 08:44:25 [INFO] login success
+2025-05-30 09:25:27 [INFO] login success
+2025-05-30 09:26:05 [WARN] Invalid credentials attempted
+2025-05-30 09:26:12 [INFO] login success
+2025-05-30 09:29:19 [INFO] login success
+2025-05-30 09:37:18 [INFO] login success
+2025-05-30 10:12:50 [INFO] login success

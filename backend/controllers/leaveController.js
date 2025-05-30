@@ -85,19 +85,27 @@ export const submitLeave = async (req, res) => {
       });
     }
 
-    let assignedManagerId, leaveStatus;
+    let assignedManagerId = null;
+    let leaveStatus;
 
     if (leaveCount >= totalDays) {
       // Sufficient leave balance
-      assignedManagerId = employee.manager?.emp_id;
+      assignedManagerId = employee.manager?.emp_id || null;
       leaveStatus = leaveType.name === "sick_leave" ? "APPROVED" : "PENDING";
     } else {
       // Insufficient leave balance
-      assignedManagerId = employee.manager?.manager?.emp_id; // Senior manager
+      assignedManagerId = employee.manager?.manager?.emp_id || null; // Senior manager
       console.log("Assigned Senior Manager ID:", assignedManagerId);
 
       leaveStatus = "PENDING";
     }
+    if (!assignedManagerId) {
+      return res.status(400).send({
+        error:
+          "No manager or senior manager found to approve the leave request.",
+      });
+    }
+    console.log("Assigned Manager ID:", assignedManagerId);
 
     // Insert the leave request
     const insertResult = await insertLeaveRequest(

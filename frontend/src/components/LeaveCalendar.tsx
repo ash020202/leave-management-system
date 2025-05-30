@@ -10,6 +10,7 @@ import {
   subWeeks,
   isToday,
   isSameMonth,
+  isWeekend,
 } from "date-fns";
 import {
   Calendar as CalendarIcon,
@@ -53,7 +54,6 @@ const LeaveCalendar = () => {
       if (user?.empId) {
         setIsLoading(true);
         try {
-          // const data = await getManagerLeaves(user.empId);
           const [leaveData, holidayData] = await Promise.all([
             getManagerLeaves(user.empId),
             getHolidays(),
@@ -62,10 +62,6 @@ const LeaveCalendar = () => {
 
           setLeaves(Array.isArray(leaveData) ? leaveData : []);
           setHolidays(Array.isArray(holidayData) ? holidayData : []);
-          // const approvedLeaves = data.filter(
-          //   (leave) => leave.status === "APPROVED"
-          // );
-          // setLeaves(data);
         } catch (error) {
           console.error("Error fetching leaves for calendar:", error);
         } finally {
@@ -77,15 +73,17 @@ const LeaveCalendar = () => {
     fetchLeaves();
   }, [user?.empId]);
 
-  // Get the current week dates
+  // Get the current week dates (Monday to Sunday)
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // Monday start
-  const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 }); // Sunday end
   const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
+
   const getHolidayForDay = (day: Date) => {
     return holidays.find((holiday) =>
       isSameDay(parseISO(holiday.date.iso), day)
     );
   };
+
   // Time slots for the calendar (9 AM to 6 PM)
   const timeSlots = [
     "9 AM",
@@ -113,15 +111,39 @@ const LeaveCalendar = () => {
     setCurrentDate(new Date());
   };
 
-  // Get leaves for a specific day
+  // Check if leave spans over a weekend
+  const doesLeaveSpanWeekend = (leave: LeaveRequest) => {
+    const leaveStart = parseISO(leave.from_date);
+    const leaveEnd = parseISO(leave.to_date);
+
+    const allDaysInRange = eachDayOfInterval({
+      start: leaveStart,
+      end: leaveEnd,
+    });
+    return allDaysInRange.some((day) => isWeekend(day));
+  };
+
+  // Get leaves for a specific day with weekend logic
   const getLeavesForDay = (day: Date) => {
     return leaves.filter((leave) => {
       const leaveStart = parseISO(leave.from_date);
       const leaveEnd = parseISO(leave.to_date);
 
-      return eachDayOfInterval({ start: leaveStart, end: leaveEnd }).some(
-        (leaveDay) => isSameDay(leaveDay, day)
-      );
+      // Check if leave spans weekend
+      const spansWeekend = doesLeaveSpanWeekend(leave);
+
+      if (spansWeekend && isWeekend(day)) {
+        // For weekend days, only show if it's exactly the from_date or to_date
+        return isSameDay(leaveStart, day) || isSameDay(leaveEnd, day);
+      } else if (spansWeekend && !isWeekend(day)) {
+        // For weekdays when leave spans weekend, only show on from_date and to_date
+        return isSameDay(leaveStart, day) || isSameDay(leaveEnd, day);
+      } else {
+        // Normal case - show for all days in the range
+        return eachDayOfInterval({ start: leaveStart, end: leaveEnd }).some(
+          (leaveDay) => isSameDay(leaveDay, day)
+        );
+      }
     });
   };
 
@@ -200,16 +222,17 @@ const LeaveCalendar = () => {
         ) : (
           <div className="flex flex-col h-full">
             {/* Calendar Header - Days of Week */}
-            <div className="grid grid-cols-8 border-b bg-slate-50">
+            <div className="grid grid-cols-7 border-b bg-slate-50">
               {/* Empty cell for time column */}
-              <div className="p-3 border-r"></div>
+              {/* <div className="p-3 border-r"></div> */}
 
               {weekDays.map((day) => (
                 <div
                   key={day.toISOString()}
                   className={cn(
                     "p-3 text-center border-r last:border-r-0",
-                    isToday(day) && "bg-blue-50"
+                    isToday(day) && "bg-blue-50",
+                    isWeekend(day) && "bg-slate-100" // Different background for weekends
                   )}
                 >
                   <div className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -219,7 +242,8 @@ const LeaveCalendar = () => {
                     className={cn(
                       "text-2xl font-medium mt-1",
                       isToday(day) ? "text-blue-600" : "text-foreground",
-                      !isSameMonth(day, currentDate) && "text-muted-foreground"
+                      !isSameMonth(day, currentDate) && "text-muted-foreground",
+                      isWeekend(day) && "text-slate-500" // Muted text for weekends
                     )}
                   >
                     {format(day, "d")}
@@ -230,9 +254,9 @@ const LeaveCalendar = () => {
 
             {/* Calendar Body - Time Grid */}
             <div className="flex-1 overflow-auto">
-              <div className="grid grid-cols-8 min-h-full">
+              <div className="grid grid-cols-7 min-h-full">
                 {/* Time Column */}
-                <div className="border-r bg-slate-50">
+                {/* <div className="border-r bg-slate-50">
                   {timeSlots.map((time, index) => (
                     <div
                       key={time}
@@ -241,7 +265,7 @@ const LeaveCalendar = () => {
                       {time}
                     </div>
                   ))}
-                </div>
+                </div> */}
 
                 {/* Day Columns */}
                 {weekDays.map((day) => {
@@ -254,7 +278,8 @@ const LeaveCalendar = () => {
                       className={cn(
                         "border-r last:border-r-0 relative",
                         isToday(day) && "bg-blue-50/30",
-                        holiday && "bg-yellow-100/50" // <- light yellow for holiday
+                        holiday && "bg-yellow-100/50",
+                        isWeekend(day) && "bg-slate-50/50" // Different background for weekends
                       )}
                     >
                       {/* Time slots grid */}
@@ -264,9 +289,17 @@ const LeaveCalendar = () => {
                           className="h-16 border-b"
                         />
                       ))}
+
                       {holiday && (
                         <div className="absolute top-0 left-0 right-0 p-1 text-center text-xs font-medium text-yellow-800 bg-yellow-200 border-b border-yellow-300 z-10">
                           🎉 {holiday.name}
+                        </div>
+                      )}
+
+                      {/* Weekend label */}
+                      {isWeekend(day) && !holiday && (
+                        <div className="absolute top-0 left-0 right-0 p-1 text-center text-xs font-medium text-slate-600 bg-slate-100 border-b border-slate-200 z-10">
+                          Weekend
                         </div>
                       )}
 

@@ -2,6 +2,7 @@ import { findEmpById, insertEmpHelper } from "../utils/Helper.js";
 import { AppDataSource } from "../db/data-source.js";
 import { Employee } from "../models/Employees.js";
 import logger from "../utils/logger.js";
+import { getLeaveBalanceRepo } from "../repositories/LeaveBalanceRepo.js";
 
 const getEmployeeRepo = AppDataSource.getRepository(Employee);
 
@@ -97,5 +98,50 @@ export const getOneEmployee = async (req, res) => {
     logger.error("single emp fetech failed", error);
     console.log(error);
     return res.json({ message: "error in single emp fetch" });
+  }
+};
+
+export const getLeaveBalance = async (req, res) => {
+  const { emp_id } = req.params;
+
+  try {
+    // Fetch employee details
+    const employee = await getEmployeeRepo.findOne({
+      where: { emp_id },
+      relations: ["manager", "manager.manager"], // Include manager and senior manager relations
+    });
+
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    // Fetch leave balances for the employee
+    const leaveBalances = await getLeaveBalanceRepo.find({
+      where: { employee: { emp_id } },
+      relations: ["leaveType"], // Include leaveType relation
+    });
+
+    // Map leave balances to leave type names
+    const balances = {};
+    leaveBalances.forEach((lb) => {
+      balances[lb.leaveType.name] = lb.balance;
+    });
+
+    // Format the response
+    const response = {
+      emp_id: employee.emp_id,
+      emp_name: employee.emp_name,
+      department: employee.department,
+      role: employee.role,
+      total_leave_balance: Object.values(balances).reduce((a, b) => a + b, 0),
+      manager_name: employee.manager?.emp_name || "N/A",
+      sr_manager_name: employee.manager?.manager?.emp_name || "N/A",
+      ...balances, // Include individual leave balances
+    };
+
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error("Error fetching leave balance:", error);
+    return res.status(500).json({ message: "Failed to fetch leave balance" });
   }
 };

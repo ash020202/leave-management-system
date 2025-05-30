@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,7 +46,9 @@ const leaveTypes = [
   { id: 4, value: "floater_leave", label: "Floater Leave" },
   { id: 2, value: "loss_of_pay", label: "Loss of Pay" },
 ];
+
 const internLeaveTypes = [{ value: "loss_of_pay", label: "Loss Of Pay" }];
+
 const formSchema = z
   .object({
     leave_type: z.string({
@@ -77,6 +79,85 @@ interface LeaveRequestFormProps {
 const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const user = getCurrentUser();
+  const userInfo = localStorage.getItem("user-info");
+
+  // Define public holidays (you can customize this list)
+  const publicHolidays = [
+    new Date(2025, 11, 25), // Christmas Day - Dec 25, 2025
+    // new Date(2025, 11, 26), // Boxing Day - Dec 26, 2025
+    new Date(2025, 0, 1), // New Year's Day - Jan 1, 2025
+    new Date(2025, 0, 26), // Republic Day - Jan 26, 2025
+    new Date(2025, 7, 15), // Independence Day - Aug 15, 2025
+    new Date(2025, 9, 2), // Gandhi Jayanti - Oct 2, 2025
+    // Add more holidays as needed
+  ];
+
+  // Function to check if a date is a weekend (Saturday or Sunday)
+  const isWeekend = (date: Date) => {
+    const day = date.getDay();
+    return day === 0 || day === 6; // 0 = Sunday, 6 = Saturday
+  };
+
+  // Function to check if a date is a public holiday
+  const isPublicHoliday = (date: Date) => {
+    return publicHolidays.some(
+      (holiday) =>
+        holiday.getDate() === date.getDate() &&
+        holiday.getMonth() === date.getMonth() &&
+        holiday.getFullYear() === date.getFullYear()
+    );
+  };
+
+  // Function to calculate working days between two dates
+  const calculateWorkingDays = (fromDate: Date, toDate: Date) => {
+    if (!fromDate || !toDate) return 0;
+
+    let workingDays = 0;
+    const currentDate = new Date(fromDate);
+
+    while (currentDate <= toDate) {
+      if (!isWeekend(currentDate) && !isPublicHoliday(currentDate)) {
+        workingDays++;
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return workingDays;
+  };
+
+  // Parse user info and extract leave balances
+  const userLeaveData = useMemo(() => {
+    if (!userInfo) return null;
+
+    try {
+      const parsedData = JSON.parse(userInfo);
+      return parsedData;
+    } catch (error) {
+      console.error("Error parsing user info:", error);
+      return null;
+    }
+  }, [userInfo]);
+
+  // Get leave types with balances based on user role
+  const availableLeaveTypes = useMemo(() => {
+    if (!userLeaveData) return [];
+
+    if (user?.role === "INTERN") {
+      return internLeaveTypes.map((type) => ({
+        ...type,
+        balance: userLeaveData[type.value] || 0,
+      }));
+    } else {
+      return leaveTypes.map((type) => ({
+        ...type,
+        balance: userLeaveData[type.value] || 0,
+      }));
+    }
+  }, [userLeaveData, user?.role]);
+
+  console.log("User Info:", userInfo);
+  console.log("Parsed User Data:", userLeaveData);
+  console.log("Available Leave Types with Balance:", availableLeaveTypes);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -150,17 +231,21 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {user.role === "INTERN"
-                        ? internLeaveTypes.map((type) => (
-                            <SelectItem key={type.value} value={type.value}>
-                              {type.label}
-                            </SelectItem>
-                          ))
-                        : leaveTypes.map((type) => (
-                            <SelectItem key={type.value} value={type.value}>
-                              {type.label}
-                            </SelectItem>
-                          ))}
+                      {availableLeaveTypes.map((type) => (
+                        <SelectItem
+                          key={type.value}
+                          value={type.value}
+                          disabled={type.balance === 0}
+                        >
+                          <div className="flex justify-between items-center w-full">
+                            <span>{type.label}</span>
+                            <span className="text-sm text-muted-foreground ml-2">
+                              {type.balance}{" "}
+                              {type.balance === 1 ? "day" : "days"} available
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -168,92 +253,153 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
               )}
             />
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* Custom Date Range Selector */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50">
+                <div className="text-left">
+                  <div className="text-sm text-gray-500">From</div>
+                  <div className="font-medium">
+                    {form.watch("from_date")
+                      ? format(form.watch("from_date"), "dd MMM, yyyy")
+                      : "Select date"}
+                  </div>
+                </div>
+
+                {form.watch("from_date") && form.watch("to_date") && (
+                  <div className="flex flex-col items-center px-4 py-2 bg-purple-100 rounded-lg">
+                    <div className="text-lg font-semibold text-purple-700">
+                      {calculateWorkingDays(
+                        form.watch("from_date"),
+                        form.watch("to_date")
+                      )}{" "}
+                      days
+                    </div>
+                  </div>
+                )}
+
+                <div className="text-right">
+                  <div className="text-sm text-gray-500">To</div>
+                  <div className="font-medium">
+                    {form.watch("to_date")
+                      ? format(form.watch("to_date"), "dd MMM, yyyy")
+                      : "Select date"}
+                  </div>
+                </div>
+              </div>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-fit justify-start text-left font-normal"
+                    disabled={isSubmitting}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {form.watch("from_date") && form.watch("to_date")
+                      ? `${format(
+                          form.watch("from_date"),
+                          "dd MMM"
+                        )} - ${format(form.watch("to_date"), "dd MMM, yyyy")}`
+                      : "Pick date range"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="range"
+                    selected={{
+                      from: form.watch("from_date"),
+                      to: form.watch("to_date"),
+                    }}
+                    onSelect={(range) => {
+                      if (range?.from) {
+                        form.setValue("from_date", range.from);
+                      }
+                      if (range?.to) {
+                        form.setValue("to_date", range.to);
+                      }
+                    }}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className="pointer-events-auto"
+                    numberOfMonths={1}
+                  />
+                </PopoverContent>
+              </Popover>
+
+              {/* Show working days info */}
+              {form.watch("from_date") && form.watch("to_date") && (
+                <div className="text-sm text-gray-600 mt-2 ">
+                  <div className="flex gap-2">
+                    <div>
+                      Working days:{" "}
+                      {calculateWorkingDays(
+                        form.watch("from_date"),
+                        form.watch("to_date")
+                      )}
+                    </div>
+                    <div>
+                      Total days:{" "}
+                      {Math.ceil(
+                        (form.watch("to_date").getTime() -
+                          form.watch("from_date").getTime()) /
+                          (1000 * 60 * 60 * 24)
+                      ) + 1}
+                    </div>
+                  </div>
+
+                  {form.watch("leave_type") && (
+                    <div className="mt-1">
+                      {(() => {
+                        const selectedType = availableLeaveTypes.find(
+                          (t) => t.value === form.watch("leave_type")
+                        );
+                        const workingDays = calculateWorkingDays(
+                          form.watch("from_date"),
+                          form.watch("to_date")
+                        );
+                        const available = selectedType?.balance || 0;
+
+                        if (workingDays > available) {
+                          return (
+                            <div className="text-red-600 font-medium">
+                              Insufficient balance! Available: {available} days
+                            </div>
+                          );
+                        } else if (workingDays === available) {
+                          return (
+                            <div className="text-orange-600">
+                              Using all available balance
+                            </div>
+                          );
+                        } else {
+                          return (
+                            <div className="text-green-600">
+                              Remaining balance will be:{" "}
+                              {available - workingDays} days <br />
+                              <b className="">
+                                Note: after approval leave count will be
+                                deducted
+                              </b>
+                            </div>
+                          );
+                        }
+                      })()}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Hidden form fields for validation */}
               <FormField
                 control={form.control}
                 name="from_date"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>From Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                            disabled={isSubmitting}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Select start date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < new Date()}
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={() => <FormMessage />}
               />
 
               <FormField
                 control={form.control}
                 name="to_date"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>To Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                            disabled={isSubmitting}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Select end date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => {
-                            const fromDate = form.getValues("from_date");
-                            return fromDate && date < fromDate;
-                          }}
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={() => <FormMessage />}
               />
             </div>
 

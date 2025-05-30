@@ -230,7 +230,7 @@ const Profile = () => {
                   </h3>
                   <div className="mt-1 flex justify-between items-center">
                     <span className="text-2xl font-semibold">
-                      {userInfo?.sick_leave}
+                      {userInfo?.sick_leave ?? 0}
                     </span>
                     <div className="leave-sick rounded-md w-3 h-3"></div>
                   </div>
@@ -243,7 +243,7 @@ const Profile = () => {
                   </h3>
                   <div className="mt-1 flex justify-between items-center">
                     <span className="text-2xl font-semibold">
-                      {userInfo?.earned_leave}
+                      {userInfo?.earned_leave ?? 0}
                     </span>
                     <div className="leave-earned rounded-md w-3 h-3"></div>
                   </div>
@@ -256,7 +256,7 @@ const Profile = () => {
                   </h3>
                   <div className="mt-1 flex justify-between items-center">
                     <span className="text-2xl font-semibold">
-                      {userInfo?.floater_leave}
+                      {userInfo?.floater_leave ?? 0}
                     </span>
                     <div className="leave-floater rounded-md w-3 h-3"></div>
                   </div>
@@ -269,7 +269,7 @@ const Profile = () => {
                   </h3>
                   <div className="mt-1 flex justify-between items-center">
                     <span className="text-2xl font-semibold">
-                      {userInfo?.loss_of_pay}
+                      {userInfo?.loss_of_pay ?? 0}
                     </span>
                     <div className="leave-loss-pay rounded-md w-3 h-3"></div>
                   </div>

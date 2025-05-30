@@ -333,7 +333,7 @@ export const getLeaveRequests = async (manager_id) => {
     const leaveRequests = await getLeaveReqRepo.find({
       where: {
         manager_id: manager_id, // Match manager_id directly
-        status: "PENDING", // Fetch only pending leave requests
+        // status: "PENDING", // Fetch only pending leave requests
       },
       relations: ["employee", "leaveType"], // Include employee and leaveType relations
       order: {
@@ -476,7 +476,7 @@ export const leaveBalanceHelper = async (emp_id) => {
     leaveBalances.forEach((lb) => {
       balances[lb.leaveType.name] = lb.balance; // Map leave type name to balance
     });
-    console.log("Leave Balances:", balances);
+    // console.log("Leave Balances:", balances);
 
     return balances;
   } catch (error) {

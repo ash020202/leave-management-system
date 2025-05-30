@@ -112,3 +112,63 @@
     at async RdbmsSchemaBuilder.build (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:66:13)
     at async DataSource.synchronize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:211:9)
     at async DataSource.initialize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:156:17)
+2025-05-29 12:30:35 [ERROR] Employee not found for emp_id: 4
+2025-05-29 12:31:11 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:24:5)
+2025-05-29 12:32:02 [ERROR] Employee not found for emp_id: 4
+2025-05-29 12:32:08 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:24:5)
+2025-05-29 12:33:44 [ERROR] Employee not found for emp_id: 4
+2025-05-29 12:33:49 [ERROR] Employee not found for emp_id: 5
+2025-05-29 12:33:54 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:24:5)
+2025-05-29 12:39:08 [ERROR] Employee not found for emp_id: 4
+2025-05-29 12:41:56 [ERROR] Employee not found for emp_id: 4
+2025-05-29 12:47:03 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:83:5)
+2025-05-29 12:49:17 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:24:5)
+2025-05-29 12:50:59 [ERROR] QueryFailedError: duplicate key value violates unique constraint "REL_c6fee72f4f3e71ac37b769656f"
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InsertQueryBuilder.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\InsertQueryBuilder.js:106:33)
+    at async SubjectExecutor.executeInsertOperations (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:260:42)
+    at async SubjectExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\SubjectExecutor.js:92:9)
+    at async EntityPersistExecutor.execute (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\persistence\EntityPersistExecutor.js:140:21)
+    at async signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:24:5)
+2025-05-29 13:43:32 [ERROR] TypeError: Cannot read properties of null (reading 'emp_id')
+    at login (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:51:30)
+2025-05-29 13:43:34 [ERROR] TypeError: Cannot read properties of null (reading 'emp_id')
+    at login (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:51:30)
+2025-05-30 08:39:55 [ERROR] TypeError: Cannot read properties of null (reading 'emp_id')
+    at login (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:51:30)

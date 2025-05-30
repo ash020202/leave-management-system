@@ -148,6 +148,12 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
             Pending
           </Badge>
         );
+      case "CANCELLED":
+        return (
+          <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+            Cancelled
+          </Badge>
+        );
       default:
         return null;
     }

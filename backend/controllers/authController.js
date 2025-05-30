@@ -12,8 +12,8 @@ export const signup = async (req, res) => {
   try {
     const employee = await getEmployeeRepo.findOneBy({ emp_id });
     if (!employee) {
-      logger.error("Employee not found for emp_id: " + emp_id);
-      return res.status(404).json({ message: "Employee not found" });
+      logger.error("Manager not found for emp_id: " + emp_id);
+      return res.status(404).json({ message: "Manager not found" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = getAuthRepo.create({
