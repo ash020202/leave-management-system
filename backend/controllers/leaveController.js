@@ -1,3 +1,4 @@
+import { getEmployeeRepo } from "../repositories/EmployeeRepo.js";
 import { getLeaveBalanceRepo } from "../repositories/LeaveBalanceRepo.js";
 import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
 import { getLeaveTypeRepo } from "../repositories/LeaveTypeRepo.js";
@@ -248,9 +249,12 @@ export const changeLeaveStatus = async (req, res) => {
       }
 
       leaveBalance.balance -= leaveRequest.num_of_days;
-      await getLeaveBalanceRepo.save(leaveBalance);
-
-      await getLeaveReqRepo.save(leaveRequest);
+      leaveRequest.employee.total_leave_balance -= leaveRequest.num_of_days; // Update employee's leave balance
+      Promise.all([
+        getLeaveBalanceRepo.save(leaveBalance),
+        getEmployeeRepo.save(leaveRequest.employee),
+        getLeaveReqRepo.save(leaveRequest),
+      ]);
 
       return res.status(200).json({
         message: `Leave request approved successfully by ${approver.emp_name}`,

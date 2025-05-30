@@ -12,7 +12,6 @@ const router = express.Router();
 router.get("/", getAllEmployees);
 router.get("/user-fetch/:emp_id", getLeaveBalance);
 router.post("/insert-one", insertEmployees);
-// router.post("/insert-many", bulkInsertEmployees);
 router.delete("/delete-one", deleteEmployee);
 
 export default router;

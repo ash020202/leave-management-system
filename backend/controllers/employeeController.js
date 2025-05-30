@@ -17,43 +17,6 @@ export const getAllEmployees = async (req, res) => {
   }
 };
 
-// export const insertEmployees = async (req, res) => {
-//   const {
-//     emp_name,
-//     department,
-//     role,
-//     manager_id,
-//     manager_name,
-//     sr_manager_id,
-//     sr_manager_name,
-//     total_leave_balance,
-//     sick_leave,
-//     floater_leave,
-//     earned_leave,
-//     loss_of_pay,
-//   } = req.body;
-//   try {
-//     await insertEmpHelper(
-//       emp_name,
-//       department,
-//       role,
-//       manager_id,
-//       manager_name,
-//       sr_manager_id,
-//       sr_manager_name,
-//       total_leave_balance,
-//       sick_leave,
-//       floater_leave,
-//       earned_leave,
-//       loss_of_pay
-//     );
-//     logger.info("leave inserted successfully");
-//     return res.status(200).json({ message: "success inserted" });
-//   } catch (error) {
-//     logger.error("error in insert helper");
-//     return res.json({ message: "error in insert helper" });
-//   }
-// };
 export const insertEmployees = async (req, res) => {
   const { emp_name, department, role, manager_id, total_leave_balance } =
     req.body;
@@ -133,7 +96,8 @@ export const getLeaveBalance = async (req, res) => {
       emp_name: employee.emp_name,
       department: employee.department,
       role: employee.role,
-      total_leave_balance: Object.values(balances).reduce((a, b) => a + b, 0),
+      // total_leave_balance: Object.values(balances).reduce((a, b) => a + b, 0),
+      total_leave_balance: employee.total_leave_balance,
       manager_name: employee.manager?.emp_name || "N/A",
       sr_manager_name: employee.manager?.manager?.emp_name || "N/A",
       ...balances, // Include individual leave balances

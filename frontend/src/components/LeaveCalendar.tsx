@@ -286,7 +286,7 @@ const LeaveCalendar = () => {
                       {timeSlots.map((time, index) => (
                         <div
                           key={`${day.toISOString()}-${time}`}
-                          className="h-16 border-b"
+                          className="h-16"
                         />
                       ))}
 

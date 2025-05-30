@@ -46,65 +46,6 @@ export const decryptPassword = (encryptedPassword) => {
   return originalPassword;
 };
 
-// export const findEmpById = async (emp_id) => {
-//   try {
-//     const getEmp = await getEmployeeRepo.findOneBy({ emp_id });
-//     // console.log(getEmp);
-
-//     return getEmp;
-//   } catch (error) {
-//     console.log("error in employee repo");
-//     throw new Error("emp fetch failed");
-//   }
-// };
-
-// export const insertLeaveRequest = async (
-//   emp_id,
-//   leave_type_id,
-//   from_date,
-//   to_date,
-//   reason,
-//   leaveStatus,
-//   assignedManagerId,
-//   totalDays
-// ) => {
-//   try {
-//     // Check for duplicate leave requests
-//     const checkDuplicate = await getLeaveReqRepo.findOne({
-//       where: {
-//         employee: { emp_id },
-//         from_date,
-//         to_date,
-//       },
-//     });
-
-//     if (checkDuplicate) {
-//       return {
-//         duplicate: true,
-//         message: `Leave already exists for the selected date range (${from_date} to ${to_date}).`,
-//       };
-//     }
-
-//     // Create the leave request entity
-//     const leave = getLeaveReqRepo.create({
-//       employee: { emp_id }, // Reference the employee entity
-//       leaveType: { leave_type_id }, // Reference the leave type entity
-//       from_date,
-//       to_date,
-//       reason,
-//       status: leaveStatus,
-//       num_of_days: totalDays,
-//       manager_id: assignedManagerId,
-//     });
-
-//     // Save the leave request
-//     await getLeaveReqRepo.save(leave);
-//     return { duplicate: false, message: "Leave request inserted successfully" };
-//   } catch (error) {
-//     console.error("Insert Leave Error:", error);
-//     throw new Error("Failed to insert leave request");
-//   }
-// };
 export const findEmpById = async (emp_id) => {
   try {
     const employee = await getEmployeeRepo.findOne({
@@ -118,113 +59,7 @@ export const findEmpById = async (emp_id) => {
     throw new Error("Failed to fetch employee");
   }
 };
-// export const insertLeaveRequest = async (
-//   emp_id,
-//   leave_type_id,
-//   from_date,
-//   to_date,
-//   reason,
-//   leaveStatus,
-//   assignedManagerId,
-//   totalDays
-// ) => {
-//   try {
-//     // Check for duplicate leave requests
-//     const checkDuplicate = await getLeaveReqRepo.findOne({
-//       where: {
-//         employee: { emp_id },
-//         from_date,
-//         to_date,
-//       },
-//     });
 
-//     if (checkDuplicate) {
-//       return {
-//         duplicate: true,
-//         message: `Leave already exists for the selected date range (${from_date} to ${to_date}).`,
-//       };
-//     }
-
-//     // Create the leave request entity
-//     const leave = getLeaveReqRepo.create({
-//       employee: { emp_id }, // Reference the employee entity
-//       leaveType: { leave_type_id }, // Reference the leave type entity
-//       from_date,
-//       to_date,
-//       reason,
-//       status: leaveStatus,
-//       num_of_days: totalDays,
-//       manager_id: assignedManagerId,
-//     });
-
-//     // Save the leave request
-//     await getLeaveReqRepo.save(leave);
-//     return { duplicate: false, message: "Leave request inserted successfully" };
-//   } catch (error) {
-//     console.error("Insert Leave Error:", error);
-//     throw new Error("Failed to insert leave request");
-//   }
-// };
-// export const updateLeaveBalance = async (emp_id, leave_type, totalDays) => {
-//   try {
-//     const employee = await findEmpById(emp_id);
-
-//     if (!employee) {
-//       throw new Error("Employee not found");
-//     }
-//     // console.log(employee[leave_type]);
-
-//     // Decrease the specific leave type and total balance
-
-//     employee[leave_type] = employee[leave_type] - totalDays;
-//     employee.total_leave_balance = employee.total_leave_balance - totalDays;
-
-//     await getEmployeeRepo.save(employee);
-
-//     // Return updated leave values
-//     return {
-//       [leave_type]: employee[leave_type],
-//       total_leave_balance: employee.total_leave_balance,
-//     };
-//   } catch (error) {
-//     console.error("Error in updateLeaveBalance:", error);
-//     throw new Error("Failed to update leave balance");
-//   }
-// };
-
-//for manager to see what leave req came
-// export const getLeaveRequests = async (manager_id) => {
-//   const leaveRequests = await getLeaveReqRepo.find({
-//     where: {
-//       status: "PENDING",
-//       employee: {
-//         manager_id: manager_id, // this is the correct way
-//       },
-//     },
-//     relations: {
-//       employee: true,
-//     },
-//     order: {
-//       created_at: "DESC",
-//     },
-//   });
-
-//   console.log(leaveRequests);
-
-//   // If you want to return emp_name instead of the full employee object:
-//   return leaveRequests.map((lr) => ({
-//     leave_req_id: lr.leave_req_id,
-//     emp_id: lr.emp_id,
-//     emp_name: lr.employee.emp_name,
-//     leave_type: lr.leave_type,
-//     from_date: lr.from_date,
-//     to_date: lr.to_date,
-//     reason: lr.reason,
-//     status: lr.status,
-//     num_of_days: lr.num_of_days,
-//     created_at: lr.created_at,
-//   }));
-// };
 export const insertLeaveRequest = async (
   emp_id,
   leave_type_id,
@@ -236,6 +71,22 @@ export const insertLeaveRequest = async (
   totalDays
 ) => {
   try {
+    const checkDuplicate = await getLeaveReqRepo.findOneBy({
+      employee: { emp_id },
+      from_date,
+      to_date,
+    });
+
+    if (
+      checkDuplicate &&
+      from_date === checkDuplicate.from_date &&
+      to_date === checkDuplicate.to_date
+    ) {
+      return {
+        duplicate: true,
+        message: `Leave already exists for the selected date range (${from_date} to ${to_date}).`,
+      };
+    }
     console.log("Assigned Manager ID being saved:", assignedManagerId);
 
     const leave = getLeaveReqRepo.create({
@@ -273,6 +124,7 @@ export const updateLeaveBalance = async (emp_id, leave_type_id, totalDays) => {
 
     // Deduct the leave days from the balance
     leaveBalance.balance -= totalDays;
+    leaveBalance.employee.total_leave_balance -= totalDays; // Update the total leave balance
 
     if (leaveBalance.balance < 0) {
       throw new Error("Insufficient leave balance");
@@ -287,45 +139,6 @@ export const updateLeaveBalance = async (emp_id, leave_type_id, totalDays) => {
     throw new Error("Failed to update leave balance");
   }
 };
-
-// export const getLeaveRequests = async (manager_id) => {
-//   const leaveRequests = await getLeaveReqRepo.find({
-//     where: {
-//       employee: {
-//         manager_id: manager_id,
-//       },
-//     },
-//     relations: {
-//       employee: true,
-//     },
-//     order: {
-//       created_at: "DESC",
-//     },
-//   });
-
-//   // console.log("Leave Requests Count:", leaveRequests.length);
-//   // leaveRequests.forEach((lr) => {
-//   //   console.log({
-//   //     leave_req_id: lr.leave_req_id,
-//   //     emp_id: lr.emp_id,
-//   //     manager_id: lr.employee.manager_id,
-//   //     emp_name: lr.employee.emp_name,
-//   //   });
-//   // });
-
-//   return leaveRequests.map((lr) => ({
-//     leave_req_id: lr.leave_req_id,
-//     emp_id: lr.emp_id,
-//     emp_name: lr.employee.emp_name,
-//     leave_type: lr.leave_type,
-//     from_date: lr.from_date,
-//     to_date: lr.to_date,
-//     reason: lr.reason,
-//     status: lr.status,
-//     num_of_days: lr.num_of_days,
-//     created_at: lr.created_at,
-//   }));
-// };
 
 //for all emp leave history
 export const getLeaveRequests = async (manager_id) => {
@@ -359,18 +172,7 @@ export const getLeaveRequests = async (manager_id) => {
     throw new Error("Failed to fetch leave requests");
   }
 };
-// export const getEmpLeaveHistory = async (emp_id) => {
-//   try {
-//     const leaveHistory = await getLeaveReqRepo.find({
-//       where: { emp_id },
-//     });
 
-//     // console.log(leaveHistory);
-//     return leaveHistory;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 export const getEmpLeaveHistory = async (emp_id) => {
   try {
     const leaveHistory = await getLeaveReqRepo.find({
@@ -448,22 +250,6 @@ export const cancelLeaveHelper = async (leave_req_id, emp_id) => {
     };
   }
 };
-
-// export const leaveBalanceHelper = async (emp_id) => {
-//   try {
-//     const employee = await findEmpById(emp_id);
-//     if (!employee) {
-//       return { code: 500, message: "Employee not found" };
-//     }
-//     const { sick_leave, floater_leave, earned_leave, loss_of_pay } = employee;
-//     return { sick_leave, floater_leave, earned_leave, loss_of_pay };
-//   } catch (error) {
-//     throw {
-//       code: 400,
-//       message: error,
-//     };
-//   }
-// };
 
 export const leaveBalanceHelper = async (emp_id) => {
   try {
