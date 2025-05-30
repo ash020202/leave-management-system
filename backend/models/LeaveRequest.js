@@ -51,5 +51,11 @@ export const LeaveRequest = new EntitySchema({
       target: LeaveType,
       joinColumn: { name: "leave_type_id" },
     },
+    manager: {
+      type: "many-to-one",
+      target: Employee,
+      joinColumn: { name: "manager_id" },
+      nullable: true,
+    },
   },
 });

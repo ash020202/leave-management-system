@@ -87,7 +87,7 @@ export const insertLeaveRequest = async (
         message: `Leave already exists for the selected date range (${from_date} to ${to_date}).`,
       };
     }
-    console.log("Assigned Manager ID being saved:", assignedManagerId);
+    // console.log("Assigned Manager ID being saved:", assignedManagerId);
 
     const leave = getLeaveReqRepo.create({
       employee: { emp_id }, // Reference the employee entity
@@ -179,7 +179,7 @@ export const getEmpLeaveHistory = async (emp_id) => {
       where: {
         employee: { emp_id }, // Match the employee's emp_id
       },
-      relations: ["employee", "leaveType"], // Include relations to fetch employee and leaveType details
+      relations: ["employee", "leaveType", "manager"], // Include relations to fetch employee and leaveType details
       order: {
         created_at: "DESC", // Order by creation date (most recent first)
       },
@@ -197,6 +197,7 @@ export const getEmpLeaveHistory = async (emp_id) => {
       rejection_reason: leave.rejection_reason,
       created_at: leave.created_at,
       emp_name: leave.employee.emp_name, // Include employee name
+      approved_by: leave.manager.emp_name, // Include manager ID who approved the leave
     }));
   } catch (error) {
     console.error("Error fetching leave history:", error);
@@ -230,7 +231,7 @@ export const cancelLeaveHelper = async (leave_req_id, emp_id) => {
   if (!leave) {
     throw { code: 404, message: "Leave request not found" };
   }
-  console.log(leave.employee.emp_id, emp_id);
+  // console.log(leave.employee.emp_id, emp_id);
 
   if (leave.employee.emp_id !== parseInt(emp_id)) {
     throw {

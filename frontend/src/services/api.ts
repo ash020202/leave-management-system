@@ -24,6 +24,7 @@ export interface LeaveRequest {
   rejection_reason?: string;
   created_at: string;
   emp_name?: string;
+  approved_by?: string;
 }
 
 export interface LeaveBalance {

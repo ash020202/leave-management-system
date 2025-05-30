@@ -96,7 +96,7 @@ export const submitLeave = async (req, res) => {
     } else {
       // Insufficient leave balance
       assignedManagerId = employee.manager?.manager?.emp_id || null; // Senior manager
-      console.log("Assigned Senior Manager ID:", assignedManagerId);
+      // console.log("Assigned Senior Manager ID:", assignedManagerId);
 
       leaveStatus = "PENDING";
     }
@@ -106,7 +106,7 @@ export const submitLeave = async (req, res) => {
           "No manager or senior manager found to approve the leave request.",
       });
     }
-    console.log("Assigned Manager ID:", assignedManagerId);
+    // console.log("Assigned Manager ID:", assignedManagerId);
 
     // Insert the leave request
     const insertResult = await insertLeaveRequest(
@@ -135,7 +135,7 @@ export const submitLeave = async (req, res) => {
           leaveType.leave_type_id,
           totalDays
         );
-        console.log("Updated Leave Balance:", updatedBalance);
+        // console.log("Updated Leave Balance:", updatedBalance);
 
         remainingLeave = updatedBalance;
       } catch (error) {

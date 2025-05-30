@@ -114,6 +114,9 @@ const LeaveList = ({ onUpdate }: LeaveListProps) => {
     }
   };
 
+  const hasRejectedLeave = filteredLeaves.some(
+    (leave) => leave.status === "REJECTED" && leave.rejection_reason
+  );
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -147,11 +150,16 @@ const LeaveList = ({ onUpdate }: LeaveListProps) => {
           <div className="w-full">
             {/* Header */}
             <div className="flex font-medium border-b py-2">
-              <div className=" flex-1">Type</div>
-              <div className=" flex-1 ">From</div>
-              <div className=" flex-1">To</div>
-              <div className=" flex-1">Status</div>
-              <div className=" flex-1">Actions</div>
+              <div className="w-1/6">Type</div>
+              <div className="w-1/6">From</div>
+              <div className="w-1/6">To</div>
+              <div className="w-1/6">Status</div>
+              <div className="w-1/6">Approver</div>
+              {hasRejectedLeave ? (
+                <div className="w-1/6">Actions</div>
+              ) : (
+                <div className="w-1/6 invisible">Actions</div> // placeholder
+              )}
             </div>
 
             {/* Body */}
@@ -161,25 +169,29 @@ const LeaveList = ({ onUpdate }: LeaveListProps) => {
                   key={leave.leave_req_id}
                   className="flex items-center border-b py-2 text-sm min-h-[80px]"
                 >
-                  <div className=" flex-1">
+                  <div className="w-1/6">
                     {getLeaveTypeBadge(leave.leave_type)}
                   </div>
 
-                  <div className=" flex-1">
+                  <div className=" w-1/6">
                     {format(parseISO(leave.from_date), "MMM dd, yyyy")}
                   </div>
 
-                  <div className=" flex-1">
+                  <div className=" w-1/6">
                     {format(parseISO(leave.to_date), "MMM dd, yyyy")}
                   </div>
 
-                  <div className=" flex-1">{getStatusBadge(leave.status)}</div>
+                  <div className=" w-1/6">{getStatusBadge(leave.status)}</div>
+                  <p className="text-[10px] font-semibold text-center">
+                    {leave.approved_by}
+                  </p>
 
-                  <div className=" flex-1  flex-col gap-1">
+                  {/* {hasRejectedLeave && ( */}
+                  <div className=" w-1/6  flex-col gap-1">
                     {(leave.status === "CANCELLED" ||
                       leave.status === "PENDING") && (
                       <button
-                        className={`text-white text-xs px-3 py-1 rounded ${
+                        className={`text-white text-xs px-3 py-1 rounded ml-5 ${
                           leave.status === "CANCELLED"
                             ? "bg-gray-500 cursor-not-allowed"
                             : "bg-red-600 hover:bg-red-700"
@@ -196,6 +208,7 @@ const LeaveList = ({ onUpdate }: LeaveListProps) => {
                       </span>
                     )}
                   </div>
+                  {/* )} */}
                 </div>
               ))}
             </div>
