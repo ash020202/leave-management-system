@@ -1,3 +1,5 @@
+import { EmployeeConstants } from "../constants/EmployeeConstants.js";
+import { LeaveConstants } from "../constants/LeaveConstants.js";
 import { getEmployeeRepo } from "../repositories/EmployeeRepo.js";
 import { getLeaveBalanceRepo } from "../repositories/LeaveBalanceRepo.js";
 import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
@@ -61,6 +63,19 @@ export const submitLeave = async (req, res) => {
       return res.status(404).json({ error: "Leave type not found" });
     }
 
+    //check if floater leave then isFloater is true based on given from date and to date match with an constant here
+    const floaterLeaves = LeaveConstants.FLOATER_LEAVE;
+    if (leaveType.name === LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE) {
+      if (
+        !floaterLeaves.includes(from_date) ||
+        !floaterLeaves.includes(to_date)
+      ) {
+        return res.status(400).json({
+          error: `Floater leave can only be applied for certain dates Contact HR for more details.`,
+        });
+      }
+    }
+
     // Fetch leave balance for the employee
     const leaveBalance = await leaveBalanceHelper(emp_id);
     const leaveCount = leaveBalance[leaveType.name]; // Use leave type name to get the balance
@@ -84,10 +99,14 @@ export const submitLeave = async (req, res) => {
     const { totalDays, allDaysInvalid } = calculateWorkingDays(
       from_date,
       to_date,
-      allHolidays
+      allHolidays,
+      leaveType.name
     );
 
-    if (allDaysInvalid || totalDays === 0) {
+    if (
+      leaveType.name !== LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE &&
+      (allDaysInvalid || totalDays === 0)
+    ) {
       return res.status(400).send({
         error: "Leave cannot be applied for weekends or public holidays only.",
       });
@@ -99,13 +118,16 @@ export const submitLeave = async (req, res) => {
     if (leaveCount >= totalDays) {
       // Sufficient leave balance
       assignedManagerId = employee.manager?.emp_id || null;
-      leaveStatus = leaveType.name === "sick_leave" ? "APPROVED" : "PENDING";
+      leaveStatus =
+        leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+          ? LeaveConstants.LEAVE_STATUS.APPROVED
+          : LeaveConstants.LEAVE_STATUS.PENDING;
     } else {
       // Insufficient leave balance
       assignedManagerId = employee.manager?.manager?.emp_id || null; // Senior manager
       // console.log("Assigned Senior Manager ID:", assignedManagerId);
 
-      leaveStatus = "PENDING";
+      leaveStatus = LeaveConstants.LEAVE_STATUS.PENDING;
     }
     if (!assignedManagerId) {
       return res.status(400).send({
@@ -135,7 +157,10 @@ export const submitLeave = async (req, res) => {
     }
 
     let remainingLeave = 0;
-    if (leaveCount >= totalDays && leaveType.name === "sick_leave") {
+    if (
+      leaveCount >= totalDays &&
+      leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+    ) {
       try {
         const updatedBalance = await updateLeaveBalance(
           emp_id,
@@ -155,7 +180,7 @@ export const submitLeave = async (req, res) => {
 
     const message =
       leaveCount >= totalDays
-        ? leaveType.name === "sick_leave"
+        ? leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
           ? `${leaveType.name} leave approved and ${totalDays} days deducted from balance.`
           : `${leaveType.name} leave request sent to manager and ${totalDays} days deducted from balance.`
         : `${leaveType.name} leave balance insufficient. Leave request forwarded to Senior Manager.`;
@@ -213,7 +238,10 @@ export const changeLeaveStatus = async (req, res) => {
     }
 
     // Ensure only managers or senior managers can approve/reject
-    if (approver.role !== "MANAGER" && approver.role !== "SENIOR_MANAGER") {
+    if (
+      approver.role !== EmployeeConstants.EMPLOYEE_ROLES.MANAGER &&
+      approver.role !== EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
+    ) {
       return res.status(403).json({
         message:
           "Only managers or senior managers can approve or reject leaves.",
@@ -231,14 +259,14 @@ export const changeLeaveStatus = async (req, res) => {
     }
 
     // Handle rejection
-    if (newStatus === "REJECTED") {
+    if (newStatus === LeaveConstants.LEAVE_STATUS.REJECTED) {
       if (!rejection_reason) {
         return res
           .status(400)
           .json({ message: "Rejection reason is required" });
       }
 
-      leaveRequest.status = "REJECTED";
+      leaveRequest.status = LeaveConstants.LEAVE_STATUS.REJECTED;
       leaveRequest.rejection_reason = rejection_reason;
       await getLeaveReqRepo.save(leaveRequest);
 
@@ -248,8 +276,8 @@ export const changeLeaveStatus = async (req, res) => {
     }
 
     // Handle approval
-    if (newStatus === "APPROVED") {
-      leaveRequest.status = "APPROVED";
+    if (newStatus === LeaveConstants.LEAVE_STATUS.APPROVED) {
+      leaveRequest.status = LeaveConstants.LEAVE_STATUS.APPROVED;
       leaveRequest.rejection_reason = null;
 
       // Update leave balance

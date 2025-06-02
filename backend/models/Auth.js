@@ -1,5 +1,6 @@
 import { EntitySchema } from "typeorm";
 import { Employee } from "../models/Employees.js";
+import { EmployeeConstants } from "../constants/EmployeeConstants.js";
 
 export const Auth = new EntitySchema({
   name: "Auth",
@@ -19,7 +20,12 @@ export const Auth = new EntitySchema({
     },
     role: {
       type: "enum",
-      enum: ["INTERN", "EMPLOYEE", "MANAGER", "SENIOR_MANAGER"],
+      enum: [
+        EmployeeConstants.EMPLOYEE_ROLES.INTERN,
+        EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
+        EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+        EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER,
+      ],
       default: "EMPLOYEE",
     },
   },

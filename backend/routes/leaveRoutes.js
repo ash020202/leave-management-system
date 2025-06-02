@@ -13,20 +13,29 @@ import {
   authorize,
   checkOwnership,
 } from "../middleware/authMiddleware.js";
+import { EmployeeConstants } from "../constants/EmployeeConstants.js";
 
 const router = express.Router();
 
 router.post(
   "/request",
   authenticate,
-  authorize("INTERN", "EMPLOYEE", "SENIOR_MANAGER", "MANAGER"),
+  authorize(
+    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
+    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
+    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
+  ),
   submitLeave
 );
 router.get(
   "/manager/leaves/:emp_id",
 
   authenticate,
-  authorize("SENIOR_MANAGER", "MANAGER"),
+  authorize(
+    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
+  ),
   checkOwnership,
 
   getManagerLeaveRequests
@@ -34,33 +43,56 @@ router.get(
 router.patch(
   "/status/:emp_id",
   authenticate,
-  authorize("SENIOR_MANAGER", "MANAGER"),
+  authorize(
+    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
+  ),
   changeLeaveStatus
 );
 router.post(
   "/cancel/:emp_id",
   authenticate,
-  authorize("INTERN", "EMPLOYEE", "SENIOR_MANAGER", "MANAGER"),
+  authorize(
+    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
+    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
+    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
+  ),
   cancelLeave
 );
 router.get(
   "/balance/:emp_id",
   authenticate,
-  authorize("INTERN", "EMPLOYEE", "SENIOR_MANAGER", "MANAGER"),
+  authorize(
+    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
+    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
+    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
+  ),
   checkLeaveBalance
 );
 
 router.get(
   "/user/:emp_id",
   authenticate,
-  authorize("INTERN", "EMPLOYEE", "SENIOR_MANAGER", "MANAGER"),
+  authorize(
+    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
+    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
+    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
+  ),
   getLeaveHistory
 );
 
 router.get(
   "/get-public-holidays",
   authenticate,
-  authorize("INTERN", "EMPLOYEE", "SENIOR_MANAGER", "MANAGER"),
+  authorize(
+    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
+    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
+    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
+  ),
   getPublicHolidays
 );
 

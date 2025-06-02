@@ -1,6 +1,7 @@
 import { EntitySchema } from "typeorm";
 import { Employee } from "./Employees.js";
 import { LeaveType } from "./LeaveType.js";
+import { LeaveConstants } from "../constants/LeaveConstants.js";
 
 export const LeaveRequest = new EntitySchema({
   name: "LeaveRequest",
@@ -23,7 +24,11 @@ export const LeaveRequest = new EntitySchema({
     status: {
       type: "varchar",
       default: "PENDING", // PENDING, APPROVED, REJECTED
-      enum: ["PENDING", "APPROVED", "REJECTED"],
+      enum: [
+        LeaveConstants.LEAVE_STATUS.PENDING,
+        LeaveConstants.LEAVE_STATUS.APPROVED,
+        LeaveConstants.LEAVE_STATUS.REJECTED,
+      ],
     },
     rejection_reason: {
       type: "text",

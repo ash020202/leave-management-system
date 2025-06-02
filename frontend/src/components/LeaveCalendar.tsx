@@ -312,7 +312,7 @@ const LeaveCalendar = () => {
                                 <HoverCardTrigger asChild>
                                   <div
                                     className={cn(
-                                      "rounded-md border-l-4 p-2 text-xs font-medium pointer-events-auto cursor-pointer shadow-sm",
+                                      "rounded-md mt-4 border-l-4 p-2 text-xs font-medium pointer-events-auto cursor-pointer shadow-sm",
                                       getLeaveTypeColor(leave.leave_type),
                                       "min-h-[2rem] flex flex-col justify-center"
                                     )}

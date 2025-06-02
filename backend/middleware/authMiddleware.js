@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { EmployeeConstants } from "../constants/EmployeeConstants.js";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const authenticate = (req, res, next) => {
@@ -31,7 +32,8 @@ export const checkOwnership = (req, res, next) => {
 
   if (
     parseInt(emp_id) !== empId &&
-    (role !== "SENIOR_MANAGER" || role !== "MANAGER")
+    (role !== EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER ||
+      role !== EmployeeConstants.EMPLOYEE_ROLES.MANAGER)
   ) {
     return res
       .status(403)

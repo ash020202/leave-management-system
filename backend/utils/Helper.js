@@ -3,18 +3,37 @@ import { getLeaveBalanceRepo } from "../repositories/LeaveBalanceRepo.js";
 import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
 import CryptoJS from "crypto-js";
 import { getLeaveTypeRepo } from "../repositories/LeaveTypeRepo.js";
+import { LeaveConstants } from "../constants/LeaveConstants.js";
 
 // holidays.js
 // utils/workingDays.js
 
-export const calculateWorkingDays = (from_date, to_date, holidays = []) => {
+export const calculateWorkingDays = (
+  from_date,
+  to_date,
+  holidays = [],
+  leaveType = ""
+) => {
   const start = new Date(from_date);
   const end = new Date(to_date);
+  // console.log(leaveType);
 
   // Format all holidays to 'YYYY-MM-DD' and use a Set for faster lookup
+  // const holidaySet = new Set(
+  //   holidays.map((date) => new Date(date).toISOString().split("T")[0])
+  // );
+  const floaterSet = new Set(LeaveConstants.FLOATER_LEAVE);
+  // const cleanHolidays = holidaySet.filter((h) => !floaterSet.has(h));
   const holidaySet = new Set(
-    holidays.map((date) => new Date(date).toISOString().split("T")[0])
+    holidays
+      .map((date) => new Date(date).toISOString().split("T")[0])
+      .filter((d) =>
+        leaveType === LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE
+          ? !floaterSet.has(d) // ❗ Ignore floater days from holidays for floater leave
+          : true
+      )
   );
+  // console.log("Holiday Set:", holidaySet);
 
   let totalDays = 0;
   let allDaysInvalid = true;
@@ -131,6 +150,7 @@ export const updateLeaveBalance = async (emp_id, leave_type_id, totalDays) => {
     }
 
     // Save the updated leave balance
+    await getEmployeeRepo.save(leaveBalance.employee); // Save the employee to update total_leave_balance
     await getLeaveBalanceRepo.save(leaveBalance);
 
     return leaveBalance.balance; // Return the updated balance

@@ -1,0 +1,33 @@
+export const LeaveConstants = {
+  LEAVE_TYPES: {
+    SICK_LEAVE: "sick_leave",
+    FLOATER_LEAVE: "floater_leave",
+    LOSS_OF_PAY: "loss_of_pay",
+    EARNED_LEAVE: "earned_leave",
+  },
+  LEAVE_STATUS: {
+    PENDING: "PENDING",
+    APPROVED: "APPROVED",
+    REJECTED: "REJECTED",
+  },
+  FLOATER_LEAVE: [
+    "2025-01-01",
+    "2025-01-14",
+    "2025-01-26",
+    "2025-03-14",
+    "2025-03-31",
+    "2025-04-14",
+    "2025-04-18",
+    "2025-05-01",
+    "2025-06-07",
+    "2025-06-27",
+    "2025-08-15",
+    "2025-08-27",
+    "2025-10-01",
+    "2025-10-02",
+    "2025-10-20",
+    "2025-10-21",
+    "2025-12-25",
+    "2025-12-26",
+  ],
+};
