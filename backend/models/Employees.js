@@ -34,5 +34,10 @@ export const Employee = new EntitySchema({
       target: "Employee",
       inverseSide: "manager",
     },
+    leaveBalances: {
+      type: "one-to-many",
+      target: "LeaveBalance",
+      inverseSide: "employee",
+    },
   },
 });

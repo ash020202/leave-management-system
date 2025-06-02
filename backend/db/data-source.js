@@ -6,6 +6,7 @@ import { LeaveRequest } from "../models/LeaveRequest.js";
 import { Auth } from "../models/Auth.js";
 import { LeaveBalance } from "../models/LeaveBalance.js";
 import { LeaveType } from "../models/LeaveType.js";
+import { LeavePolicy } from "../models/LeavePolicy.js";
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -21,5 +22,12 @@ export const AppDataSource = new DataSource({
   //   rejectUnauthorized: false, // required for Render
   // },
 
-  entities: [Employee, LeaveRequest, LeaveBalance, LeaveType, Auth],
+  entities: [
+    Employee,
+    LeaveRequest,
+    LeaveBalance,
+    LeaveType,
+    Auth,
+    LeavePolicy,
+  ],
 });

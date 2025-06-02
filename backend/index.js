@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-
+import "./cron-jobs/cronJob.js";
 import bodyParser from "body-parser";
 import empRoute from "./routes/employeeRoute.js";
 import leaveRoute from "./routes/leaveRoutes.js";

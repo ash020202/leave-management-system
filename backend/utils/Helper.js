@@ -4,6 +4,7 @@ import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
 import CryptoJS from "crypto-js";
 import { getLeaveTypeRepo } from "../repositories/LeaveTypeRepo.js";
 import { LeaveConstants } from "../constants/LeaveConstants.js";
+import { getLeavePolicyRepo } from "../repositories/LeavePolicyRepo.js";
 
 // holidays.js
 // utils/workingDays.js
@@ -326,3 +327,45 @@ export const insertEmpHelper = async (
     throw new Error("Insert failed");
   }
 };
+
+export async function accumulateLeavesMonthly() {
+  const employees = await getEmployeeRepo.find();
+
+  for (const emp of employees) {
+    const policies = await getLeavePolicyRepo.find({
+      where: { employee_type: emp.role },
+      relations: ["leaveType"],
+    });
+
+    for (const policy of policies) {
+      const existingBalance = await getLeaveBalanceRepo.findOne({
+        where: {
+          employee: { emp_id: emp.emp_id },
+          leaveType: { leave_type_id: policy.leaveType.leave_type_id },
+        },
+        relations: ["employee", "leaveType"],
+      });
+
+      if (existingBalance) {
+        // Accumulate but not over max limit
+        // console.log(existingBalance.balance);
+
+        const newBalance = Math.min(
+          existingBalance.balance + policy.accrual_per_month,
+          policy.max_days_per_year
+        );
+        existingBalance.balance = newBalance;
+        await getLeaveBalanceRepo.save(existingBalance);
+      } else {
+        // Create new balance record
+        await getLeaveBalanceRepo.save({
+          employee: emp,
+          leaveType: policy.leaveType,
+          balance: Math.min(policy.accrual_per_month, policy.max_days_per_year),
+        });
+      }
+    }
+  }
+
+  console.log("Leave accumulation complete.");
+}
