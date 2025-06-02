@@ -337,6 +337,8 @@ export async function accumulateLeavesMonthly() {
       relations: ["leaveType"],
     });
 
+    let monthlyTotalAdd = 0;
+
     for (const policy of policies) {
       const existingBalance = await getLeaveBalanceRepo.findOne({
         where: {
@@ -347,24 +349,39 @@ export async function accumulateLeavesMonthly() {
       });
 
       if (existingBalance) {
-        // Accumulate but not over max limit
-        // console.log(existingBalance.balance);
-
         const newBalance = Math.min(
           existingBalance.balance + policy.accrual_per_month,
           policy.max_days_per_year
         );
+        monthlyTotalAdd += newBalance - existingBalance.balance;
+
         existingBalance.balance = newBalance;
         await getLeaveBalanceRepo.save(existingBalance);
       } else {
-        // Create new balance record
+        const initialBalance = Math.min(
+          policy.accrual_per_month,
+          policy.max_days_per_year
+        );
+
+        monthlyTotalAdd += initialBalance;
+
         await getLeaveBalanceRepo.save({
           employee: emp,
           leaveType: policy.leaveType,
-          balance: Math.min(policy.accrual_per_month, policy.max_days_per_year),
+          balance: initialBalance,
         });
       }
     }
+
+    // Add only if monthlyTotalAdd > 0
+    if (monthlyTotalAdd > 0) {
+      emp.total_leave_balance += monthlyTotalAdd;
+      await getEmployeeRepo.save(emp);
+    }
+
+    console.log(
+      `Updated total leave for ${emp.role} (ID: ${emp.emp_id}): +${monthlyTotalAdd}`
+    );
   }
 
   console.log("Leave accumulation complete.");
