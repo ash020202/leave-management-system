@@ -155,9 +155,9 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
     }
   }, [userLeaveData, user?.role]);
 
-  console.log("User Info:", userInfo);
-  console.log("Parsed User Data:", userLeaveData);
-  console.log("Available Leave Types with Balance:", availableLeaveTypes);
+  // console.log("User Info:", userInfo);
+  // console.log("Parsed User Data:", userLeaveData);
+  // console.log("Available Leave Types with Balance:", availableLeaveTypes);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -171,6 +171,7 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
       toast.error("You need to be logged in to request leave");
       return;
     }
+    // console.log(values);
 
     setIsSubmitting(true);
     try {

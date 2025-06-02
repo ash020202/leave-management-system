@@ -3,6 +3,7 @@ import { AppDataSource } from "../db/data-source.js";
 import { Employee } from "../models/Employees.js";
 import logger from "../utils/logger.js";
 import { getLeaveBalanceRepo } from "../repositories/LeaveBalanceRepo.js";
+import { EmployeeIDParams } from "../validators/common/EmployeeIDParams.js";
 
 const getEmployeeRepo = AppDataSource.getRepository(Employee);
 
@@ -10,7 +11,7 @@ export const getAllEmployees = async (req, res) => {
   try {
     const employees = await getEmployeeRepo.find();
     logger.info("success fetching employees");
-    return res.json(employees);
+    return res.status(200).json(employees);
   } catch (error) {
     logger.error("Error fetching employees:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -38,8 +39,8 @@ export const insertEmployees = async (req, res) => {
   }
 };
 export const deleteEmployee = async (req, res) => {
-  const { emp_id } = req.body;
   try {
+    const { emp_id } = await EmployeeIDParams.validateAsync(req.params);
     const deleteEmp = await getEmployeeRepo.delete({ emp_id });
     if (deleteEmp.affected === 0) {
       throw new Error("Employee not found");
@@ -47,27 +48,18 @@ export const deleteEmployee = async (req, res) => {
     logger.info("delete employee success");
     return res.status(200).json({ message: `deleted emp id: ${emp_id}` });
   } catch (error) {
+    if (error.isJoi) {
+      // Handle Joi validation errors
+      return res.status(400).json({ error: error.details[0].message });
+    }
     logger.error("error in delete");
-    return res.json({ message: "error in delete" });
+    return res.status(500).json({ message: "error in delete" });
   }
 };
 
-export const getOneEmployee = async (req, res) => {
-  const { emp_id } = req.params;
+export const getUserLeaveBalance = async (req, res) => {
   try {
-    const employee = await findEmpById(emp_id);
-    return res.status(200).json(employee);
-  } catch (error) {
-    logger.error("single emp fetech failed", error);
-    console.log(error);
-    return res.json({ message: "error in single emp fetch" });
-  }
-};
-
-export const getLeaveBalance = async (req, res) => {
-  const { emp_id } = req.params;
-
-  try {
+    const { emp_id } = await EmployeeIDParams.validateAsync(req.params);
     // Fetch employee details
     const employee = await getEmployeeRepo.findOne({
       where: { emp_id },
@@ -105,6 +97,10 @@ export const getLeaveBalance = async (req, res) => {
 
     return res.status(200).json(response);
   } catch (error) {
+    if (error.isJoi) {
+      // Handle Joi validation errors
+      return res.status(400).json({ error: error.details[0].message });
+    }
     console.error("Error fetching leave balance:", error);
     return res.status(500).json({ message: "Failed to fetch leave balance" });
   }

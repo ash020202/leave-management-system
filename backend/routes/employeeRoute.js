@@ -2,16 +2,15 @@ import express from "express";
 import {
   deleteEmployee,
   getAllEmployees,
-  getLeaveBalance,
-  getOneEmployee,
+  getUserLeaveBalance,
   insertEmployees,
 } from "../controllers/employeeController.js";
 
 const router = express.Router();
 
 router.get("/", getAllEmployees);
-router.get("/user-fetch/:emp_id", getLeaveBalance);
+router.get("/user-fetch/:emp_id", getUserLeaveBalance);
 router.post("/insert-one", insertEmployees);
-router.delete("/delete-one", deleteEmployee);
+router.delete("/user/:emp_id", deleteEmployee);
 
 export default router;

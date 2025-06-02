@@ -56,6 +56,7 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const user = getCurrentUser();
+  console.log("user", typeof user.empId);
 
   const fetchLeaves = async () => {
     if (!user?.empId) return;

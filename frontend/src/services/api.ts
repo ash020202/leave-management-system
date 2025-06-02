@@ -165,6 +165,8 @@ export const requestLeave = async (leaveData: {
   to_date: string;
   reason: string;
 }) => {
+  console.log(leaveData);
+
   try {
     const response = await fetch(`${API_URL}/leave/request`, {
       method: "POST",

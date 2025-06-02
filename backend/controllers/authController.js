@@ -4,12 +4,18 @@ import { getAuthRepo } from "../repositories/AuthRepo.js";
 import { getEmployeeRepo } from "../repositories/EmployeeRepo.js";
 import logger from "../utils/logger.js";
 import { decryptPassword } from "../utils/Helper.js";
+import {
+  LoginSchema,
+  SignUpSchema,
+} from "../validators/auth-validators/SignUpLogin.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const signup = async (req, res) => {
-  const { email, password, emp_id } = req.body;
   try {
+    const { email, password, emp_id } = await SignUpSchema.validateAsync(
+      req.body
+    );
     const employee = await getEmployeeRepo.findOneBy({ emp_id });
     if (!employee) {
       logger.error("Manager not found for emp_id: " + emp_id);
@@ -25,17 +31,19 @@ export const signup = async (req, res) => {
     logger.info("sign up success");
     res.status(201).json({ message: "Signup successful" });
   } catch (err) {
+    if (err.isJoi) {
+      // Handle Joi validation errors
+      return res.status(400).json({ error: error.details[0].message });
+    }
     logger.error(err);
     res.status(500).json({ message: "Signup failed" });
   }
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
-
-  // const decryptPwd = decryptPassword(password);
-
   try {
+    const { email, password } = await LoginSchema.validateAsync(req.body);
+    // const decryptPwd = decryptPassword(password);
     const user = await getAuthRepo.findOne({
       where: { email },
       relations: ["employee"],
@@ -59,6 +67,10 @@ export const login = async (req, res) => {
     res.json({ token });
     logger.info("login success");
   } catch (err) {
+    if (err.isJoi) {
+      // Handle Joi validation errors
+      return res.status(400).json({ error: error.details[0].message });
+    }
     logger.error(err);
     res.status(500).json({ message: "Login failed" });
   }

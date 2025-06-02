@@ -16,6 +16,10 @@ import {
   fetchIndianHolidays,
   fetchPublicHolidays,
 } from "../utils/calendarHoliday.js";
+import { EmployeeIDParams } from "../validators/common/EmployeeIDParams.js";
+import { CancelLeaveBodySchema } from "../validators/leave-request-validators/CancelLev.js";
+import { ChangeLeaveStatusBodySchema } from "../validators/leave-request-validators/ChangeLevStatus.js";
+import { LeaveReqSchema } from "../validators/leave-request-validators/LeaveReqSchema.js";
 
 export const getPublicHolidays = async (req, res) => {
   const year = new Date().getFullYear();
@@ -37,9 +41,12 @@ export const getPublicHolidays = async (req, res) => {
 };
 
 export const submitLeave = async (req, res) => {
-  const { emp_id, leave_type_id, from_date, to_date, reason } = req.body;
-
   try {
+    const { emp_id, leave_type_id, from_date, to_date, reason } =
+      await LeaveReqSchema.validateAsync(req.body, {
+        abortEarly: false, // catch all errors
+        convert: false, //  prevent auto-type coercion like string "3" => number 3
+      });
     // Fetch the employee
     const employee = await findEmpById(emp_id);
     // console.log("Manager:", employee.manager);
@@ -155,32 +162,50 @@ export const submitLeave = async (req, res) => {
 
     return res.status(200).send({ message, remainingLeave });
   } catch (err) {
+    if (err.isJoi) {
+      // Handle Joi validation errors
+      return res.status(400).json({ error: err.details[0].message });
+    }
     console.error("Error processing leave request:", err);
     return res.status(500).send({ error: "Unexpected server error" });
   }
 };
 
 export const getManagerLeaveRequests = async (req, res) => {
-  const { emp_id } = req.params;
-  const manager_id = Number(emp_id);
-
   try {
+    const { emp_id } = await EmployeeIDParams.validateAsync(req.params);
+
+    const manager_id = Number(emp_id);
     const leaveRequests = await getLeaveRequests(manager_id);
     if (leaveRequests.length === 0) {
       return res.status(200).json({ message: "No Pending Leave Request" });
     }
-    return res.json(leaveRequests);
+    return res.status(200).json(leaveRequests);
   } catch (error) {
+    if (error.isJoi) {
+      // Handle Joi validation errors
+      return res.status(400).json({ error: error.details[0].message });
+    }
     console.error(error);
     return res.status(500).send("Error fetching leave requests");
   }
 };
 
 export const changeLeaveStatus = async (req, res) => {
-  const { emp_id } = req.params; // Approver's emp_id
-  const { newStatus, leave_req_id, rejection_reason } = req.body;
-
   try {
+    const paramValues = await EmployeeIDParams.validateAsync(req.params);
+
+    // Validate body
+    const bodyValues = await ChangeLeaveStatusBodySchema.validateAsync(
+      req.body,
+      {
+        abortEarly: false,
+        convert: false,
+      }
+    );
+
+    const emp_id = paramValues.emp_id;
+    const { newStatus, leave_req_id, rejection_reason } = bodyValues;
     // Fetch the approver's details
     const approver = await findEmpById(emp_id);
     if (!approver) {
@@ -264,6 +289,10 @@ export const changeLeaveStatus = async (req, res) => {
     // Invalid status
     return res.status(400).json({ message: "Invalid status provided" });
   } catch (error) {
+    if (error.isJoi) {
+      // Handle Joi validation errors
+      return res.status(400).json({ error: error.details[0].message });
+    }
     console.error("Error in changeLeaveStatus:", error);
     return res.status(500).json({
       error: "An error occurred while processing the leave status change.",
@@ -271,41 +300,51 @@ export const changeLeaveStatus = async (req, res) => {
   }
 };
 export const cancelLeave = async (req, res) => {
-  const { emp_id } = req.params;
-  const { leave_req_id } = req.body;
-
   try {
+    const { emp_id } = await EmployeeIDParams.validateAsync(req.params);
+    const { leave_req_id } = await CancelLeaveBodySchema.validateAsync(
+      req.body,
+      {
+        abortEarly: false, // catch all errors
+        convert: false, //  prevent auto-type coercion like string "3" => number 3
+      }
+    );
     const result = await cancelLeaveHelper(leave_req_id, emp_id);
     return res.status(200).json({ message: result });
   } catch (error) {
+    if (error.isJoi) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     console.error("Cancel Error:", error);
     return res.status(error.code || 500).json({ message: error.message });
   }
 };
 
 export const checkLeaveBalance = async (req, res) => {
-  const { emp_id } = req.params;
-  // console.log(emp_id);
-
   try {
+    const { emp_id } = await EmployeeIDParams.validateAsync(req.params);
     const result = await leaveBalanceHelper(emp_id);
     // console.log(result);
-
     return res.status(200).json(result);
   } catch (error) {
+    if (error.isJoi) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     console.error("leave balance Error:", error);
     return res.status(error.code || 500).json({ message: error.message });
   }
 };
 
 export const getLeaveHistory = async (req, res) => {
-  const { emp_id } = req.params;
   try {
+    const { emp_id } = await EmployeeIDParams.validateAsync(req.params);
     const result = await getEmpLeaveHistory(emp_id);
     return res.status(200).json(result);
   } catch (error) {
+    if (error.isJoi) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
     console.log(error);
-
     return res.status(500).json(error);
   }
 };
