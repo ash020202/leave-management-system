@@ -34,15 +34,16 @@ export const LeaveRequest = new EntitySchema({
       type: "text",
       nullable: true,
     },
+    requires_dual_approval: {
+      type: "boolean",
+      default: false,
+    },
     num_of_days: {
       type: "int",
     },
     created_at: {
       type: "timestamp",
       createDate: true,
-    },
-    manager_id: {
-      type: "int", // Add this column to store the assigned manager's ID
     },
   },
   relations: {
@@ -56,11 +57,10 @@ export const LeaveRequest = new EntitySchema({
       target: LeaveType,
       joinColumn: { name: "leave_type_id" },
     },
-    manager: {
-      type: "many-to-one",
-      target: Employee,
-      joinColumn: { name: "manager_id" },
-      nullable: true,
+    approvals: {
+      type: "one-to-many",
+      target: "ApprovalFlow",
+      inverseSide: "leaveRequest",
     },
   },
 });

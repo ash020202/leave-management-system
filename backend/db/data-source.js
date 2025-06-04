@@ -7,6 +7,7 @@ import { Auth } from "../models/Auth.js";
 import { LeaveBalance } from "../models/LeaveBalance.js";
 import { LeaveType } from "../models/LeaveType.js";
 import { LeavePolicy } from "../models/LeavePolicy.js";
+import { ApprovalFlow } from "../models/ApprovalFlow.js";
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -16,8 +17,8 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PWD,
   database: process.env.DB_NAME,
-  synchronize: false, // use migrations in production
-  logging: false,
+  synchronize: true, // use migrations in production
+  logging: true,
   // ssl: {
   //   rejectUnauthorized: false, // required for Render
   // },
@@ -29,5 +30,6 @@ export const AppDataSource = new DataSource({
     LeaveType,
     Auth,
     LeavePolicy,
+    ApprovalFlow,
   ],
 });

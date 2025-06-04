@@ -1288,3 +1288,27 @@
 2025-06-02 17:49:53 [INFO]  DB connected successfully
 2025-06-02 17:49:53 [INFO] Server running on port 5000
 2025-06-02 17:50:56 [INFO] login success
+2025-06-04 11:52:53 [ERROR] TypeORMError: Entity metadata for LeaveRequest#approvals was not found. Check if you specified a correct entity object and if it's connected in the connection options.
+    at C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataBuilder.js:729:23
+    at Array.forEach (<anonymous>)
+    at EntityMetadataBuilder.computeInverseProperties (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataBuilder.js:722:34)
+    at C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataBuilder.js:84:58
+    at Array.forEach (<anonymous>)
+    at EntityMetadataBuilder.build (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataBuilder.js:84:25)
+    at ConnectionMetadataBuilder.buildEntityMetadatas (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\connection\ConnectionMetadataBuilder.js:68:137)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DataSource.buildMetadatas (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:467:33)
+    at async DataSource.initialize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:144:13)
+2025-06-04 11:53:45 [ERROR] TypeORMError: Entity metadata for LeaveRequest#approvals was not found. Check if you specified a correct entity object and if it's connected in the connection options.
+    at C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataBuilder.js:729:23
+    at Array.forEach (<anonymous>)
+    at EntityMetadataBuilder.computeInverseProperties (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataBuilder.js:722:34)
+    at C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataBuilder.js:84:58
+    at Array.forEach (<anonymous>)
+    at EntityMetadataBuilder.build (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataBuilder.js:84:25)
+    at ConnectionMetadataBuilder.buildEntityMetadatas (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\connection\ConnectionMetadataBuilder.js:68:137)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DataSource.buildMetadatas (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:467:33)
+    at async DataSource.initialize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:144:13)
+2025-06-04 11:54:13 [INFO]  DB connected successfully
+2025-06-04 11:54:13 [INFO] Server running on port 5000
