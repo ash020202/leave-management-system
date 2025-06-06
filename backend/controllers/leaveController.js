@@ -1,5 +1,6 @@
 import { EmployeeConstants } from "../constants/EmployeeConstants.js";
 import { LeaveConstants } from "../constants/LeaveConstants.js";
+import { ApprovalFlowRepo } from "../repositories/ApprovalFlowRepo.js";
 import { getEmployeeRepo } from "../repositories/EmployeeRepo.js";
 import { getLeaveBalanceRepo } from "../repositories/LeaveBalanceRepo.js";
 import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
@@ -8,6 +9,8 @@ import {
   calculateWorkingDays,
   cancelLeaveHelper,
   findEmpById,
+  getApprovalTrailForLeave,
+  getApprovedOrRejectedLeaves,
   getEmpLeaveHistory,
   getLeaveRequests,
   insertLeaveRequest,
@@ -124,7 +127,7 @@ export const submitLeave = async (req, res) => {
           : LeaveConstants.LEAVE_STATUS.PENDING;
     } else {
       // Insufficient leave balance
-      assignedManagerId = employee.manager?.manager?.emp_id || null; // Senior manager
+      assignedManagerId = employee.manager?.emp_id || null; // Senior manager
       // console.log("Assigned Senior Manager ID:", assignedManagerId);
 
       leaveStatus = LeaveConstants.LEAVE_STATUS.PENDING;
@@ -183,7 +186,7 @@ export const submitLeave = async (req, res) => {
         ? leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
           ? `${leaveType.name} leave approved and ${totalDays} days deducted from balance.`
           : `${leaveType.name} leave request sent to manager and ${totalDays} days deducted from balance.`
-        : `${leaveType.name} leave balance insufficient. Leave request forwarded to Senior Manager.`;
+        : `${leaveType.name} leave balance insufficient. Leave request forwarded to Manager Approval -> Senior Manager.`;
 
     return res.status(200).send({ message, remainingLeave });
   } catch (err) {
@@ -196,7 +199,7 @@ export const submitLeave = async (req, res) => {
   }
 };
 
-export const getManagerLeaveRequests = async (req, res) => {
+export const getManagerPendingLeaveRequests = async (req, res) => {
   try {
     const { emp_id } = await EmployeeIDParams.validateAsync(req.params);
 
@@ -215,7 +218,26 @@ export const getManagerLeaveRequests = async (req, res) => {
     return res.status(500).send("Error fetching leave requests");
   }
 };
-
+export const getApprovedOrRejectedLevController = async (req, res) => {
+  try {
+    const { emp_id } = req.params;
+    const result = await getApprovedOrRejectedLeaves(emp_id);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
+export const trackLeave = async (req, res) => {
+  try {
+    const { leave_req_id } = req.params;
+    const result = await getApprovalTrailForLeave(leave_req_id);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(error);
+  }
+};
 export const changeLeaveStatus = async (req, res) => {
   try {
     const paramValues = await EmployeeIDParams.validateAsync(req.params);
@@ -267,51 +289,128 @@ export const changeLeaveStatus = async (req, res) => {
       }
 
       leaveRequest.status = LeaveConstants.LEAVE_STATUS.REJECTED;
+
       leaveRequest.rejection_reason = rejection_reason;
       await getLeaveReqRepo.save(leaveRequest);
-
+      await ApprovalFlowRepo.save({
+        leaveRequest,
+        approver,
+        status:
+          approver.role === EmployeeConstants.EMPLOYEE_ROLES.MANAGER
+            ? LeaveConstants.LEAVE_STATUS.REJECTED
+            : LeaveConstants.LEAVE_STATUS.REJECTED_SENIOR_MANAGER,
+        remarks: rejection_reason || null,
+      });
       return res.status(200).json({
         message: `Leave request rejected successfully by ${approver.emp_name}`,
       });
     }
 
     // Handle approval
+    // Handle approval
     if (newStatus === LeaveConstants.LEAVE_STATUS.APPROVED) {
-      leaveRequest.status = LeaveConstants.LEAVE_STATUS.APPROVED;
-      leaveRequest.rejection_reason = null;
-
-      // Update leave balance
-      const leaveBalance = await getLeaveBalanceRepo.findOne({
-        where: {
-          employee: { emp_id: leaveRequest.employee.emp_id },
-          leaveType: { leave_type_id: leaveRequest.leaveType.leave_type_id },
-        },
-        relations: ["employee", "leaveType"],
-      });
-
-      if (!leaveBalance) {
-        return res.status(404).json({
-          message: "Leave balance not found for the specified leave type",
+      // Check if approver is MANAGER
+      if (approver.role === EmployeeConstants.EMPLOYEE_ROLES.MANAGER) {
+        // Check leave balance
+        const leaveBalance = await getLeaveBalanceRepo.findOne({
+          where: {
+            employee: { emp_id: leaveRequest.employee.emp_id },
+            leaveType: { leave_type_id: leaveRequest.leaveType.leave_type_id },
+          },
         });
+
+        const hasEnoughBalance =
+          leaveBalance && leaveBalance.balance >= leaveRequest.num_of_days;
+
+        if (hasEnoughBalance) {
+          // Direct approve
+          leaveRequest.status = LeaveConstants.LEAVE_STATUS.APPROVED;
+          leaveBalance.balance -= leaveRequest.num_of_days;
+          leaveRequest.employee.total_leave_balance -= leaveRequest.num_of_days;
+
+          await Promise.all([
+            getLeaveBalanceRepo.save(leaveBalance),
+            getEmployeeRepo.save(leaveRequest.employee),
+            getLeaveReqRepo.save(leaveRequest),
+            ApprovalFlowRepo.save({
+              leaveRequest,
+              approver,
+              status: LeaveConstants.LEAVE_STATUS.APPROVED,
+              remarks: null,
+            }),
+          ]);
+
+          return res.status(200).json({
+            message: `Leave request approved successfully by ${approver.emp_name}`,
+          });
+        } else {
+          // Forward to Senior Manager
+          leaveRequest.status =
+            LeaveConstants.LEAVE_STATUS.PENDING_SENIOR_MANAGER;
+          leaveRequest.rejection_reason = null;
+
+          // Assign senior manager as approver
+          const seniorManagerId = approver.manager?.emp_id;
+          // console.log("Senior Manager ID:", seniorManagerId);
+
+          if (!seniorManagerId) {
+            return res.status(400).json({
+              message: "No senior manager found to approve this request.",
+            });
+          }
+
+          leaveRequest.manager_id = seniorManagerId;
+          await getLeaveReqRepo.save(leaveRequest);
+          await ApprovalFlowRepo.save({
+            leaveRequest,
+            approver,
+            status: LeaveConstants.LEAVE_STATUS.APPROVED,
+            remarks: null,
+          });
+
+          return res.status(200).json({
+            message: `Leave request forwarded to Senior Manager by ${approver.emp_name}`,
+          });
+        }
       }
 
-      if (leaveBalance.balance < leaveRequest.num_of_days) {
-        return res.status(400).json({
-          message: "Insufficient leave balance to approve this request",
+      // Check if approver is SENIOR_MANAGER
+      if (approver.role === EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER) {
+        const leaveBalance = await getLeaveBalanceRepo.findOne({
+          where: {
+            employee: { emp_id: leaveRequest.employee.emp_id },
+            leaveType: { leave_type_id: leaveRequest.leaveType.leave_type_id },
+          },
+        });
+
+        // if (!leaveBalance || leaveBalance.balance < leaveRequest.num_of_days) {
+        //   return res.status(400).json({
+        //     message: "Insufficient leave balance to approve this request",
+        //   });
+        // }
+
+        leaveRequest.status = LeaveConstants.LEAVE_STATUS.APPROVED;
+        leaveRequest.rejection_reason = null;
+
+        leaveBalance.balance -= leaveRequest.num_of_days;
+        leaveRequest.employee.total_leave_balance -= leaveRequest.num_of_days;
+
+        await Promise.all([
+          getLeaveBalanceRepo.save(leaveBalance),
+          getEmployeeRepo.save(leaveRequest.employee),
+          getLeaveReqRepo.save(leaveRequest),
+          ApprovalFlowRepo.save({
+            leaveRequest,
+            approver,
+            status: LeaveConstants.LEAVE_STATUS.APPROVED_SENIOR_MANAGER,
+            remarks: null,
+          }),
+        ]);
+
+        return res.status(200).json({
+          message: `Leave request approved successfully by ${approver.emp_name}`,
         });
       }
-
-      leaveBalance.balance -= leaveRequest.num_of_days;
-      leaveRequest.employee.total_leave_balance -= leaveRequest.num_of_days; // Update employee's leave balance
-      Promise.all([
-        getLeaveBalanceRepo.save(leaveBalance),
-        getEmployeeRepo.save(leaveRequest.employee),
-        getLeaveReqRepo.save(leaveRequest),
-      ]);
-
-      return res.status(200).json({
-        message: `Leave request approved successfully by ${approver.emp_name}`,
-      });
     }
 
     // Invalid status

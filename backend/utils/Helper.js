@@ -5,7 +5,8 @@ import CryptoJS from "crypto-js";
 import { getLeaveTypeRepo } from "../repositories/LeaveTypeRepo.js";
 import { LeaveConstants } from "../constants/LeaveConstants.js";
 import { getLeavePolicyRepo } from "../repositories/LeavePolicyRepo.js";
-
+import { ApprovalFlowRepo } from "../repositories/ApprovalFlowRepo.js";
+import { In } from "typeorm";
 // holidays.js
 // utils/workingDays.js
 
@@ -224,6 +225,87 @@ export const getEmpLeaveHistory = async (emp_id) => {
     console.error("Error fetching leave history:", error);
     throw new Error("Failed to fetch leave history");
   }
+};
+
+export const getApprovedOrRejectedLeaves = async (manager_id) => {
+  // const mg_id = Number(manager_id);
+
+  // // Step 1: Get all leave requests for employees under this manager
+  // const leaveRequests = await getLeaveReqRepo.find({
+  //   where: { manager_id: mg_id },
+  //   relations: {
+  //     employee: true,
+  //     leaveType: true,
+  //     approvalFlows: {
+  //       approver: true,
+  //     },
+  //   },
+  //   order: {
+  //     created_at: "DESC",
+  //   },
+  // });
+
+  // // Step 2: For each leave request, get the latest approval flow entry if any
+  // const formattedLeaves = leaveRequests.map((req) => {
+  //   const latestApproval = req.approvalFlows?.sort(
+  //     (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  //   )[0];
+
+  //   return {
+  //     leave_req_id: req.leave_req_id,
+  //     employee_name: req.employee.emp_name,
+  //     leave_type: req.leaveType.name,
+  //     from_date: req.from_date,
+  //     to_date: req.to_date,
+  //     reason: req.reason,
+  //     status: latestApproval?.status || "PENDING",
+  //     approver_name: latestApproval?.approver?.emp_name || "N/A",
+  //   };
+  // });
+
+  // return formattedLeaves;
+
+  const approvals = await ApprovalFlowRepo.find({
+    where: { approver: { emp_id: manager_id } },
+    relations: [
+      "leaveRequest",
+      "leaveRequest.employee",
+      "leaveRequest.manager",
+      "leaveRequest.leaveType",
+    ],
+    order: { created_at: "DESC" },
+  });
+  // console.log(approvals[0].leaveRequest.employee);
+
+  // Format or filter data as needed before returning
+  return approvals.map((approval) => ({
+    leave_req_id: approval.leaveRequest.leave_req_id,
+    emp_name: approval.leaveRequest.employee.emp_name,
+    from_date: approval.leaveRequest.from_date,
+    to_date: approval.leaveRequest.to_date,
+    reason: approval.leaveRequest.reason,
+    status: approval.leaveRequest.status,
+    approval_status: approval.status,
+    approver_id: approval.leaveRequest.employee.emp_id,
+    approved_at: approval.created_at,
+    remarks: approval.remarks,
+  }));
+};
+
+export const getApprovalTrailForLeave = async (leave_req_id) => {
+  const trail = await ApprovalFlowRepo.find({
+    where: {
+      leaveRequest: { leave_req_id: leave_req_id },
+    },
+    relations: {
+      approver: true,
+    },
+    order: {
+      created_at: "ASC",
+    },
+  });
+
+  return trail;
 };
 
 export const leaveReqApproval = async (

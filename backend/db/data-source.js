@@ -7,6 +7,7 @@ import { Auth } from "../models/Auth.js";
 import { LeaveBalance } from "../models/LeaveBalance.js";
 import { LeaveType } from "../models/LeaveType.js";
 import { LeavePolicy } from "../models/LeavePolicy.js";
+import { ApprovalFlow } from "../models/ApprovalFlow.js";
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -29,5 +30,6 @@ export const AppDataSource = new DataSource({
     LeaveType,
     Auth,
     LeavePolicy,
+    ApprovalFlow,
   ],
 });

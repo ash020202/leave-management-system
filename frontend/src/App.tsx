@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 import LeaveApprovalList from "./components/LeaveApprovalList";
 import LeaveList from "./components/LeaveList";
 import Layout from "./components/Layout";
+import LeavePendingList from "./components/LeavePendingList";
 
 const queryClient = new QueryClient();
 const handleLeaveRequestSuccess = () => {
@@ -63,6 +64,16 @@ const App = () => (
               <ProtectedRoute requiredRoles={["MANAGER", "SENIOR_MANAGER"]}>
                 <Layout>
                   <LeaveApprovalList />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-team-leave-requests"
+            element={
+              <ProtectedRoute requiredRoles={["MANAGER", "SENIOR_MANAGER"]}>
+                <Layout>
+                  <LeavePendingList />
                 </Layout>
               </ProtectedRoute>
             }

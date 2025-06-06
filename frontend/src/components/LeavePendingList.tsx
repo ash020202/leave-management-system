@@ -6,7 +6,8 @@ import {
   updateLeaveStatus,
   LeaveRequest,
   trackLeaveHistory,
-  getManagerApprovedRejLeaves,
+  getManagerPendingLeaves,
+  PendingLeaveReq,
 } from "@/services/api";
 import { getCurrentUser } from "@/utils/auth";
 import {
@@ -49,17 +50,19 @@ interface LeaveApprovalListProps {
   onUpdate?: () => void;
 }
 
-const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
+const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
+  const [leaves, setLeaves] = useState<PendingLeaveReq[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [rejectionReason, setRejectionReason] = useState("");
-  const [selectedLeave, setSelectedLeave] = useState<LeaveRequest | null>(null);
+  const [selectedLeave, setSelectedLeave] = useState<PendingLeaveReq | null>(
+    null
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [selectedLeaveHistory, setSelectedLeaveHistory] = useState<any[]>([]);
-  const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
+  //   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  //   const [selectedLeaveHistory, setSelectedLeaveHistory] = useState<any[]>([]);
+  //   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
   const user = getCurrentUser();
   console.log("user", typeof user.empId);
 
@@ -68,7 +71,7 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
 
     setIsLoading(true);
     try {
-      const data = await getManagerApprovedRejLeaves(user.empId);
+      const data = await getManagerPendingLeaves(user.empId);
       setLeaves(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching team leaves:", error);
@@ -81,8 +84,9 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
     fetchLeaves();
   }, []);
 
-  const handleApprove = async (leave: LeaveRequest) => {
+  const handleApprove = async (leave: PendingLeaveReq) => {
     if (!user?.empId) return;
+    console.log("hello");
 
     setIsProcessing(true);
     try {
@@ -96,17 +100,17 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
     }
   };
 
-  const handleTrack = async (leave_req_id: string) => {
-    try {
-      const data = await trackLeaveHistory(leave_req_id);
-      // console.log(data);
-      setSelectedLeaveHistory(data);
-      setSelectedEmployeeName(user.emp_name);
-      setIsHistoryOpen(true);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //   const handleTrack = async (leave_req_id: string) => {
+  //     try {
+  //       const data = await trackLeaveHistory(leave_req_id);
+  //       // console.log(data);
+  //       setSelectedLeaveHistory(data);
+  //       setSelectedEmployeeName(user.emp_name);
+  //       setIsHistoryOpen(true);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
   const handleReject = async () => {
     if (!user?.empId || !selectedLeave) return;
@@ -135,7 +139,7 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
     }
   };
 
-  const openRejectDialog = (leave: LeaveRequest) => {
+  const openRejectDialog = (leave: PendingLeaveReq) => {
     setSelectedLeave(leave);
     setIsDialogOpen(true);
   };
@@ -143,9 +147,14 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
   const filteredLeaves = Array.isArray(leaves)
     ? leaves.filter((leave) => {
         if (filter === "all") return true;
-        if (filter === "pending") return leave?.status === "PENDING";
+        if (filter === "pending")
+          return (
+            leave?.status === "PENDING" ||
+            leave.status === "PENDING_SENIOR_MANAGER"
+          );
         if (filter === "approved") return leave?.status === "APPROVED";
         if (filter === "rejected") return leave?.status === "REJECTED";
+
         return true;
       })
     : [];
@@ -236,7 +245,7 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
                   <TableHead>Reason</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
-                  <TableHead>Track Leave</TableHead>
+                  {/* <TableHead>Track Leave</TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -259,48 +268,69 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
                       {leave.reason}
                     </TableCell>
                     <TableCell>{getStatusBadge(leave.status)}</TableCell>
+                    {/* <TableCell>
+                      <div className="flex space-x-2">
+                        <button
+                          // variant="default"
+                          className="bg-green-600 px-3 py-1 rounded text-white"
+                          onClick={() => handleApprove(leave)}
+                          disabled={isProcessing}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="bg-red-600 px-3 py-1 rounded text-white"
+                          onClick={() => openRejectDialog(leave)}
+                          disabled={isProcessing}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    </TableCell> */}
                     <TableCell>
-                      {leave.status === "PENDING" ? (
-                        <div className="flex space-x-2">
-                          <button
-                            // variant="default"
-                            className="bg-green-600 px-3 py-1 rounded text-white"
-                            onClick={() => handleApprove(leave)}
-                            disabled={isProcessing}
-                          >
-                            Approve
-                          </button>
-                          <button
-                            className="bg-red-600 px-3 py-1 rounded text-white"
-                            onClick={() => openRejectDialog(leave)}
-                            disabled={isProcessing}
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      ) : (
-                        leave.status === "REJECTED" &&
-                        leave.rejection_reason && (
-                          <span
-                            className="text-sm text-muted-foreground"
-                            title={leave.rejection_reason}
-                          >
-                            Reason:{" "}
-                            {leave.rejection_reason.length > 20
-                              ? `${leave.rejection_reason.substring(0, 20)}...`
-                              : leave.rejection_reason}
-                          </span>
-                        )
-                      )}
+                      <div className="flex space-x-2">
+                        <button
+                          className={`px-3 py-1 rounded text-white ${
+                            leave.status === "PENDING" ||
+                            leave.status === "PENDING_SENIOR_MANAGER"
+                              ? "bg-green-600 hover:bg-green-700"
+                              : "bg-gray-400 cursor-not-allowed"
+                          }`}
+                          onClick={() => handleApprove(leave)}
+                          disabled={
+                            isProcessing ||
+                            (leave.status !== "PENDING" &&
+                              leave.status !== "PENDING_SENIOR_MANAGER")
+                          }
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className={`px-3 py-1 rounded text-white ${
+                            leave.status === "PENDING" ||
+                            leave.status === "PENDING_SENIOR_MANAGER"
+                              ? "bg-red-600 hover:bg-red-700"
+                              : "bg-gray-400 cursor-not-allowed"
+                          }`}
+                          onClick={() => openRejectDialog(leave)}
+                          disabled={
+                            isProcessing ||
+                            (leave.status !== "PENDING" &&
+                              leave.status !== "PENDING_SENIOR_MANAGER")
+                          }
+                        >
+                          Reject
+                        </button>
+                      </div>
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <button
                         className="text-blue-600 hover:text-blue-800 font-medium hover:underline"
                         onClick={() => handleTrack(leave.leave_req_id)}
                       >
                         track
                       </button>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>
@@ -342,14 +372,14 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <LeaveHistoryTracker
+      {/* <LeaveHistoryTracker
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
         leaveHistory={selectedLeaveHistory}
         employeeName={selectedEmployeeName}
-      />
+      /> */}
     </>
   );
 };
 
-export default LeaveApprovalList;
+export default LeavePendingList;

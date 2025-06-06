@@ -3,10 +3,12 @@ import {
   cancelLeave,
   changeLeaveStatus,
   checkLeaveBalance,
+  getApprovedOrRejectedLevController,
   getLeaveHistory,
-  getManagerLeaveRequests,
+  getManagerPendingLeaveRequests,
   getPublicHolidays,
   submitLeave,
+  trackLeave,
 } from "../controllers/leaveController.js";
 import {
   authenticate,
@@ -38,7 +40,7 @@ router.get(
   ),
   checkOwnership,
 
-  getManagerLeaveRequests
+  getManagerPendingLeaveRequests
 );
 router.patch(
   "/status/:emp_id",
@@ -96,4 +98,28 @@ router.get(
   getPublicHolidays
 );
 
+router.get(
+  "/manager/approved-rejected-leaves/:emp_id",
+  authenticate,
+  authorize(
+    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
+    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
+    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
+  ),
+  checkOwnership,
+  getApprovedOrRejectedLevController
+);
+
+router.get(
+  "/track/:leave_req_id",
+  authenticate,
+  authorize(
+    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
+    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
+    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
+  ),
+  trackLeave
+);
 export default router;

@@ -20,11 +20,37 @@ export interface LeaveRequest {
   from_date: string;
   to_date: string;
   reason: string;
-  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
+  status:
+    | "PENDING"
+    | "APPROVED"
+    | "REJECTED"
+    | "CANCELLED"
+    | "PENDING_SENIOR_MANAGER";
   rejection_reason?: string;
+  approval_status: string;
+  approver_id: number;
+  approved_at: string;
   created_at: string;
   emp_name?: string;
   approved_by?: string;
+}
+
+export interface PendingLeaveReq {
+  leave_req_id: string;
+  emp_id: string;
+  emp_name?: string;
+  leave_type: "sick_leave" | "earned_leave" | "floater_leave" | "loss_of_pay";
+  from_date: string;
+  to_date: string;
+  reason: string;
+  status:
+    | "PENDING"
+    | "PENDING_SENIOR_MANAGER"
+    | "APPROVED"
+    | "REJECTED"
+    | "CANCELLED";
+  num_of_days: number;
+  created_at: string;
 }
 
 export interface LeaveBalance {
@@ -278,13 +304,16 @@ export const getUserLeaves = async (emp_id: string) => {
   }
 };
 
-export const getManagerLeaves = async (emp_id: string) => {
+export const getManagerApprovedRejLeaves = async (emp_id: string) => {
   try {
-    const response = await fetch(`${API_URL}/leave/manager/leaves/${emp_id}`, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
+    const response = await fetch(
+      `${API_URL}/leave/manager/approved-rejected-leaves/${emp_id}`,
+      {
+        headers: {
+          ...getAuthHeader(),
+        },
+      }
+    );
 
     const data = await response.json();
 
@@ -302,7 +331,47 @@ export const getManagerLeaves = async (emp_id: string) => {
     throw error;
   }
 };
+export const getManagerPendingLeaves = async (emp_id: string) => {
+  try {
+    const response = await fetch(`${API_URL}/leave/manager/leaves/${emp_id}`, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch team leaves");
+    }
+
+    return data as PendingLeaveReq[];
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "An error occurred fetching team leaves";
+    toast.error(message);
+    throw error;
+  }
+};
+export const trackLeaveHistory = async (leave_req_id: string) => {
+  try {
+    const response = await fetch(`${API_URL}/leave/track/${leave_req_id}`, {
+      headers: {
+        ...getAuthHeader(),
+      },
+    });
+    return response.json();
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "An error occurred fetching track leave history";
+    toast.error(message);
+    throw error;
+  }
+};
 export const updateLeaveStatus = async (
   emp_id: string,
   leave_req_id: string,
@@ -329,7 +398,7 @@ export const updateLeaveStatus = async (
       throw new Error(data.message || "Failed to update leave status");
     }
 
-    toast.success(`Leave ${newStatus.toLowerCase()} successfully`);
+    toast.success(data.message || "approved success");
     return data;
   } catch (error) {
     const message =

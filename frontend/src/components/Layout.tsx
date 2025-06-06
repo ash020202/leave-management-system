@@ -9,6 +9,7 @@ import {
   HistoryIcon,
   MenuIcon,
   XIcon,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -58,14 +59,19 @@ const Layout = ({ children }: LayoutProps) => {
           href: "/calendar",
         },
         {
-          title: "Leave History",
+          title: "My Leave History",
           icon: <HistoryIcon className="h-5 w-5" />,
           href: "/leave-history",
         },
         {
-          title: "My Team Leaves",
+          title: "My Team Leaves History",
           icon: <HistoryIcon className="h-5 w-5" />,
           href: "/my-team-leaves",
+        },
+        {
+          title: "My team Leave Requests",
+          icon: <Clock />,
+          href: "/my-team-leave-requests",
         },
       ];
     } else if (isEmployee) {

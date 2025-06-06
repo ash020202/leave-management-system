@@ -33,7 +33,7 @@ export const signup = async (req, res) => {
   } catch (err) {
     if (err.isJoi) {
       // Handle Joi validation errors
-      return res.status(400).json({ error: error.details[0].message });
+      return res.status(400).json({ error: err.details[0].message });
     }
     logger.error(err);
     res.status(500).json({ message: "Signup failed" });
@@ -61,7 +61,7 @@ export const login = async (req, res) => {
         role: user.employee.role,
       },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1d" }
     );
 
     res.json({ token });

@@ -28,6 +28,8 @@ export const LeaveRequest = new EntitySchema({
         LeaveConstants.LEAVE_STATUS.PENDING,
         LeaveConstants.LEAVE_STATUS.APPROVED,
         LeaveConstants.LEAVE_STATUS.REJECTED,
+        LeaveConstants.LEAVE_STATUS.PENDING_SENIOR_MANAGER,
+        LeaveConstants.LEAVE_STATUS.REJECTED_SENIOR_MANAGER,
       ],
     },
     rejection_reason: {
@@ -61,6 +63,11 @@ export const LeaveRequest = new EntitySchema({
       target: Employee,
       joinColumn: { name: "manager_id" },
       nullable: true,
+    },
+    approvalFlows: {
+      type: "one-to-many",
+      target: "ApprovalFlow",
+      inverseSide: "leaveRequest",
     },
   },
 });

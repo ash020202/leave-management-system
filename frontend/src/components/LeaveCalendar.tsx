@@ -19,7 +19,11 @@ import {
   Clock,
   Users,
 } from "lucide-react";
-import { getHolidays, getManagerLeaves, LeaveRequest } from "@/services/api";
+import {
+  getHolidays,
+  getManagerApprovedRejLeaves,
+  LeaveRequest,
+} from "@/services/api";
 import { getCurrentUser } from "@/utils/auth";
 import { cn } from "@/lib/utils";
 
@@ -55,7 +59,7 @@ const LeaveCalendar = () => {
         setIsLoading(true);
         try {
           const [leaveData, holidayData] = await Promise.all([
-            getManagerLeaves(user.empId),
+            getManagerApprovedRejLeaves(user.empId),
             getHolidays(),
           ]);
           console.log(leaveData);
@@ -147,6 +151,11 @@ const LeaveCalendar = () => {
     });
   };
 
+  // Safe getter for leave type with fallback
+  const getLeaveType = (leave: LeaveRequest) => {
+    return leave.leave_type || "general"; // fallback to 'general' if undefined
+  };
+
   const getLeaveTypeColor = (leaveType: string) => {
     switch (leaveType) {
       case "sick_leave":
@@ -173,7 +182,7 @@ const LeaveCalendar = () => {
       case "loss_of_pay":
         return "Loss of Pay";
       default:
-        return type;
+        return "Leave"; // Generic fallback
     }
   };
 
@@ -223,9 +232,6 @@ const LeaveCalendar = () => {
           <div className="flex flex-col h-full">
             {/* Calendar Header - Days of Week */}
             <div className="grid grid-cols-7 border-b bg-slate-50">
-              {/* Empty cell for time column */}
-              {/* <div className="p-3 border-r"></div> */}
-
               {weekDays.map((day) => (
                 <div
                   key={day.toISOString()}
@@ -255,18 +261,6 @@ const LeaveCalendar = () => {
             {/* Calendar Body - Time Grid */}
             <div className="flex-1 overflow-auto">
               <div className="grid grid-cols-7 min-h-full">
-                {/* Time Column */}
-                {/* <div className="border-r bg-slate-50">
-                  {timeSlots.map((time, index) => (
-                    <div
-                      key={time}
-                      className="h-16 p-2 border-b text-xs text-muted-foreground flex items-start justify-end pr-3"
-                    >
-                      {time}
-                    </div>
-                  ))}
-                </div> */}
-
                 {/* Day Columns */}
                 {weekDays.map((day) => {
                   const dayLeaves = getLeavesForDay(day);
@@ -307,76 +301,88 @@ const LeaveCalendar = () => {
                       {dayLeaves.length > 0 && (
                         <div className="absolute inset-0 p-1 pointer-events-none">
                           <div className="flex flex-col gap-1 h-full justify-start pt-2">
-                            {dayLeaves.slice(0, 3).map((leave, index) => (
-                              <HoverCard key={`${leave.leave_req_id}-${index}`}>
-                                <HoverCardTrigger asChild>
-                                  <div
-                                    className={cn(
-                                      "rounded-md mt-4 border-l-4 p-2 text-xs font-medium pointer-events-auto cursor-pointer shadow-sm",
-                                      getLeaveTypeColor(leave.leave_type),
-                                      "min-h-[2rem] flex flex-col justify-center"
-                                    )}
-                                  >
-                                    <div className="truncate font-medium">
-                                      {leave.emp_name}
-                                    </div>
-                                    <div className="text-[10px] opacity-75 truncate">
-                                      {getLeaveTypeLabel(leave.leave_type)}
-                                    </div>
-                                  </div>
-                                </HoverCardTrigger>
-                                <HoverCardContent className="w-80">
-                                  <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                      <h4 className="font-medium flex items-center gap-2">
-                                        <Users className="h-4 w-4" />
+                            {dayLeaves.slice(0, 3).map((leave, index) => {
+                              const leaveType = getLeaveType(leave);
+                              return (
+                                <HoverCard
+                                  key={`${leave.leave_req_id}-${index}`}
+                                >
+                                  <HoverCardTrigger asChild>
+                                    <div
+                                      className={cn(
+                                        "rounded-md mt-4 border-l-4 p-2 text-xs font-medium pointer-events-auto cursor-pointer shadow-sm",
+                                        getLeaveTypeColor(leaveType),
+                                        "min-h-[2rem] flex flex-col justify-center"
+                                      )}
+                                    >
+                                      <div className="truncate font-medium">
                                         {leave.emp_name}
-                                      </h4>
-                                      <Badge
-                                        className={cn(
-                                          "text-xs",
-                                          leave.status === "APPROVED"
-                                            ? "bg-green-100 text-green-800"
-                                            : "bg-orange-100 text-orange-800"
-                                        )}
-                                      >
-                                        {leave.status}
-                                      </Badge>
+                                      </div>
+                                      <div className="text-[10px] opacity-75 truncate">
+                                        {getLeaveTypeLabel(leaveType)}
+                                      </div>
                                     </div>
+                                  </HoverCardTrigger>
+                                  <HoverCardContent className="w-80">
+                                    <div className="space-y-2">
+                                      <div className="flex items-center justify-between">
+                                        <h4 className="font-medium flex items-center gap-2">
+                                          <Users className="h-4 w-4" />
+                                          {leave.emp_name}
+                                        </h4>
+                                        <Badge
+                                          className={cn(
+                                            "text-xs",
+                                            leave.status === "APPROVED"
+                                              ? "bg-green-100 text-green-800"
+                                              : "bg-orange-100 text-orange-800"
+                                          )}
+                                        >
+                                          {leave.status}
+                                        </Badge>
+                                      </div>
 
-                                    <div className="space-y-1">
-                                      <p className="text-sm">
-                                        <span className="font-medium">
-                                          Type:
-                                        </span>{" "}
-                                        {getLeaveTypeLabel(leave.leave_type)}
-                                      </p>
-                                      <p className="text-sm">
-                                        <span className="font-medium">
-                                          Duration:
-                                        </span>{" "}
-                                        {format(
-                                          parseISO(leave.from_date),
-                                          "MMM d"
-                                        )}{" "}
-                                        -{" "}
-                                        {format(
-                                          parseISO(leave.to_date),
-                                          "MMM d, yyyy"
+                                      <div className="space-y-1">
+                                        <p className="text-sm">
+                                          <span className="font-medium">
+                                            Type:
+                                          </span>{" "}
+                                          {getLeaveTypeLabel(leaveType)}
+                                        </p>
+                                        <p className="text-sm">
+                                          <span className="font-medium">
+                                            Duration:
+                                          </span>{" "}
+                                          {format(
+                                            parseISO(leave.from_date),
+                                            "MMM d"
+                                          )}{" "}
+                                          -{" "}
+                                          {format(
+                                            parseISO(leave.to_date),
+                                            "MMM d, yyyy"
+                                          )}
+                                        </p>
+                                        {leave.approved_at && (
+                                          <p className="text-xs text-muted-foreground">
+                                            Approved:{" "}
+                                            {format(
+                                              parseISO(leave.approved_at),
+                                              "MMM d, yyyy 'at' h:mm a"
+                                            )}
+                                          </p>
                                         )}
-                                      </p>
-                                      <p className="text-xs text-muted-foreground">
-                                        Applied:{" "}
-                                        {format(
-                                          parseISO(leave.created_at),
-                                          "MMM d, yyyy 'at' h:mm a"
+                                        {leave.reason && (
+                                          <p className="text-xs text-muted-foreground">
+                                            Reason: {leave.reason}
+                                          </p>
                                         )}
-                                      </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                </HoverCardContent>
-                              </HoverCard>
-                            ))}
+                                  </HoverCardContent>
+                                </HoverCard>
+                              );
+                            })}
 
                             {dayLeaves.length > 3 && (
                               <div className="text-[10px] text-muted-foreground px-2 py-1 bg-muted rounded-md pointer-events-auto">
