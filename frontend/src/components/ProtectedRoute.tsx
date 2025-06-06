@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { isAuthenticated, hasRole, getCurrentUser } from "@/utils/auth";
+import { isAuthenticated, hasRole } from "@/utils/auth";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,7 +12,6 @@ const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const location = useLocation();
   const isLoggedIn = isAuthenticated();
-  const user = getCurrentUser();
 
   if (!isLoggedIn) {
     // Redirect to login if not authenticated

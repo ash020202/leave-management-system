@@ -4,8 +4,6 @@ import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import {
   updateLeaveStatus,
-  LeaveRequest,
-  trackLeaveHistory,
   getManagerPendingLeaves,
   PendingLeaveReq,
 } from "@/services/api";
@@ -44,7 +42,6 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import Loader from "./Loader";
-import LeaveHistoryTracker from "./LeaveHistoryTracker";
 
 interface LeaveApprovalListProps {
   onUpdate?: () => void;
@@ -60,9 +57,7 @@ const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  //   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  //   const [selectedLeaveHistory, setSelectedLeaveHistory] = useState<any[]>([]);
-  //   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
+
   const user = getCurrentUser();
   console.log("user", typeof user.empId);
 
@@ -99,18 +94,6 @@ const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
       setIsProcessing(false);
     }
   };
-
-  //   const handleTrack = async (leave_req_id: string) => {
-  //     try {
-  //       const data = await trackLeaveHistory(leave_req_id);
-  //       // console.log(data);
-  //       setSelectedLeaveHistory(data);
-  //       setSelectedEmployeeName(user.emp_name);
-  //       setIsHistoryOpen(true);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
 
   const handleReject = async () => {
     if (!user?.empId || !selectedLeave) return;
@@ -304,14 +287,6 @@ const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
                         </button>
                       </div>
                     </TableCell>
-                    {/* <TableCell>
-                      <button
-                        className="text-blue-600 hover:text-blue-800 font-medium hover:underline"
-                        onClick={() => handleTrack(leave.leave_req_id)}
-                      >
-                        track
-                      </button>
-                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>
@@ -353,12 +328,6 @@ const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {/* <LeaveHistoryTracker
-        isOpen={isHistoryOpen}
-        onClose={() => setIsHistoryOpen(false)}
-        leaveHistory={selectedLeaveHistory}
-        employeeName={selectedEmployeeName}
-      /> */}
     </>
   );
 };

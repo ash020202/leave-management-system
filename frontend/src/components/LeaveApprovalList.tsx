@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { format, parseISO } from "date-fns";
-import { toast } from "sonner";
 import {
-  updateLeaveStatus,
   LeaveRequest,
   trackLeaveHistory,
   getManagerApprovedRejLeaves,
@@ -31,32 +29,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import Loader from "./Loader";
 import LeaveHistoryTracker from "./LeaveHistoryTracker";
 
-interface LeaveApprovalListProps {
-  onUpdate?: () => void;
-}
-
-const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
+const LeaveApprovalList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
   const [filter, setFilter] = useState<string>("all");
-  const [rejectionReason, setRejectionReason] = useState("");
-  const [selectedLeave, setSelectedLeave] = useState<LeaveRequest | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [selectedLeaveHistory, setSelectedLeaveHistory] = useState<any[]>([]);
   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
@@ -81,21 +62,6 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
     fetchLeaves();
   }, []);
 
-  const handleApprove = async (leave: LeaveRequest) => {
-    if (!user?.empId) return;
-
-    setIsProcessing(true);
-    try {
-      await updateLeaveStatus(user.empId, leave.leave_req_id, "APPROVED");
-      fetchLeaves();
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      console.error("Error approving leave:", error);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
   const handleTrack = async (leave_req_id: string) => {
     try {
       const data = await trackLeaveHistory(leave_req_id);
@@ -106,38 +72,6 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handleReject = async () => {
-    if (!user?.empId || !selectedLeave) return;
-    if (!rejectionReason.trim()) {
-      toast.error("Please provide a reason for rejection");
-      return;
-    }
-
-    setIsProcessing(true);
-    try {
-      await updateLeaveStatus(
-        user.empId,
-        selectedLeave.leave_req_id,
-        "REJECTED",
-        rejectionReason
-      );
-      setIsDialogOpen(false);
-      setRejectionReason("");
-      setSelectedLeave(null);
-      fetchLeaves();
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      console.error("Error rejecting leave:", error);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const openRejectDialog = (leave: LeaveRequest) => {
-    setSelectedLeave(leave);
-    setIsDialogOpen(true);
   };
 
   const filteredLeaves = Array.isArray(leaves)
@@ -235,7 +169,6 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
                   <TableHead>To</TableHead>
                   <TableHead>Reason</TableHead>
                   <TableHead>Status</TableHead>
-
                   <TableHead>Track Leave</TableHead>
                 </TableRow>
               </TableHeader>
@@ -275,40 +208,6 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
           )}
         </CardContent>
       </Card>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Reject Leave Request</DialogTitle>
-            <DialogDescription>
-              Please provide a reason for rejecting this leave request.
-            </DialogDescription>
-          </DialogHeader>
-          <Textarea
-            placeholder="Enter reason for rejection"
-            value={rejectionReason}
-            onChange={(e) => setRejectionReason(e.target.value)}
-            className="resize-none"
-            disabled={isProcessing}
-          />
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDialogOpen(false)}
-              disabled={isProcessing}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleReject}
-              disabled={isProcessing || !rejectionReason.trim()}
-            >
-              {isProcessing ? "Processing..." : "Reject Leave"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
       <LeaveHistoryTracker
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}

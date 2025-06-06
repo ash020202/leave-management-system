@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { requestLeave } from "@/services/api";
 import { getCurrentUser } from "@/utils/auth";
 
@@ -193,7 +192,7 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
         reason: values.reason,
       };
 
-      const res = await requestLeave(leaveData);
+      await requestLeave(leaveData);
       form.reset();
       // toast.info(res);
       if (onSuccess) onSuccess();

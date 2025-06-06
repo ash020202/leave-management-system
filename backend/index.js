@@ -7,7 +7,6 @@ import leaveRoute from "./routes/leaveRoutes.js";
 import authRoute from "./routes/authRoute.js";
 import { AppDataSource } from "./db/data-source.js";
 import logger from "./utils/logger.js";
-import { carryForwardLeaves } from "./utils/Helper.js";
 
 const app = express();
 
@@ -28,7 +27,6 @@ AppDataSource.initialize()
     app.listen(port, () => {
       logger.info(`Server running on port ${port}`);
       console.log(`Server running on port ${port}`);
-      // carryForwardLeaves();
     });
   })
   .catch((err) => {

@@ -1,4 +1,4 @@
-import { findEmpById, insertEmpHelper } from "../utils/Helper.js";
+import { insertEmpHelper } from "../utils/Helper.js";
 import { AppDataSource } from "../db/data-source.js";
 import { Employee } from "../models/Employees.js";
 import logger from "../utils/logger.js";

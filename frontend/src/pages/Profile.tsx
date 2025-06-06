@@ -111,12 +111,12 @@ const Profile = () => {
                   <UserRoundIcon className="h-5 w-5 text-primary" />
                   <CardTitle>Profile Information</CardTitle>
                 </div>
-                <Button
+                {/* <Button
                   variant={isEditing ? "outline" : "default"}
                   onClick={() => setIsEditing(!isEditing)}
                 >
                   {isEditing ? "Cancel" : "Edit Profile"}
-                </Button>
+                </Button> */}
               </div>
               <CardDescription>
                 Update your personal information
