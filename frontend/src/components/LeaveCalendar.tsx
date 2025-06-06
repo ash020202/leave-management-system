@@ -115,40 +115,59 @@ const LeaveCalendar = () => {
     setCurrentDate(new Date());
   };
 
-  // Check if leave spans over a weekend
-  const doesLeaveSpanWeekend = (leave: LeaveRequest) => {
-    const leaveStart = parseISO(leave.from_date);
-    const leaveEnd = parseISO(leave.to_date);
-
-    const allDaysInRange = eachDayOfInterval({
-      start: leaveStart,
-      end: leaveEnd,
-    });
-    return allDaysInRange.some((day) => isWeekend(day));
-  };
-
-  // Get leaves for a specific day with weekend logic
+  // Get leaves for a specific day - Updated logic for continuous range excluding weekends
   const getLeavesForDay = (day: Date) => {
     return leaves.filter((leave) => {
       const leaveStart = parseISO(leave.from_date);
       const leaveEnd = parseISO(leave.to_date);
 
-      // Check if leave spans weekend
-      const spansWeekend = doesLeaveSpanWeekend(leave);
+      // Get all days in the leave range
+      const allDaysInRange = eachDayOfInterval({
+        start: leaveStart,
+        end: leaveEnd,
+      });
 
-      if (spansWeekend && isWeekend(day)) {
-        // For weekend days, only show if it's exactly the from_date or to_date
-        return isSameDay(leaveStart, day) || isSameDay(leaveEnd, day);
-      } else if (spansWeekend && !isWeekend(day)) {
-        // For weekdays when leave spans weekend, only show on from_date and to_date
-        return isSameDay(leaveStart, day) || isSameDay(leaveEnd, day);
-      } else {
-        // Normal case - show for all days in the range
-        return eachDayOfInterval({ start: leaveStart, end: leaveEnd }).some(
-          (leaveDay) => isSameDay(leaveDay, day)
-        );
-      }
+      // Filter out weekends from the range
+      const workingDaysInRange = allDaysInRange.filter(
+        (date) => !isWeekend(date)
+      );
+
+      // Check if the current day is in the working days range
+      return workingDaysInRange.some((workingDay) =>
+        isSameDay(workingDay, day)
+      );
     });
+  };
+
+  // Get leave position info for styling continuous ranges
+  const getLeavePositionInfo = (leave: LeaveRequest, day: Date) => {
+    const leaveStart = parseISO(leave.from_date);
+    const leaveEnd = parseISO(leave.to_date);
+
+    // Get all working days in the leave range
+    const allDaysInRange = eachDayOfInterval({
+      start: leaveStart,
+      end: leaveEnd,
+    });
+    const workingDaysInRange = allDaysInRange.filter(
+      (date) => !isWeekend(date)
+    );
+
+    // Find current day index in working days
+    const currentDayIndex = workingDaysInRange.findIndex((workingDay) =>
+      isSameDay(workingDay, day)
+    );
+
+    const isFirst = currentDayIndex === 0;
+    const isLast = currentDayIndex === workingDaysInRange.length - 1;
+    const isSingle = workingDaysInRange.length === 1;
+
+    return {
+      isFirst,
+      isLast,
+      isSingle,
+      workingDaysCount: workingDaysInRange.length,
+    };
   };
 
   // Safe getter for leave type with fallback
@@ -184,6 +203,24 @@ const LeaveCalendar = () => {
       default:
         return "Leave"; // Generic fallback
     }
+  };
+
+  // Get styling for continuous leave ranges
+  const getLeaveRangeStyle = (leave: LeaveRequest, day: Date) => {
+    const { isFirst, isLast, isSingle } = getLeavePositionInfo(leave, day);
+
+    let roundedClass = "";
+    if (isSingle) {
+      roundedClass = "rounded-md";
+    } else if (isFirst) {
+      roundedClass = "rounded-l-md rounded-r-none";
+    } else if (isLast) {
+      roundedClass = "rounded-r-md rounded-l-none";
+    } else {
+      roundedClass = "rounded-none";
+    }
+
+    return roundedClass;
   };
 
   return (
@@ -297,12 +334,19 @@ const LeaveCalendar = () => {
                         </div>
                       )}
 
-                      {/* Leave Events */}
+                      {/* Leave Events - Updated to show continuous ranges */}
                       {dayLeaves.length > 0 && (
                         <div className="absolute inset-0 p-1 pointer-events-none">
                           <div className="flex flex-col gap-1 h-full justify-start pt-2">
                             {dayLeaves.slice(0, 3).map((leave, index) => {
                               const leaveType = getLeaveType(leave);
+                              const {
+                                isFirst,
+                                isLast,
+                                isSingle,
+                                workingDaysCount,
+                              } = getLeavePositionInfo(leave, day);
+
                               return (
                                 <HoverCard
                                   key={`${leave.leave_req_id}-${index}`}
@@ -310,14 +354,18 @@ const LeaveCalendar = () => {
                                   <HoverCardTrigger asChild>
                                     <div
                                       className={cn(
-                                        "rounded-md mt-4 border-l-4 p-2 text-xs font-medium pointer-events-auto cursor-pointer shadow-sm",
+                                        "border-l-4 p-2 text-xs font-medium pointer-events-auto cursor-pointer shadow-sm mt-4",
                                         getLeaveTypeColor(leaveType),
-                                        "min-h-[2rem] flex flex-col justify-center"
+                                        getLeaveRangeStyle(leave, day),
+                                        "min-h-[2rem] flex flex-col justify-center relative"
                                       )}
                                     >
+                                      {/* Show employee name on all days */}
                                       <div className="truncate font-medium">
                                         {leave.emp_name}
                                       </div>
+
+                                      {/* Show leave type on all days */}
                                       <div className="text-[10px] opacity-75 truncate">
                                         {getLeaveTypeLabel(leaveType)}
                                       </div>
@@ -362,6 +410,13 @@ const LeaveCalendar = () => {
                                             parseISO(leave.to_date),
                                             "MMM d, yyyy"
                                           )}
+                                        </p>
+                                        <p className="text-sm">
+                                          <span className="font-medium">
+                                            Working Days:
+                                          </span>{" "}
+                                          {workingDaysCount} day
+                                          {workingDaysCount > 1 ? "s" : ""}
                                         </p>
                                         {leave.approved_at && (
                                           <p className="text-xs text-muted-foreground">
