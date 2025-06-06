@@ -245,7 +245,6 @@ const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
                   <TableHead>Reason</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
-                  {/* <TableHead>Track Leave</TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -268,25 +267,7 @@ const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
                       {leave.reason}
                     </TableCell>
                     <TableCell>{getStatusBadge(leave.status)}</TableCell>
-                    {/* <TableCell>
-                      <div className="flex space-x-2">
-                        <button
-                          // variant="default"
-                          className="bg-green-600 px-3 py-1 rounded text-white"
-                          onClick={() => handleApprove(leave)}
-                          disabled={isProcessing}
-                        >
-                          Approve
-                        </button>
-                        <button
-                          className="bg-red-600 px-3 py-1 rounded text-white"
-                          onClick={() => openRejectDialog(leave)}
-                          disabled={isProcessing}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    </TableCell> */}
+
                     <TableCell>
                       <div className="flex space-x-2">
                         <button

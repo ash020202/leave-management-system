@@ -1,7 +1,15 @@
 import cron from "node-cron";
-import { accumulateLeavesMonthly } from "../utils/Helper.js";
+import {
+  accumulateLeavesMonthly,
+  carryForwardLeaves,
+} from "../utils/Helper.js";
 
-cron.schedule("44 14 04 * *", async () => {
+cron.schedule("23 15 06 * *", async () => {
   console.log("Running monthly leave accumulation job...");
   await accumulateLeavesMonthly();
+});
+
+cron.schedule("06 15 06 * *", async () => {
+  console.log("running carry forward leave balance update job");
+  await carryForwardLeaves();
 });

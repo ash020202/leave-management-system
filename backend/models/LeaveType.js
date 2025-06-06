@@ -13,5 +13,9 @@ export const LeaveType = new EntitySchema({
       type: "varchar",
       unique: true,
     },
+    is_carry_forward: {
+      type: "boolean",
+      default: false,
+    },
   },
 });

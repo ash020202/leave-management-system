@@ -235,7 +235,7 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
                   <TableHead>To</TableHead>
                   <TableHead>Reason</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+
                   <TableHead>Track Leave</TableHead>
                 </TableRow>
               </TableHeader>
@@ -259,40 +259,7 @@ const LeaveApprovalList = ({ onUpdate }: LeaveApprovalListProps) => {
                       {leave.reason}
                     </TableCell>
                     <TableCell>{getStatusBadge(leave.status)}</TableCell>
-                    <TableCell>
-                      {leave.status === "PENDING" ? (
-                        <div className="flex space-x-2">
-                          <button
-                            // variant="default"
-                            className="bg-green-600 px-3 py-1 rounded text-white"
-                            onClick={() => handleApprove(leave)}
-                            disabled={isProcessing}
-                          >
-                            Approve
-                          </button>
-                          <button
-                            className="bg-red-600 px-3 py-1 rounded text-white"
-                            onClick={() => openRejectDialog(leave)}
-                            disabled={isProcessing}
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      ) : (
-                        leave.status === "REJECTED" &&
-                        leave.rejection_reason && (
-                          <span
-                            className="text-sm text-muted-foreground"
-                            title={leave.rejection_reason}
-                          >
-                            Reason:{" "}
-                            {leave.rejection_reason.length > 20
-                              ? `${leave.rejection_reason.substring(0, 20)}...`
-                              : leave.rejection_reason}
-                          </span>
-                        )
-                      )}
-                    </TableCell>
+
                     <TableCell>
                       <button
                         className="text-blue-600 hover:text-blue-800 font-medium hover:underline"

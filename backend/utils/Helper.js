@@ -6,7 +6,6 @@ import { getLeaveTypeRepo } from "../repositories/LeaveTypeRepo.js";
 import { LeaveConstants } from "../constants/LeaveConstants.js";
 import { getLeavePolicyRepo } from "../repositories/LeavePolicyRepo.js";
 import { ApprovalFlowRepo } from "../repositories/ApprovalFlowRepo.js";
-import { In } from "typeorm";
 // holidays.js
 // utils/workingDays.js
 
@@ -275,11 +274,12 @@ export const getApprovedOrRejectedLeaves = async (manager_id) => {
     ],
     order: { created_at: "DESC" },
   });
-  // console.log(approvals[0].leaveRequest.employee);
+  // console.log(approvals[0].leaveRequest.leaveType.name);
 
   // Format or filter data as needed before returning
   return approvals.map((approval) => ({
     leave_req_id: approval.leaveRequest.leave_req_id,
+    leave_type: approval.leaveRequest.leaveType.name,
     emp_name: approval.leaveRequest.employee.emp_name,
     from_date: approval.leaveRequest.from_date,
     to_date: approval.leaveRequest.to_date,
@@ -467,4 +467,43 @@ export async function accumulateLeavesMonthly() {
   }
 
   console.log("Leave accumulation complete.");
+}
+
+export async function carryForwardLeaves() {
+  try {
+    // const leaveBalances = await getLeaveBalanceRepo
+    //   .createQueryBuilder("balance")
+    //   .leftJoinAndSelect("balance.leaveType", "type")
+    //   .getMany();
+    const leaveBalances = await getLeaveBalanceRepo.find({
+      relations: ["leaveType"],
+    });
+    // console.log(leaveBalances);
+
+    for (const bal of leaveBalances) {
+      const isCarryforward = bal.leaveType.is_carry_forward;
+      // console.log(isCarryforward);
+      if (!isCarryforward) {
+        bal.balance = 0;
+        console.log(
+          `Reset balance for non-carry-forward leave: ${bal.leaveType.name} `
+        );
+      } else {
+        console.log(
+          `Carried forward leave: ${bal.leaveType.name} with balance ${bal.balance}`
+        );
+      }
+      await getLeaveBalanceRepo.save(bal);
+      await getLeaveBalanceRepo.find();
+      if (isCarryforward) {
+        console.log(
+          `Carried forward leave: ${bal.leaveType.name} updated balance ${bal.balance}`
+        );
+      }
+    }
+    console.log("Leave carryforward job completed.");
+  } catch (error) {
+    console.log(error);
+    return;
+  }
 }
