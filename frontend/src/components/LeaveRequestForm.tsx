@@ -425,6 +425,16 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Submitting..." : "Submit Request"}
             </Button>
+            <p className="text-center ">
+              To Download Leave Policy{" "}
+              <a
+                download="/public/Leave_Management_System_Policy_Document.pdf"
+                href="#"
+                className="text-blue-500 font-semibold"
+              >
+                click here
+              </a>
+            </p>
           </form>
         </Form>
       </CardContent>
