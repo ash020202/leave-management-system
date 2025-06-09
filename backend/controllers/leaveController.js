@@ -118,20 +118,12 @@ export const submitLeave = async (req, res) => {
     let assignedManagerId = null;
     let leaveStatus;
 
-    if (leaveCount >= totalDays) {
-      // Sufficient leave balance
-      assignedManagerId = employee.manager?.emp_id || null;
-      leaveStatus =
-        leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
-          ? LeaveConstants.LEAVE_STATUS.APPROVED
-          : LeaveConstants.LEAVE_STATUS.PENDING;
-    } else {
-      // Insufficient leave balance
-      assignedManagerId = employee.manager?.emp_id || null; // Senior manager
-      // console.log("Assigned Senior Manager ID:", assignedManagerId);
+    assignedManagerId = employee.manager?.emp_id || null;
+    leaveStatus =
+      leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+        ? LeaveConstants.LEAVE_STATUS.APPROVED
+        : LeaveConstants.LEAVE_STATUS.PENDING;
 
-      leaveStatus = LeaveConstants.LEAVE_STATUS.PENDING;
-    }
     if (!assignedManagerId) {
       return res.status(400).send({
         error:

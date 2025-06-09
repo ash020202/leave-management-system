@@ -2,12 +2,9 @@ import { getEmployeeRepo } from "../repositories/EmployeeRepo.js";
 import { getLeaveBalanceRepo } from "../repositories/LeaveBalanceRepo.js";
 import { getLeaveReqRepo } from "../repositories/LeaveRequestRepo.js";
 import CryptoJS from "crypto-js";
-import { getLeaveTypeRepo } from "../repositories/LeaveTypeRepo.js";
 import { LeaveConstants } from "../constants/LeaveConstants.js";
 import { getLeavePolicyRepo } from "../repositories/LeavePolicyRepo.js";
 import { ApprovalFlowRepo } from "../repositories/ApprovalFlowRepo.js";
-// holidays.js
-// utils/workingDays.js
 
 export const calculateWorkingDays = (
   from_date,
@@ -19,10 +16,6 @@ export const calculateWorkingDays = (
   const end = new Date(to_date);
   // console.log(leaveType);
 
-  // Format all holidays to 'YYYY-MM-DD' and use a Set for faster lookup
-  // const holidaySet = new Set(
-  //   holidays.map((date) => new Date(date).toISOString().split("T")[0])
-  // );
   const floaterSet = new Set(LeaveConstants.FLOATER_LEAVE);
   // const cleanHolidays = holidaySet.filter((h) => !floaterSet.has(h));
   const holidaySet = new Set(
@@ -127,6 +120,7 @@ export const insertLeaveRequest = async (
     throw new Error("Failed to insert leave request");
   }
 };
+
 export const updateLeaveBalance = async (emp_id, leave_type_id, totalDays) => {
   try {
     // Fetch the leave balance for the employee and leave type
@@ -161,7 +155,7 @@ export const updateLeaveBalance = async (emp_id, leave_type_id, totalDays) => {
   }
 };
 
-//for all emp leave history
+//fetch emp leave requests to manager helper
 export const getLeaveRequests = async (manager_id) => {
   try {
     const leaveRequests = await getLeaveReqRepo.find({
@@ -227,43 +221,6 @@ export const getEmpLeaveHistory = async (emp_id) => {
 };
 
 export const getApprovedOrRejectedLeaves = async (manager_id) => {
-  // const mg_id = Number(manager_id);
-
-  // // Step 1: Get all leave requests for employees under this manager
-  // const leaveRequests = await getLeaveReqRepo.find({
-  //   where: { manager_id: mg_id },
-  //   relations: {
-  //     employee: true,
-  //     leaveType: true,
-  //     approvalFlows: {
-  //       approver: true,
-  //     },
-  //   },
-  //   order: {
-  //     created_at: "DESC",
-  //   },
-  // });
-
-  // // Step 2: For each leave request, get the latest approval flow entry if any
-  // const formattedLeaves = leaveRequests.map((req) => {
-  //   const latestApproval = req.approvalFlows?.sort(
-  //     (a, b) => new Date(b.created_at) - new Date(a.created_at)
-  //   )[0];
-
-  //   return {
-  //     leave_req_id: req.leave_req_id,
-  //     employee_name: req.employee.emp_name,
-  //     leave_type: req.leaveType.name,
-  //     from_date: req.from_date,
-  //     to_date: req.to_date,
-  //     reason: req.reason,
-  //     status: latestApproval?.status || "PENDING",
-  //     approver_name: latestApproval?.approver?.emp_name || "N/A",
-  //   };
-  // });
-
-  // return formattedLeaves;
-
   const approvals = await ApprovalFlowRepo.find({
     where: { approver: { emp_id: manager_id } },
     relations: [
@@ -410,6 +367,7 @@ export const insertEmpHelper = async (
   }
 };
 
+//cron job helper
 export async function accumulateLeavesMonthly() {
   const employees = await getEmployeeRepo.find();
 
@@ -471,39 +429,59 @@ export async function accumulateLeavesMonthly() {
 
 export async function carryForwardLeaves() {
   try {
-    // const leaveBalances = await getLeaveBalanceRepo
-    //   .createQueryBuilder("balance")
-    //   .leftJoinAndSelect("balance.leaveType", "type")
-    //   .getMany();
+    // Get all leave balances with their related leave types and employees
     const leaveBalances = await getLeaveBalanceRepo.find({
-      relations: ["leaveType"],
+      relations: ["leaveType", "employee"], // Assuming you have employee relation
     });
-    // console.log(leaveBalances);
+
+    // Group balances by employee to calculate total per employee
+    const employeeBalanceMap = new Map();
 
     for (const bal of leaveBalances) {
       const isCarryforward = bal.leaveType.is_carry_forward;
-      // console.log(isCarryforward);
+      const employeeId = bal.employee.emp_id; // or bal.employee.id depending on your relation setup
+      // console.log(employeeId);
+
       if (!isCarryforward) {
+        // Reset balance for non-carry-forward leave types
         bal.balance = 0;
         console.log(
-          `Reset balance for non-carry-forward leave: ${bal.leaveType.name} `
+          `Reset balance for non-carry-forward leave: ${bal.leaveType.name} for employee ${employeeId}`
         );
       } else {
         console.log(
-          `Carried forward leave: ${bal.leaveType.name} with balance ${bal.balance}`
+          `Carried forward leave: ${bal.leaveType.name} with balance ${bal.balance} for employee ${employeeId}`
         );
       }
+
+      // Save the updated balance
       await getLeaveBalanceRepo.save(bal);
-      await getLeaveBalanceRepo.find();
-      if (isCarryforward) {
-        console.log(
-          `Carried forward leave: ${bal.leaveType.name} updated balance ${bal.balance}`
-        );
+
+      // Calculate total balance per employee
+      if (!employeeBalanceMap.has(employeeId)) {
+        employeeBalanceMap.set(employeeId, 0);
       }
+      employeeBalanceMap.set(
+        employeeId,
+        employeeBalanceMap.get(employeeId) + bal.balance
+      );
     }
-    console.log("Leave carryforward job completed.");
+
+    // Update total_leave_balance in employees table
+    for (const [employeeId, totalBalance] of employeeBalanceMap) {
+      await getEmployeeRepo.update(
+        { emp_id: employeeId }, // or { id: employeeId } depending on your primary key
+        { total_leave_balance: totalBalance }
+      );
+
+      console.log(
+        `Updated total_leave_balance to ${totalBalance} for employee ${employeeId}`
+      );
+    }
+
+    console.log("Leave carryforward job completed successfully.");
   } catch (error) {
-    console.log(error);
-    return;
+    console.error("Error in carryForwardLeaves:", error);
+    throw error; // Re-throw to handle at higher level if needed
   }
 }

@@ -1,5 +1,8 @@
 import jwt from "jsonwebtoken";
-import { EmployeeConstants } from "../constants/EmployeeConstants.js";
+import {
+  DEFAULT_ALLOWED_ROLES,
+  EmployeeConstants,
+} from "../constants/EmployeeConstants.js";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const authenticate = (req, res, next) => {
@@ -19,9 +22,18 @@ export const authenticate = (req, res, next) => {
 
 export const authorize = (...allowedRoles) => {
   return (req, res, next) => {
-    if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ message: "Access denied" });
+    // If no roles specified, use default roles (everyone can access)
+    const rolesToCheck =
+      allowedRoles.length > 0 ? allowedRoles : DEFAULT_ALLOWED_ROLES;
+
+    if (!rolesToCheck.includes(req.user.role)) {
+      return res.status(403).json({
+        message: "Access denied",
+        requiredRoles: rolesToCheck,
+        userRole: req.user.role,
+      });
     }
+
     next();
   };
 };

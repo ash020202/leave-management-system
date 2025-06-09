@@ -19,17 +19,7 @@ import { EmployeeConstants } from "../constants/EmployeeConstants.js";
 
 const router = express.Router();
 
-router.post(
-  "/request",
-  authenticate,
-  authorize(
-    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
-    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
-    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
-    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
-  ),
-  submitLeave
-);
+//manager fetch pending leave
 router.get(
   "/manager/leaves/:emp_id",
 
@@ -42,6 +32,8 @@ router.get(
 
   getManagerPendingLeaveRequests
 );
+
+// manager leave status update,
 router.patch(
   "/status/:emp_id",
   authenticate,
@@ -51,59 +43,12 @@ router.patch(
   ),
   changeLeaveStatus
 );
-router.post(
-  "/cancel/:emp_id",
-  authenticate,
-  authorize(
-    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
-    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
-    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
-    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
-  ),
-  cancelLeave
-);
-router.get(
-  "/balance/:emp_id",
-  authenticate,
-  authorize(
-    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
-    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
-    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
-    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
-  ),
-  checkLeaveBalance
-);
 
-router.get(
-  "/user/:emp_id",
-  authenticate,
-  authorize(
-    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
-    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
-    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
-    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
-  ),
-  getLeaveHistory
-);
-
-router.get(
-  "/get-public-holidays",
-  authenticate,
-  authorize(
-    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
-    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
-    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
-    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
-  ),
-  getPublicHolidays
-);
-
+//fetch approved,rejected leaves for manager
 router.get(
   "/manager/approved-rejected-leaves/:emp_id",
   authenticate,
   authorize(
-    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
-    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
     EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
     EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
   ),
@@ -111,15 +56,22 @@ router.get(
   getApprovedOrRejectedLevController
 );
 
-router.get(
-  "/track/:leave_req_id",
-  authenticate,
-  authorize(
-    EmployeeConstants.EMPLOYEE_ROLES.INTERN,
-    EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
-    EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
-    EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER
-  ),
-  trackLeave
-);
+//employee leave request
+router.post("/request", authenticate, authorize(), submitLeave);
+
+//employee cancel leave
+router.post("/cancel/:emp_id", authenticate, authorize(), cancelLeave);
+
+//emp leave balance
+router.get("/balance/:emp_id", authenticate, authorize(), checkLeaveBalance);
+
+//emp leave history
+router.get("/user/:emp_id", authenticate, authorize(), getLeaveHistory);
+
+//fetch public holidays
+router.get("/public-holidays", authenticate, authorize(), getPublicHolidays);
+
+//trach leave approval flow
+router.get("/track/:leave_req_id", authenticate, authorize(), trackLeave);
+
 export default router;

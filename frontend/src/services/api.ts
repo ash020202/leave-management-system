@@ -162,7 +162,7 @@ const getAuthHeader = () => {
 // Leave Functions
 export const getHolidays = async () => {
   try {
-    const response = await fetch(`${API_URL}/leave/get-public-holidays`, {
+    const response = await fetch(`${API_URL}/leave/public-holidays`, {
       headers: {
         ...getAuthHeader(),
       },

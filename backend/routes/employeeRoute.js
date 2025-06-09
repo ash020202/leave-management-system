@@ -9,8 +9,8 @@ import {
 const router = express.Router();
 
 router.get("/", getAllEmployees);
+router.post("/", insertEmployees);
 router.get("/user-fetch/:emp_id", getUserLeaveBalance);
-router.post("/insert-one", insertEmployees);
 router.delete("/user/:emp_id", deleteEmployee);
 
 export default router;

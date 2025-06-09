@@ -4,12 +4,12 @@ import {
   carryForwardLeaves,
 } from "../utils/Helper.js";
 
-cron.schedule("23 15 06 * *", async () => {
+cron.schedule("09 09 09 * *", async () => {
   console.log("Running monthly leave accumulation job...");
   await accumulateLeavesMonthly();
 });
 
-cron.schedule("06 15 06 * *", async () => {
+cron.schedule("07 09 09 * *", async () => {
   console.log("running carry forward leave balance update job");
   await carryForwardLeaves();
 });

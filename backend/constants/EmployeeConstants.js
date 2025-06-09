@@ -8,3 +8,10 @@ const EMPLOYEE_ROLES = {
 export const EmployeeConstants = {
   EMPLOYEE_ROLES,
 };
+
+export const DEFAULT_ALLOWED_ROLES = [
+  EmployeeConstants.EMPLOYEE_ROLES.INTERN,
+  EmployeeConstants.EMPLOYEE_ROLES.EMPLOYEE,
+  EmployeeConstants.EMPLOYEE_ROLES.MANAGER,
+  EmployeeConstants.EMPLOYEE_ROLES.SENIOR_MANAGER,
+];
