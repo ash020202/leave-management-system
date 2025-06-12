@@ -1,11 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { requestLeave } from "@/services/api";
+import { CalendarCheck, CalendarIcon } from "lucide-react";
+import { getFloaterHolidays, requestLeave } from "@/services/api";
 import { getCurrentUser } from "@/utils/auth";
 
 import { Button } from "@/components/ui/button";
@@ -38,8 +38,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 
-const leaveTypes = [
+interface Holiday {
+  date: string;
+  name: string;
+}
+
+export const leaveTypes = [
   { id: 1, value: "sick_leave", label: "Sick Leave" },
   { id: 3, value: "earned_leave", label: "Earned Leave" },
   { id: 4, value: "floater_leave", label: "Floater Leave" },
@@ -79,6 +92,50 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const user = getCurrentUser();
   const userInfo = localStorage.getItem("user-info");
+  const [isHolidayModalOpen, setIsHolidayModalOpen] = useState(false);
+  const [holidays, setHolidays] = useState<Holiday[]>([]);
+  const [holidaysLoading, setHolidaysLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchHolidays = async () => {
+      setHolidaysLoading(true);
+      try {
+        // Replace this with your actual API call
+        const holidayData = await getFloaterHolidays();
+        setHolidays(holidayData);
+      } catch (error) {
+        console.error("Error fetching holidays:", error);
+        toast.error("Failed to load holidays");
+      } finally {
+        setHolidaysLoading(false);
+      }
+    };
+
+    fetchHolidays();
+  }, []);
+
+  const formatHolidayDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    };
+    return date.toLocaleDateString("en-US", options);
+  };
+
+  const holidaysByMonth = useMemo(() => {
+    return holidays.reduce((acc, holiday) => {
+      const date = new Date(holiday.date);
+      const monthName = date.toLocaleDateString("en-US", { month: "long" });
+      if (!acc[monthName]) {
+        acc[monthName] = [];
+      }
+      acc[monthName].push(holiday);
+      return acc;
+    }, {} as Record<string, Holiday[]>);
+  }, [holidays]);
 
   // Define public holidays (you can customize this list)
   const publicHolidays = [
@@ -165,6 +222,29 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
     },
   });
 
+  const handleFloaterHolidaySelect = (holiday: Holiday) => {
+    const holidayDate = new Date(holiday.date);
+
+    // Set the leave type to floater leave
+    form.setValue("leave_type", "floater_leave");
+
+    // Set both from and to date to the holiday date (single day leave)
+    form.setValue("from_date", holidayDate);
+    form.setValue("to_date", holidayDate);
+
+    // Pre-fill reason with holiday name
+    form.setValue("reason", `Floater leave for ${holiday.name}`);
+
+    // Close the holiday modal
+    setIsHolidayModalOpen(false);
+
+    // Show success toast
+    toast.success(`Selected ${holiday.name} for floater leave`);
+
+    // Trigger form validation
+    form.trigger();
+  };
+
   const onSubmit = async (values: FormValues) => {
     if (!user) {
       toast.error("You need to be logged in to request leave");
@@ -206,10 +286,97 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
   return (
     <Card className="">
       <CardHeader>
-        <CardTitle>Request Leave</CardTitle>
-        <CardDescription>
-          Fill in the details to request a leave
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Request Leave</CardTitle>
+            <CardDescription>
+              Fill in the details to request a leave
+            </CardDescription>
+          </div>
+
+          {/* Holiday List Button */}
+          <Dialog
+            open={isHolidayModalOpen}
+            onOpenChange={setIsHolidayModalOpen}
+          >
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <CalendarCheck className="h-4 w-4" />
+                View Holidays
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl h-[80dvh] overflow-hidden">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <CalendarCheck className="h-5 w-5 text-blue-600" />
+                  Floater Holiday Calendar 2025
+                </DialogTitle>
+                <DialogDescription>
+                  Company holidays and observances
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="overflow-y-auto max-h-[60vh] pr-2">
+                {holidaysLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="text-muted-foreground">
+                      Loading holidays...
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {Object.entries(holidaysByMonth).map(
+                      ([month, monthHolidays]) => (
+                        <div key={month}>
+                          <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                            <CalendarCheck className="h-5 w-5 text-blue-600" />
+                            {month}
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {monthHolidays.map((holiday, index) => (
+                              <div
+                                key={index}
+                                onClick={() =>
+                                  handleFloaterHolidaySelect(holiday)
+                                }
+                                className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg p-4 hover:shadow-md transition-shadow"
+                              >
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <h4 className="font-semibold text-gray-800 mb-1">
+                                      {holiday.name}
+                                    </h4>
+                                    <p className="text-sm text-gray-600">
+                                      {formatHolidayDate(holiday.date)}
+                                    </p>
+                                  </div>
+                                  <div className="w-3 h-3 bg-blue-500 rounded-full mt-1 flex-shrink-0"></div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t">
+                <p className="text-sm text-muted-foreground">
+                  Total holidays: {holidays.length}
+                </p>
+                <Button onClick={() => setIsHolidayModalOpen(false)}>
+                  Close
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -222,7 +389,7 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
                   <FormLabel>Leave Type</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                     disabled={isSubmitting}
                   >
                     <FormControl>

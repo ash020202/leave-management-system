@@ -42,6 +42,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Loader from "./Loader";
+import { useNavigate } from "react-router-dom";
 
 const LeaveCalendar = () => {
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
@@ -50,7 +51,7 @@ const LeaveCalendar = () => {
   const [holidays, setHolidays] = useState<
     { name: string; date: { iso: string } }[]
   >([]);
-
+  const navigate = useNavigate();
   const user = getCurrentUser();
 
   useEffect(() => {
@@ -62,9 +63,17 @@ const LeaveCalendar = () => {
             getManagerApprovedRejLeaves(user.empId),
             getHolidays(),
           ]);
-          console.log(leaveData);
+          // console.log(leaveData);
+          const filteredLeaves = Array.isArray(leaveData)
+            ? leaveData.filter(
+                (leave) =>
+                  leave.status === "PENDING" ||
+                  leave.status == "PENDING_SENIOR_MANAGER" ||
+                  leave.status === "APPROVED"
+              )
+            : [];
 
-          setLeaves(Array.isArray(leaveData) ? leaveData : []);
+          setLeaves(filteredLeaves);
           setHolidays(Array.isArray(holidayData) ? holidayData : []);
         } catch (error) {
           console.error("Error fetching leaves for calendar:", error);
@@ -359,6 +368,9 @@ const LeaveCalendar = () => {
                                         getLeaveRangeStyle(leave, day),
                                         "min-h-[2rem] flex flex-col justify-center relative"
                                       )}
+                                      onClick={() =>
+                                        navigate("/my-team-leaves")
+                                      }
                                     >
                                       {/* Show employee name on all days */}
                                       <div className="truncate font-medium">

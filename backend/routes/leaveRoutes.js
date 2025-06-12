@@ -4,6 +4,7 @@ import {
   changeLeaveStatus,
   checkLeaveBalance,
   getApprovedOrRejectedLevController,
+  getFloaterHolidays,
   getLeaveHistory,
   getManagerPendingLeaveRequests,
   getPublicHolidays,
@@ -70,6 +71,7 @@ router.get("/user/:emp_id", authenticate, authorize(), getLeaveHistory);
 
 //fetch public holidays
 router.get("/public-holidays", authenticate, authorize(), getPublicHolidays);
+router.get("/floater-holidays", getFloaterHolidays);
 
 //trach leave approval flow
 router.get("/track/:leave_req_id", authenticate, authorize(), trackLeave);

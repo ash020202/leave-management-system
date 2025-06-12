@@ -113,8 +113,12 @@ export const insertLeaveRequest = async (
       manager_id: assignedManagerId, // Save the assigned manager ID
     });
 
-    await getLeaveReqRepo.save(leave);
-    return { duplicate: false, message: "Leave request inserted successfully" };
+    const savedLeave = await getLeaveReqRepo.save(leave);
+    return {
+      duplicate: false,
+      leave_req_id: savedLeave.leave_req_id,
+      message: "Leave request inserted successfully",
+    };
   } catch (error) {
     console.error("Insert Leave Error:", error);
     throw new Error("Failed to insert leave request");
@@ -300,7 +304,13 @@ export const cancelLeaveHelper = async (leave_req_id, emp_id) => {
     };
   }
 
-  if (leave.status === "PENDING" || leave.status === "APPROVED") {
+  await ApprovalFlowRepo.delete({
+    leaveRequest: { leave_req_id },
+  });
+  if (
+    leave.status === LeaveConstants.LEAVE_STATUS.PENDING ||
+    leave.status === LeaveConstants.LEAVE_STATUS.PENDING_SENIOR_MANAGER
+  ) {
     leave.status = "CANCELLED";
     await getLeaveReqRepo.save(leave);
     return "Leave cancelled successfully";

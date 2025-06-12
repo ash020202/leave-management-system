@@ -221,6 +221,31 @@ export const requestLeave = async (leaveData: {
   }
 };
 
+export const getFloaterHolidays = async () => {
+  try {
+    const response = await fetch(`${API_URL}/leave/floater-holidays`, {
+      // headers: {
+      //   ...getAuthHeader(),
+      // },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch holidays");
+    }
+
+    return data;
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "An error occurred requesting leave";
+    toast.error(message);
+    throw error;
+  }
+};
+
 export const cancelLeave = async (emp_id: string, leave_req_id: string) => {
   try {
     const response = await fetch(`${API_URL}/leave/cancel/${emp_id}`, {
