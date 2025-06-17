@@ -8,11 +8,15 @@ import { getLeaveTypeRepo } from "../repositories/LeaveTypeRepo.js";
 import {
   calculateWorkingDays,
   cancelLeaveHelper,
+  createApprovalFlowEntries,
+  fetchHolidaysForDateRange,
   findEmpById,
+  generateResponseMessage,
   getApprovalTrailForLeave,
   getApprovedOrRejectedLeaves,
   getEmpLeaveHistory,
   getLeaveRequests,
+  getLeaveStatus,
   insertLeaveRequest,
   leaveBalanceHelper,
   updateLeaveBalance,
@@ -57,60 +61,245 @@ export const getFloaterHolidays = async (req, res) => {
   }
 };
 
+// export const submitLeave = async (req, res) => {
+//   try {
+//     const { emp_id, leave_type_id, from_date, to_date, reason } =
+//       await LeaveReqSchema.validateAsync(req.body, {
+//         abortEarly: false, // catch all errors
+//         convert: false, //  prevent auto-type coercion like string "3" => number 3
+//       });
+//     // Fetch the employee
+//     const employee = await findEmpById(emp_id);
+//     // console.log("Manager:", employee.manager);
+//     // console.log("Senior Manager:", employee.manager?.manager);
+//     if (!employee) {
+//       return res.status(404).json({ error: "Employee not found" });
+//     }
+
+//     // Fetch the leave type
+//     const leaveType = await getLeaveTypeRepo.findOneBy({ leave_type_id });
+//     if (!leaveType) {
+//       return res.status(404).json({ error: "Leave type not found" });
+//     }
+
+//     //check if floater leave then isFloater is true based on given from date and to date match with an constant here
+//     const floaterLeaves = LeaveConstants.FLOATER_LEAVE.map((f) => f.date);
+//     if (leaveType.name === LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE) {
+//       if (
+//         !floaterLeaves.includes(from_date) ||
+//         !floaterLeaves.includes(to_date)
+//       ) {
+//         return res.status(400).json({
+//           error: `Floater leave can only be applied for certain dates Contact HR for more details.`,
+//         });
+//       }
+//     }
+
+//     // Fetch leave balance for the employee
+//     const leaveBalance = await leaveBalanceHelper(emp_id);
+//     const leaveCount = leaveBalance[leaveType.name]; // Use leave type name to get the balance
+
+//     // Calculate working days
+//     const fromYear = new Date(from_date).getFullYear();
+//     const toYear = new Date(to_date).getFullYear();
+//     const years = new Set();
+//     for (let year = fromYear; year <= toYear; year++) years.add(year);
+
+//     // Fetch holidays for all years
+//     let allHolidays = [];
+//     for (let year of years) {
+//       const holidays = await fetchIndianHolidays(year);
+//       const formattedHolidays = holidays.map(
+//         (h) => new Date(h).toISOString().split("T")[0]
+//       );
+//       allHolidays.push(...formattedHolidays);
+//     }
+
+//     const { totalDays, allDaysInvalid } = calculateWorkingDays(
+//       from_date,
+//       to_date,
+//       allHolidays,
+//       leaveType.name
+//     );
+
+//     if (
+//       leaveType.name !== LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE &&
+//       (allDaysInvalid || totalDays === 0)
+//     ) {
+//       return res.status(400).send({
+//         error: "Leave cannot be applied for weekends or public holidays only.",
+//       });
+//     }
+
+//     let assignedManagerId = null;
+//     let leaveStatus;
+
+//     assignedManagerId = employee.manager?.emp_id || null;
+//     leaveStatus =
+//       leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+//         ? LeaveConstants.LEAVE_STATUS.APPROVED
+//         : LeaveConstants.LEAVE_STATUS.PENDING;
+
+//     if (!assignedManagerId) {
+//       return res.status(400).send({
+//         error:
+//           "No manager or senior manager found to approve the leave request.",
+//       });
+//     }
+//     // console.log("Assigned Manager ID:", assignedManagerId);
+
+//     // Insert the leave request
+//     const insertResult = await insertLeaveRequest(
+//       emp_id,
+//       leaveType.leave_type_id, // Use leave_type_id
+//       from_date,
+//       to_date,
+//       reason,
+//       leaveStatus,
+//       assignedManagerId,
+//       totalDays
+//     );
+
+//     //to fetch leave_req from approval flow table and update status of that record
+//     const leaveRequestId = insertResult?.leave_req_id;
+//     // console.log("Leave Request ID:", leaveRequestId);
+//     // console.log("sr manager id:", employee.manager?.manager?.emp_id);
+
+//     const hasSufficientBalance = leaveCount >= totalDays;
+
+//     //update approval flow status based on leave_req_id
+//     try {
+//       //if emp have balance then one entry in approval flow (while submitting leave)
+//       if (
+//         hasSufficientBalance &&
+//         leaveType.name != LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+//       ) {
+//         // console.log(leaveType);
+
+//         const approvalFlowEntry = ApprovalFlowRepo.create({
+//           leaveRequest: leaveRequestId,
+//           approver: employee.manager.emp_id,
+//           status: LeaveConstants.LEAVE_STATUS.PENDING,
+//           remarks: "Pending manager approval - sufficient balance",
+//         });
+//         await ApprovalFlowRepo.save(approvalFlowEntry);
+//       } else {
+//         if (leaveType.name != LeaveConstants.LEAVE_TYPES.SICK_LEAVE) {
+//           //if emp have no balance or long leave then two entries in approval flow (while submitting leave)
+//           if (employee.manager?.emp_id) {
+//             //Then, manager approval entry (also PENDING initially)
+//             const managerApprovalEntry = ApprovalFlowRepo.create({
+//               leaveRequest: leaveRequestId,
+//               approver: employee.manager.emp_id,
+//               status: LeaveConstants.LEAVE_STATUS.PENDING,
+//               remarks: "Pending manager approval - insufficient balance",
+//             });
+//             await ApprovalFlowRepo.save(managerApprovalEntry);
+//           }
+
+//           if (employee.manager?.manager?.emp_id) {
+//             // Then, senior manager approval entry (also PENDING initially)
+//             const seniorManagerApprovalEntry = ApprovalFlowRepo.create({
+//               leaveRequest: leaveRequestId,
+//               approver: employee.manager.manager.emp_id,
+//               status: LeaveConstants.LEAVE_STATUS.PENDING_SENIOR_MANAGER,
+//               remarks: "Pending senior manager approval - insufficient balance",
+//             });
+//             await ApprovalFlowRepo.save(seniorManagerApprovalEntry);
+//           }
+//         }
+//       }
+//     } catch (error) {
+//       console.error("Error updating leave balance:", error);
+//       return res.status(500).send({ error: "Failed to submit leave request" });
+//     }
+
+//     if (
+//       insertResult.message?.toLowerCase().includes("already exists") ||
+//       insertResult.duplicate
+//     ) {
+//       return res.status(400).send({ error: insertResult.message });
+//     }
+
+//     let remainingLeave = 0;
+//     if (
+//       leaveCount >= totalDays &&
+//       leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+//     ) {
+//       try {
+//         const updatedBalance = await updateLeaveBalance(
+//           emp_id,
+//           leaveType.leave_type_id,
+//           totalDays
+//         );
+//         // console.log("Updated Leave Balance:", updatedBalance);
+
+//         remainingLeave = updatedBalance;
+//       } catch (error) {
+//         console.error("Error updating leave balance:", error);
+//         return res
+//           .status(500)
+//           .send({ error: "Failed to update leave balance" });
+//       }
+//     }
+
+//     const message =
+//       leaveCount >= totalDays
+//         ? leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+//           ? `${leaveType.name} leave approved and ${totalDays} days deducted from balance.`
+//           : `${leaveType.name} leave request sent to manager for ${totalDays} days.`
+//         : `${leaveType.name} leave balance insufficient. Leave request forwarded to Manager Approval -> Senior Manager.`;
+
+//     return res.status(200).send({ message, remainingLeave });
+//   } catch (err) {
+//     if (err.isJoi) {
+//       // Handle Joi validation errors
+//       return res.status(400).json({ error: err.details[0].message });
+//     }
+//     console.error("Error processing leave request:", err);
+//     return res.status(500).send({ error: "Unexpected server error" });
+//   }
+// };
+
 export const submitLeave = async (req, res) => {
   try {
+    // Validate request body
     const { emp_id, leave_type_id, from_date, to_date, reason } =
       await LeaveReqSchema.validateAsync(req.body, {
-        abortEarly: false, // catch all errors
-        convert: false, //  prevent auto-type coercion like string "3" => number 3
+        abortEarly: false,
+        convert: false,
       });
-    // Fetch the employee
+
+    // Fetch employee and leave type
     const employee = await findEmpById(emp_id);
-    // console.log("Manager:", employee.manager);
-    // console.log("Senior Manager:", employee.manager?.manager);
     if (!employee) {
       return res.status(404).json({ error: "Employee not found" });
     }
 
-    // Fetch the leave type
     const leaveType = await getLeaveTypeRepo.findOneBy({ leave_type_id });
     if (!leaveType) {
       return res.status(404).json({ error: "Leave type not found" });
     }
 
-    //check if floater leave then isFloater is true based on given from date and to date match with an constant here
-    const floaterLeaves = LeaveConstants.FLOATER_LEAVE.map((f) => f.date);
+    // Validate floater leave dates
     if (leaveType.name === LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE) {
+      const floaterLeaves = LeaveConstants.FLOATER_LEAVE.map((f) => f.date);
       if (
         !floaterLeaves.includes(from_date) ||
         !floaterLeaves.includes(to_date)
       ) {
         return res.status(400).json({
-          error: `Floater leave can only be applied for certain dates Contact HR for more details.`,
+          error:
+            "Floater leave can only be applied for certain dates. kindly view floater holidays and apply .",
         });
       }
     }
 
-    // Fetch leave balance for the employee
+    // Get leave balance and calculate working days
     const leaveBalance = await leaveBalanceHelper(emp_id);
-    const leaveCount = leaveBalance[leaveType.name]; // Use leave type name to get the balance
+    const leaveCount = leaveBalance[leaveType.name];
 
-    // Calculate working days
-    const fromYear = new Date(from_date).getFullYear();
-    const toYear = new Date(to_date).getFullYear();
-    const years = new Set();
-    for (let year = fromYear; year <= toYear; year++) years.add(year);
-
-    // Fetch holidays for all years
-    let allHolidays = [];
-    for (let year of years) {
-      const holidays = await fetchIndianHolidays(year);
-      const formattedHolidays = holidays.map(
-        (h) => new Date(h).toISOString().split("T")[0]
-      );
-      allHolidays.push(...formattedHolidays);
-    }
-
+    const allHolidays = await fetchIndianHolidays(from_date, to_date);
     const { totalDays, allDaysInvalid } = calculateWorkingDays(
       from_date,
       to_date,
@@ -118,6 +307,7 @@ export const submitLeave = async (req, res) => {
       leaveType.name
     );
 
+    // Validate working days (except for floater leave)
     if (
       leaveType.name !== LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE &&
       (allDaysInvalid || totalDays === 0)
@@ -127,14 +317,9 @@ export const submitLeave = async (req, res) => {
       });
     }
 
-    let assignedManagerId = null;
-    let leaveStatus;
-
-    assignedManagerId = employee.manager?.emp_id || null;
-    leaveStatus =
-      leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
-        ? LeaveConstants.LEAVE_STATUS.APPROVED
-        : LeaveConstants.LEAVE_STATUS.PENDING;
+    // Determine leave status and assigned manager
+    const assignedManagerId = employee.manager?.emp_id || null;
+    const leaveStatus = getLeaveStatus(leaveType.name);
 
     if (!assignedManagerId) {
       return res.status(400).send({
@@ -142,12 +327,11 @@ export const submitLeave = async (req, res) => {
           "No manager or senior manager found to approve the leave request.",
       });
     }
-    // console.log("Assigned Manager ID:", assignedManagerId);
 
-    // Insert the leave request
+    // Insert leave request
     const insertResult = await insertLeaveRequest(
       emp_id,
-      leaveType.leave_type_id, // Use leave_type_id
+      leaveType.leave_type_id,
       from_date,
       to_date,
       reason,
@@ -156,60 +340,7 @@ export const submitLeave = async (req, res) => {
       totalDays
     );
 
-    //to fetch leave_req from approval flow table and update status of that record
-    const leaveRequestId = insertResult?.leave_req_id;
-    // console.log("Leave Request ID:", leaveRequestId);
-    // console.log("sr manager id:", employee.manager?.manager?.emp_id);
-
-    const hasSufficientBalance = leaveCount >= totalDays;
-
-    //update approval flow status based on leave_req_id
-    try {
-      //if emp have balance then one entry in approval flow (while submitting leave)
-      if (
-        hasSufficientBalance &&
-        leaveType.name != LeaveConstants.LEAVE_TYPES.SICK_LEAVE
-      ) {
-        // console.log(leaveType);
-
-        const approvalFlowEntry = ApprovalFlowRepo.create({
-          leaveRequest: leaveRequestId,
-          approver: employee.manager.emp_id,
-          status: LeaveConstants.LEAVE_STATUS.PENDING,
-          remarks: "Pending manager approval - sufficient balance",
-        });
-        await ApprovalFlowRepo.save(approvalFlowEntry);
-      } else {
-        if (leaveType.name != LeaveConstants.LEAVE_TYPES.SICK_LEAVE) {
-          //if emp have no balance or long leave then two entries in approval flow (while submitting leave)
-          if (employee.manager?.emp_id) {
-            //Then, manager approval entry (also PENDING initially)
-            const managerApprovalEntry = ApprovalFlowRepo.create({
-              leaveRequest: leaveRequestId,
-              approver: employee.manager.emp_id,
-              status: LeaveConstants.LEAVE_STATUS.PENDING,
-              remarks: "Pending manager approval - insufficient balance",
-            });
-            await ApprovalFlowRepo.save(managerApprovalEntry);
-          }
-
-          if (employee.manager?.manager?.emp_id) {
-            // Then, senior manager approval entry (also PENDING initially)
-            const seniorManagerApprovalEntry = ApprovalFlowRepo.create({
-              leaveRequest: leaveRequestId,
-              approver: employee.manager.manager.emp_id,
-              status: LeaveConstants.LEAVE_STATUS.PENDING_SENIOR_MANAGER,
-              remarks: "Pending senior manager approval - insufficient balance",
-            });
-            await ApprovalFlowRepo.save(seniorManagerApprovalEntry);
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Error updating leave balance:", error);
-      return res.status(500).send({ error: "Failed to submit leave request" });
-    }
-
+    // Handle duplicate leave request
     if (
       insertResult.message?.toLowerCase().includes("already exists") ||
       insertResult.duplicate
@@ -217,20 +348,29 @@ export const submitLeave = async (req, res) => {
       return res.status(400).send({ error: insertResult.message });
     }
 
+    const leaveRequestId = insertResult?.leave_req_id;
+    const hasSufficientBalance = leaveCount >= totalDays;
+
+    // Create approval flow entries
+    await createApprovalFlowEntries(
+      leaveRequestId,
+      employee,
+      leaveType.name,
+      hasSufficientBalance
+    );
+
+    // Handle sick leave balance update
     let remainingLeave = 0;
     if (
       leaveCount >= totalDays &&
       leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
     ) {
       try {
-        const updatedBalance = await updateLeaveBalance(
+        remainingLeave = await updateLeaveBalance(
           emp_id,
           leaveType.leave_type_id,
           totalDays
         );
-        // console.log("Updated Leave Balance:", updatedBalance);
-
-        remainingLeave = updatedBalance;
       } catch (error) {
         console.error("Error updating leave balance:", error);
         return res
@@ -239,17 +379,16 @@ export const submitLeave = async (req, res) => {
       }
     }
 
-    const message =
-      leaveCount >= totalDays
-        ? leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
-          ? `${leaveType.name} leave approved and ${totalDays} days deducted from balance.`
-          : `${leaveType.name} leave request sent to manager and ${totalDays} days deducted from balance.`
-        : `${leaveType.name} leave balance insufficient. Leave request forwarded to Manager Approval -> Senior Manager.`;
+    // Generate response message
+    const message = generateResponseMessage(
+      leaveType.name,
+      totalDays,
+      hasSufficientBalance
+    );
 
     return res.status(200).send({ message, remainingLeave });
   } catch (err) {
     if (err.isJoi) {
-      // Handle Joi validation errors
       return res.status(400).json({ error: err.details[0].message });
     }
     console.error("Error processing leave request:", err);

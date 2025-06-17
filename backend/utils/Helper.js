@@ -124,6 +124,108 @@ export const insertLeaveRequest = async (
     throw new Error("Failed to insert leave request");
   }
 };
+export async function fetchHolidaysForDateRange(from_date, to_date) {
+  const fromYear = new Date(from_date).getFullYear();
+  const toYear = new Date(to_date).getFullYear();
+  const years = new Set();
+
+  for (let year = fromYear; year <= toYear; year++) {
+    years.add(year);
+  }
+
+  let allHolidays = [];
+  for (let year of years) {
+    const holidays = await fetchIndianHolidays(year);
+    const formattedHolidays = holidays.map(
+      (h) => new Date(h).toISOString().split("T")[0]
+    );
+    allHolidays.push(...formattedHolidays);
+  }
+
+  return allHolidays;
+}
+
+// Helper function to determine leave status
+export function getLeaveStatus(leaveTypeName) {
+  return leaveTypeName === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+    ? LeaveConstants.LEAVE_STATUS.APPROVED
+    : LeaveConstants.LEAVE_STATUS.PENDING;
+}
+
+// Helper function to create approval flow entries
+export async function createApprovalFlowEntries(
+  leaveRequestId,
+  employee,
+  leaveTypeName,
+  hasSufficientBalance
+) {
+  try {
+    // Skip approval flow for sick leave
+    if (leaveTypeName === LeaveConstants.LEAVE_TYPES.SICK_LEAVE) {
+      const approvalFlowEntry = ApprovalFlowRepo.create({
+        leaveRequest: leaveRequestId,
+        approver: employee.manager.emp_id,
+        status: LeaveConstants.LEAVE_STATUS.APPROVED,
+        remarks:
+          "auto approved your sick leave - your manager has been notified about your leave",
+      });
+      await ApprovalFlowRepo.save(approvalFlowEntry);
+      // console.log("sick leave approval entry done");
+      return;
+    }
+
+    if (hasSufficientBalance) {
+      // Single manager approval for sufficient balance
+      const approvalFlowEntry = ApprovalFlowRepo.create({
+        leaveRequest: leaveRequestId,
+        approver: employee.manager.emp_id,
+        status: LeaveConstants.LEAVE_STATUS.PENDING,
+        remarks: "Pending manager approval - sufficient balance",
+      });
+      await ApprovalFlowRepo.save(approvalFlowEntry);
+    } else {
+      // Manager approval entry for insufficient balance
+      if (employee.manager?.emp_id) {
+        const managerApprovalEntry = ApprovalFlowRepo.create({
+          leaveRequest: leaveRequestId,
+          approver: employee.manager.emp_id,
+          status: LeaveConstants.LEAVE_STATUS.PENDING,
+          remarks: "Pending manager approval - insufficient balance",
+        });
+        await ApprovalFlowRepo.save(managerApprovalEntry);
+      }
+
+      // Senior manager approval entry for insufficient balance
+      if (employee.manager?.manager?.emp_id) {
+        const seniorManagerApprovalEntry = ApprovalFlowRepo.create({
+          leaveRequest: leaveRequestId,
+          approver: employee.manager.manager.emp_id,
+          status: LeaveConstants.LEAVE_STATUS.PENDING_SENIOR_MANAGER,
+          remarks: "Pending senior manager approval - insufficient balance",
+        });
+        await ApprovalFlowRepo.save(seniorManagerApprovalEntry);
+      }
+    }
+  } catch (error) {
+    console.error("Error updating leave balance:", error);
+    throw new Error("Failed to submit leave request");
+  }
+}
+
+// Helper function to generate response message
+export function generateResponseMessage(
+  leaveTypeName,
+  totalDays,
+  hasSufficientBalance
+) {
+  if (hasSufficientBalance) {
+    return leaveTypeName === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+      ? `${leaveTypeName} leave approved and ${totalDays} days deducted from balance.`
+      : `${leaveTypeName} leave request sent to manager for ${totalDays} days.`;
+  } else {
+    return `${leaveTypeName} leave balance insufficient. Leave request forwarded to Manager Approval -> Senior Manager.`;
+  }
+}
 
 export const updateLeaveBalance = async (emp_id, leave_type_id, totalDays) => {
   try {

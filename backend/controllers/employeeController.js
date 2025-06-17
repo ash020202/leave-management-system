@@ -4,9 +4,12 @@ import { Employee } from "../models/Employees.js";
 import logger from "../utils/logger.js";
 import { getLeaveBalanceRepo } from "../repositories/LeaveBalanceRepo.js";
 import { EmployeeIDParams } from "../validators/common/EmployeeIDParams.js";
-
+import { redisConnection } from "../db/redis.js";
+import { Queue } from "bullmq";
 const getEmployeeRepo = AppDataSource.getRepository(Employee);
-
+const employeeQueue = new Queue("employee-bulk-upload", {
+  connection: redisConnection,
+});
 export const getAllEmployees = async (req, res) => {
   try {
     const employees = await getEmployeeRepo.find();
@@ -38,6 +41,20 @@ export const insertEmployees = async (req, res) => {
     return res.status(500).json({ message: "Error inserting employee" });
   }
 };
+
+export const bulkinsertEmp = async (req, res) => {
+  try {
+    const bulkData = req.body.employees;
+    await employeeQueue.add("bulkInsert", { data: bulkData }); // enqueue job
+    res.status(202).json({ message: "Upload queued for processing" });
+    return;
+  } catch (error) {
+    console.log("error adding job to worker", error);
+    res.status(500).json({ message: "error adding job to worker" });
+    return;
+  }
+};
+
 export const deleteEmployee = async (req, res) => {
   try {
     const { emp_id } = await EmployeeIDParams.validateAsync(req.params);
