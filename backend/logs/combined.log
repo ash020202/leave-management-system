@@ -2091,3 +2091,117 @@
 2025-06-17 10:07:03 [INFO] login success
 2025-06-17 10:07:37 [INFO]  DB connected successfully
 2025-06-17 10:07:37 [INFO] Server running on port 5000
+2025-06-17 10:13:55 [INFO]  DB connected successfully
+2025-06-17 10:13:55 [INFO] Server running on port 5000
+2025-06-17 12:32:06 [INFO]  DB connected successfully
+2025-06-17 12:32:06 [INFO] Server running on port 5000
+2025-06-17 12:32:37 [INFO]  DB connected successfully
+2025-06-17 12:32:37 [INFO] Server running on port 5000
+2025-06-17 12:33:51 [INFO]  DB connected successfully
+2025-06-17 12:33:51 [INFO] Server running on port 5000
+2025-06-17 12:34:57 [INFO]  DB connected successfully
+2025-06-17 12:34:57 [INFO] Server running on port 5000
+2025-06-17 12:36:44 [INFO]  DB connected successfully
+2025-06-17 12:36:44 [INFO] Server running on port 5000
+2025-06-17 12:41:49 [INFO]  DB connected successfully
+2025-06-17 12:41:49 [INFO] Server running on port 5000
+2025-06-17 12:42:02 [INFO]  DB connected successfully
+2025-06-17 12:42:02 [INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 3
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 4
+[INFO] leave-controller-submitLeave: Fetching leave type with id 4
+[ERROR] leave-controller-submitLeave: Invalid floater leave dates
+[INFO] leave-controller-submitLeave: Fetching employee with id 4
+[INFO] leave-controller-submitLeave: Fetching leave type with id 4
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-changeLeaveStatus: Processing approval for leave_req_id 72
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 4
+[INFO] leave-controller-submitLeave: Fetching leave type with id 4
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-submitLeave: Fetching employee with id 4
+[INFO] leave-controller-submitLeave: Fetching leave type with id 4
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 4
+[INFO] leave-controller-submitLeave: Fetching leave type with id 4
+[ERROR] leave-controller-submitLeave: Invalid floater leave dates
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching employee with id 4
+[INFO] leave-controller-submitLeave: Fetching leave type with id 4
+[ERROR] leave-controller-submitLeave: Error processing leave request: TypeError: Assignment to constant variable.
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching employee with id 4
+[INFO] leave-controller-submitLeave: Fetching leave type with id 4
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-changeLeaveStatus: Processing approval for leave_req_id 75
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-changeLeaveStatus: Deleting pending senior manager approval flow
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-cancelLeave: Attempting to cancel leave_req_id 73 for emp_id 4
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4

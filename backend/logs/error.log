@@ -183,3 +183,6 @@
     at async RdbmsSchemaBuilder.build (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:66:13)
     at async DataSource.synchronize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:211:9)
     at async DataSource.initialize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:156:17)
+[ERROR] leave-controller-submitLeave: Invalid floater leave dates
+[ERROR] leave-controller-submitLeave: Invalid floater leave dates
+[ERROR] leave-controller-submitLeave: Error processing leave request: TypeError: Assignment to constant variable.

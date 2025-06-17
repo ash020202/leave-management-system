@@ -13,10 +13,15 @@ const employeeQueue = new Queue("employee-bulk-upload", {
 export const getAllEmployees = async (req, res) => {
   try {
     const employees = await getEmployeeRepo.find();
-    logger.info("success fetching employees");
+    logger.info(
+      "employee-controller-getAllEmployees: success fetching employees"
+    );
     return res.status(200).json(employees);
   } catch (error) {
-    logger.error("Error fetching employees:", error);
+    logger.error(
+      "employee-controller-getAllEmployees: Error fetching employees: ",
+      error
+    );
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -34,10 +39,15 @@ export const insertEmployees = async (req, res) => {
       total_leave_balance
     );
 
-    logger.info("Employee inserted successfully");
+    logger.info(
+      "employee-controller-insertEmployees: Employee inserted successfully"
+    );
     return res.status(200).json(result);
   } catch (error) {
-    logger.error("Error in insert helper:", error);
+    logger.error(
+      "employee-controller-insertEmployees: Error in insert helper: ",
+      error
+    );
     return res.status(500).json({ message: "Error inserting employee" });
   }
 };
@@ -46,12 +56,16 @@ export const bulkinsertEmp = async (req, res) => {
   try {
     const bulkData = req.body.employees;
     await employeeQueue.add("bulkInsert", { data: bulkData }); // enqueue job
-    res.status(202).json({ message: "Upload queued for processing" });
-    return;
+    logger.info(
+      "employee-controller-bulkinsertEmp: Upload queued for processing"
+    );
+    return res.status(202).json({ message: "Upload queued for processing" });
   } catch (error) {
-    console.log("error adding job to worker", error);
-    res.status(500).json({ message: "error adding job to worker" });
-    return;
+    logger.error(
+      "employee-controller-bulkinsertEmp: error adding job to worker",
+      error
+    );
+    return res.status(500).json({ message: "error adding job to worker" });
   }
 };
 
@@ -60,16 +74,19 @@ export const deleteEmployee = async (req, res) => {
     const { emp_id } = await EmployeeIDParams.validateAsync(req.params);
     const deleteEmp = await getEmployeeRepo.delete({ emp_id });
     if (deleteEmp.affected === 0) {
+      logger.error("employee-controller-deleteEmployee: employee not found ");
       throw new Error("Employee not found");
     }
-    logger.info("delete employee success");
+    logger.info(
+      `employee-controller-deleteEmployee: delete employee ${emp_id} success`
+    );
     return res.status(200).json({ message: `deleted emp id: ${emp_id}` });
   } catch (error) {
     if (error.isJoi) {
       // Handle Joi validation errors
       return res.status(400).json({ error: error.details[0].message });
     }
-    logger.error("error in delete");
+    logger.error("employee-controller-deleteEmployee: error in delete", error);
     return res.status(500).json({ message: "error in delete" });
   }
 };
@@ -111,14 +128,19 @@ export const getUserLeaveBalance = async (req, res) => {
       sr_manager_name: employee.manager?.manager?.emp_name || "N/A",
       ...balances, // Include individual leave balances
     };
-
+    logger.info(
+      "employee-controller-getUserLeaveBalance: fetched user leave balance successfully"
+    );
     return res.status(200).json(response);
   } catch (error) {
     if (error.isJoi) {
       // Handle Joi validation errors
       return res.status(400).json({ error: error.details[0].message });
     }
-    console.error("Error fetching leave balance:", error);
+    logger.error(
+      "employee-controller-getUserLeaveBalance: unable to fetch user leave balance",
+      error
+    );
     return res.status(500).json({ message: "Failed to fetch leave balance" });
   }
 };

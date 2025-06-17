@@ -22,14 +22,11 @@ const port = 5000;
 AppDataSource.initialize()
   .then(() => {
     logger.info(" DB connected successfully");
-    console.log(" DB connected successfully");
 
     app.listen(port, () => {
       logger.info(`Server running on port ${port}`);
-      console.log(`Server running on port ${port}`);
     });
   })
   .catch((err) => {
     logger.error("Error during Data Source initialization", err);
-    console.error("Error during Data Source initialization", err);
   });

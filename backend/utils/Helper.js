@@ -5,6 +5,7 @@ import CryptoJS from "crypto-js";
 import { LeaveConstants } from "../constants/LeaveConstants.js";
 import { getLeavePolicyRepo } from "../repositories/LeavePolicyRepo.js";
 import { ApprovalFlowRepo } from "../repositories/ApprovalFlowRepo.js";
+import logger from "./logger.js";
 
 export const calculateWorkingDays = (
   from_date,
@@ -23,7 +24,7 @@ export const calculateWorkingDays = (
       .map((date) => new Date(date).toISOString().split("T")[0])
       .filter((d) =>
         leaveType === LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE
-          ? !floaterSet.has(d) // ❗ Ignore floater days from holidays for floater leave
+          ? !floaterSet.has(d) // Ignore floater days from holidays for floater leave
           : true
       )
   );
@@ -68,7 +69,7 @@ export const findEmpById = async (emp_id) => {
 
     return employee;
   } catch (error) {
-    console.error("Error fetching employee:", error);
+    logger.error("Helper-findEmpById-Error: error fetching employee:", error);
     throw new Error("Failed to fetch employee");
   }
 };
@@ -114,16 +115,18 @@ export const insertLeaveRequest = async (
     });
 
     const savedLeave = await getLeaveReqRepo.save(leave);
+    logger.info("Helper-insertLeaveRequest: leave inserted successfully");
     return {
       duplicate: false,
       leave_req_id: savedLeave.leave_req_id,
       message: "Leave request inserted successfully",
     };
   } catch (error) {
-    console.error("Insert Leave Error:", error);
+    logger.error("Insert Leave Error:", error);
     throw new Error("Failed to insert leave request");
   }
 };
+
 export async function fetchHolidaysForDateRange(from_date, to_date) {
   const fromYear = new Date(from_date).getFullYear();
   const toYear = new Date(to_date).getFullYear();
@@ -207,7 +210,10 @@ export async function createApprovalFlowEntries(
       }
     }
   } catch (error) {
-    console.error("Error updating leave balance:", error);
+    logger.error(
+      "Helper-createApprovalFlowEntries: Error updating leave balance:",
+      error
+    );
     throw new Error("Failed to submit leave request");
   }
 }
@@ -256,7 +262,10 @@ export const updateLeaveBalance = async (emp_id, leave_type_id, totalDays) => {
 
     return leaveBalance.balance; // Return the updated balance
   } catch (error) {
-    console.error("Error in updateLeaveBalance:", error);
+    logger.error(
+      "Helper-updateLeaveBalance: Error in updateLeaveBalance:",
+      error
+    );
     throw new Error("Failed to update leave balance");
   }
 };
@@ -289,7 +298,10 @@ export const getLeaveRequests = async (manager_id) => {
       created_at: lr.created_at,
     }));
   } catch (error) {
-    console.error("Error fetching leave requests:", error);
+    logger.error(
+      "Helper-getLeaveRequests: Error fetching leave requests:",
+      error
+    );
     throw new Error("Failed to fetch leave requests");
   }
 };
@@ -321,54 +333,66 @@ export const getEmpLeaveHistory = async (emp_id) => {
       approved_by: leave.manager.emp_name, // Include manager ID who approved the leave
     }));
   } catch (error) {
-    console.error("Error fetching leave history:", error);
+    logger.error(
+      "Helper-getEmpLeaveHistory: Error fetching leave history:",
+      error
+    );
     throw new Error("Failed to fetch leave history");
   }
 };
 
 export const getApprovedOrRejectedLeaves = async (manager_id) => {
-  const approvals = await ApprovalFlowRepo.find({
-    where: { approver: { emp_id: manager_id } },
-    relations: [
-      "leaveRequest",
-      "leaveRequest.employee",
-      "leaveRequest.manager",
-      "leaveRequest.leaveType",
-    ],
-    order: { created_at: "DESC" },
-  });
-  // console.log(approvals[0].leaveRequest.leaveType.name);
+  try {
+    const approvals = await ApprovalFlowRepo.find({
+      where: { approver: { emp_id: manager_id } },
+      relations: [
+        "leaveRequest",
+        "leaveRequest.employee",
+        "leaveRequest.manager",
+        "leaveRequest.leaveType",
+      ],
+      order: { created_at: "DESC" },
+    });
+    // console.log(approvals[0].leaveRequest.leaveType.name);
 
-  // Format or filter data as needed before returning
-  return approvals.map((approval) => ({
-    leave_req_id: approval.leaveRequest.leave_req_id,
-    leave_type: approval.leaveRequest.leaveType.name,
-    emp_name: approval.leaveRequest.employee.emp_name,
-    from_date: approval.leaveRequest.from_date,
-    to_date: approval.leaveRequest.to_date,
-    reason: approval.leaveRequest.reason,
-    status: approval.leaveRequest.status,
-    approval_status: approval.status,
-    approver_id: approval.leaveRequest.employee.emp_id,
-    approved_at: approval.created_at,
-    remarks: approval.remarks,
-  }));
+    // Format or filter data as needed before returning
+    return approvals.map((approval) => ({
+      leave_req_id: approval.leaveRequest.leave_req_id,
+      leave_type: approval.leaveRequest.leaveType.name,
+      emp_name: approval.leaveRequest.employee.emp_name,
+      from_date: approval.leaveRequest.from_date,
+      to_date: approval.leaveRequest.to_date,
+      reason: approval.leaveRequest.reason,
+      status: approval.leaveRequest.status,
+      approval_status: approval.status,
+      approver_id: approval.leaveRequest.employee.emp_id,
+      approved_at: approval.created_at,
+      remarks: approval.remarks,
+    }));
+  } catch (error) {
+    logger.error("Helper-getApprovedOrRejectedLeaves: error", error);
+    throw new Error("Helper-getApprovedOrRejectedLeaves-error");
+  }
 };
 
 export const getApprovalTrailForLeave = async (leave_req_id) => {
-  const trail = await ApprovalFlowRepo.find({
-    where: {
-      leaveRequest: { leave_req_id: leave_req_id },
-    },
-    relations: {
-      approver: true,
-    },
-    order: {
-      created_at: "ASC",
-    },
-  });
+  try {
+    const trail = await ApprovalFlowRepo.find({
+      where: {
+        leaveRequest: { leave_req_id: leave_req_id },
+      },
+      relations: {
+        approver: true,
+      },
+      order: {
+        created_at: "ASC",
+      },
+    });
 
-  return trail;
+    return trail;
+  } catch (error) {
+    logger.error("Helper-getApprovalTrailForLeave: error", error);
+  }
 };
 
 export const leaveReqApproval = async (
@@ -376,51 +400,59 @@ export const leaveReqApproval = async (
   newStatus,
   rejection_reason
 ) => {
-  const leaveReq = await getLeaveReqRepo.findOneBy({ leave_req_id });
-  if (!leaveReq) {
-    throw new Error("Leave request not found");
+  try {
+    const leaveReq = await getLeaveReqRepo.findOneBy({ leave_req_id });
+    if (!leaveReq) {
+      throw new Error("Leave request not found");
+    }
+    // console.log(leaveReq);
+
+    leaveReq.status = newStatus;
+    leaveReq.rejection_reason =
+      newStatus === "REJECTED" ? rejection_reason : null;
+
+    return await getLeaveReqRepo.save(leaveReq);
+  } catch (error) {
+    logger.error("Helper-leaveReqApproval: error", error);
   }
-  // console.log(leaveReq);
-
-  leaveReq.status = newStatus;
-  leaveReq.rejection_reason =
-    newStatus === "REJECTED" ? rejection_reason : null;
-
-  return await getLeaveReqRepo.save(leaveReq);
 };
 
 export const cancelLeaveHelper = async (leave_req_id, emp_id) => {
-  const leave = await getLeaveReqRepo.findOne({
-    where: { leave_req_id },
-    relations: ["employee", "leaveType"], // Include relations to fetch employee and leaveType
-  });
-  if (!leave) {
-    throw { code: 404, message: "Leave request not found" };
-  }
-  // console.log(leave.employee.emp_id, emp_id);
+  try {
+    const leave = await getLeaveReqRepo.findOne({
+      where: { leave_req_id },
+      relations: ["employee", "leaveType"], // Include relations to fetch employee and leaveType
+    });
+    if (!leave) {
+      throw { code: 404, message: "Leave request not found" };
+    }
+    // console.log(leave.employee.emp_id, emp_id);
 
-  if (leave.employee.emp_id !== parseInt(emp_id)) {
-    throw {
-      code: 403,
-      message: "You are not authorized to cancel this leave",
-    };
-  }
+    if (leave.employee.emp_id !== parseInt(emp_id)) {
+      throw {
+        code: 403,
+        message: "You are not authorized to cancel this leave",
+      };
+    }
 
-  await ApprovalFlowRepo.delete({
-    leaveRequest: { leave_req_id },
-  });
-  if (
-    leave.status === LeaveConstants.LEAVE_STATUS.PENDING ||
-    leave.status === LeaveConstants.LEAVE_STATUS.PENDING_SENIOR_MANAGER
-  ) {
-    leave.status = "CANCELLED";
-    await getLeaveReqRepo.save(leave);
-    return "Leave cancelled successfully";
-  } else {
-    throw {
-      code: 400,
-      message: "Only PENDING or APPROVED leaves can be cancelled",
-    };
+    await ApprovalFlowRepo.delete({
+      leaveRequest: { leave_req_id },
+    });
+    if (
+      leave.status === LeaveConstants.LEAVE_STATUS.PENDING ||
+      leave.status === LeaveConstants.LEAVE_STATUS.PENDING_SENIOR_MANAGER
+    ) {
+      leave.status = "CANCELLED";
+      await getLeaveReqRepo.save(leave);
+      return "Leave cancelled successfully";
+    } else {
+      throw {
+        code: 400,
+        message: "Only PENDING or APPROVED leaves can be cancelled",
+      };
+    }
+  } catch (error) {
+    logger.error("Helper-cancelLeaveHelper: error", error);
   }
 };
 
@@ -439,7 +471,10 @@ export const leaveBalanceHelper = async (emp_id) => {
 
     return balances;
   } catch (error) {
-    console.error("Error in leaveBalanceHelper:", error);
+    logger.error(
+      "Helper-leaveBalanceHelper: Error in leaveBalanceHelper:",
+      error
+    );
     throw new Error("Failed to fetch leave balances");
   }
 };
@@ -474,69 +509,74 @@ export const insertEmpHelper = async (
     const insertEmp = await getEmployeeRepo.save(employee);
     return { message: "Inserted successfully", employee: insertEmp };
   } catch (error) {
-    console.error("Error inserting employee:", error);
+    logger.error("Helper-insertEmpHelper: Error inserting employee:", error);
     throw new Error("Insert failed");
   }
 };
 
 //cron job helper
 export async function accumulateLeavesMonthly() {
-  const employees = await getEmployeeRepo.find();
+  try {
+    const employees = await getEmployeeRepo.find();
 
-  for (const emp of employees) {
-    const policies = await getLeavePolicyRepo.find({
-      where: { employee_type: emp.role },
-      relations: ["leaveType"],
-    });
-
-    let monthlyTotalAdd = 0;
-
-    for (const policy of policies) {
-      const existingBalance = await getLeaveBalanceRepo.findOne({
-        where: {
-          employee: { emp_id: emp.emp_id },
-          leaveType: { leave_type_id: policy.leaveType.leave_type_id },
-        },
-        relations: ["employee", "leaveType"],
+    for (const emp of employees) {
+      const policies = await getLeavePolicyRepo.find({
+        where: { employee_type: emp.role },
+        relations: ["leaveType"],
       });
 
-      if (existingBalance) {
-        const newBalance = Math.min(
-          existingBalance.balance + policy.accrual_per_month,
-          policy.max_days_per_year
-        );
-        monthlyTotalAdd += newBalance - existingBalance.balance;
+      let monthlyTotalAdd = 0;
 
-        existingBalance.balance = newBalance;
-        await getLeaveBalanceRepo.save(existingBalance);
-      } else {
-        const initialBalance = Math.min(
-          policy.accrual_per_month,
-          policy.max_days_per_year
-        );
-
-        monthlyTotalAdd += initialBalance;
-
-        await getLeaveBalanceRepo.save({
-          employee: emp,
-          leaveType: policy.leaveType,
-          balance: initialBalance,
+      for (const policy of policies) {
+        const existingBalance = await getLeaveBalanceRepo.findOne({
+          where: {
+            employee: { emp_id: emp.emp_id },
+            leaveType: { leave_type_id: policy.leaveType.leave_type_id },
+          },
+          relations: ["employee", "leaveType"],
         });
+
+        if (existingBalance) {
+          const newBalance = Math.min(
+            existingBalance.balance + policy.accrual_per_month,
+            policy.max_days_per_year
+          );
+          monthlyTotalAdd += newBalance - existingBalance.balance;
+
+          existingBalance.balance = newBalance;
+          await getLeaveBalanceRepo.save(existingBalance);
+        } else {
+          const initialBalance = Math.min(
+            policy.accrual_per_month,
+            policy.max_days_per_year
+          );
+
+          monthlyTotalAdd += initialBalance;
+
+          await getLeaveBalanceRepo.save({
+            employee: emp,
+            leaveType: policy.leaveType,
+            balance: initialBalance,
+          });
+        }
       }
+
+      // Add only if monthlyTotalAdd > 0
+      if (monthlyTotalAdd > 0) {
+        emp.total_leave_balance += monthlyTotalAdd;
+        await getEmployeeRepo.save(emp);
+      }
+
+      console.log(
+        `Updated total leave for ${emp.role} (ID: ${emp.emp_id}): +${monthlyTotalAdd}`
+      );
     }
 
-    // Add only if monthlyTotalAdd > 0
-    if (monthlyTotalAdd > 0) {
-      emp.total_leave_balance += monthlyTotalAdd;
-      await getEmployeeRepo.save(emp);
-    }
-
-    console.log(
-      `Updated total leave for ${emp.role} (ID: ${emp.emp_id}): +${monthlyTotalAdd}`
-    );
+    console.log("Leave accumulation complete.");
+  } catch (error) {
+    logger.error("Helper-accumulateLeavesMonthly: error", error);
+    throw error;
   }
-
-  console.log("Leave accumulation complete.");
 }
 
 export async function carryForwardLeaves() {
@@ -586,14 +626,17 @@ export async function carryForwardLeaves() {
         { total_leave_balance: totalBalance }
       );
 
-      console.log(
+      logger.info(
         `Updated total_leave_balance to ${totalBalance} for employee ${employeeId}`
       );
     }
 
-    console.log("Leave carryforward job completed successfully.");
+    logger.info("Leave carryforward job completed successfully.");
   } catch (error) {
-    console.error("Error in carryForwardLeaves:", error);
+    logger.error(
+      "Helper-carryForwardLeaves: Error in carryForwardLeaves:",
+      error
+    );
     throw error; // Re-throw to handle at higher level if needed
   }
 }

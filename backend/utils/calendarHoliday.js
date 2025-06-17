@@ -1,3 +1,5 @@
+import logger from "./logger.js";
+
 export const fetchIndianHolidays = async (year) => {
   const API_KEY = process.env.CALENDARIFIC_API_KEY;
   const url = `https://calendarific.com/api/v2/holidays?api_key=${API_KEY}&country=IN&year=${year}`;
@@ -15,7 +17,10 @@ export const fetchIndianHolidays = async (year) => {
       (holiday) => new Date(holiday.date.iso).toISOString().split("T")[0]
     );
   } catch (error) {
-    console.error("Failed to fetch holidays:", error);
+    logger.error(
+      "calendarHoliday-fetchIndianHolidays: Failed to fetch holidays:",
+      error
+    );
     return [];
   }
 };
@@ -33,7 +38,10 @@ export const fetchPublicHolidays = async (year) => {
 
     return data;
   } catch (error) {
-    console.error("Failed to fetch public holidays:", error);
+    logger.error(
+      "calendarHoliday-fetchPublicHolidays: Failed to fetch public holidays:",
+      error
+    );
     return [];
   }
 };

@@ -2,12 +2,9 @@ import { createLogger, format, transports } from "winston";
 import path from "path";
 
 // Define log format
-const logFormat = format.combine(
-  format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-  format.printf(({ timestamp, level, message, stack }) => {
-    return `${timestamp} [${level.toUpperCase()}] ${stack || message}`;
-  })
-);
+const logFormat = format.printf(({ level, message, stack }) => {
+  return `[${level.toUpperCase()}] ${stack || message}`;
+});
 
 // Create logger instance
 const logger = createLogger({
@@ -20,6 +17,13 @@ const logger = createLogger({
     }),
     new transports.File({
       filename: path.join("logs", "combined.log"),
+    }),
+    new transports.Console({
+      // Console log always enabled
+      format: format.combine(
+        format.colorize(), // adds colors
+        format.simple() // simpler output for console
+      ),
     }),
   ],
 });

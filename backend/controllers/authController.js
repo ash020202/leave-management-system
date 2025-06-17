@@ -28,15 +28,15 @@ export const signup = async (req, res) => {
       employee,
     });
     await getAuthRepo.save(newUser);
-    logger.info("sign up success");
-    res.status(201).json({ message: "Signup successful" });
+    logger.info("signup-controller: sign up success");
+    return res.status(201).json({ message: "Signup successful" });
   } catch (err) {
     if (err.isJoi) {
       // Handle Joi validation errors
       return res.status(400).json({ error: err.details[0].message });
     }
-    logger.error(err);
-    res.status(500).json({ message: "Signup failed" });
+    logger.error("signup-controller: ", err);
+    return res.status(500).json({ message: "Signup failed" });
   }
 };
 
@@ -50,7 +50,7 @@ export const login = async (req, res) => {
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      logger.warn("Invalid credentials attempted");
+      logger.warn("login-controller: Invalid credentials attempted");
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
@@ -65,13 +65,13 @@ export const login = async (req, res) => {
     );
 
     res.json({ token });
-    logger.info("login success");
+    return logger.info("login-controller: login success");
   } catch (err) {
     if (err.isJoi) {
       // Handle Joi validation errors
       return res.status(400).json({ error: error.details[0].message });
     }
-    logger.error(err);
-    res.status(500).json({ message: "Login failed" });
+    logger.error("login-controller: ", err);
+    return res.status(500).json({ message: "Login failed" });
   }
 };
