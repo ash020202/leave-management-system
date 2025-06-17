@@ -587,8 +587,30 @@ export const changeLeaveStatus = async (req, res) => {
         leaveRequest.status = LeaveConstants.LEAVE_STATUS.APPROVED;
         leaveRequest.rejection_reason = null;
 
-        leaveBalance.balance -= leaveRequest.num_of_days;
-        leaveRequest.employee.total_leave_balance -= leaveRequest.num_of_days;
+        // leaveBalance.balance -= leaveRequest.num_of_days;
+        // leaveRequest.employee.total_leave_balance -= leaveRequest.num_of_days;
+
+        const remainingBalance =
+          leaveBalance.balance - leaveRequest.num_of_days;
+        leaveBalance.balance = Math.max(0, remainingBalance);
+
+        // 🔁 Recalculate total leave balance from all leave types for this employee
+        const allLeaveBalances = await getLeaveBalanceRepo.find({
+          where: { employee: { emp_id: leaveRequest.employee.emp_id } },
+          relations: ["leaveType"],
+        });
+
+        // console.log("all balance ", allLeaveBalances);
+
+        const newTotalLeaveBalance = allLeaveBalances.reduce((sum, lb) => {
+          const isCurrentLeaveType =
+            lb.leaveType?.leave_type_id ===
+            leaveRequest.leaveType?.leave_type_id;
+          return sum + (isCurrentLeaveType ? leaveBalance.balance : lb.balance);
+        }, 0);
+        // console.log("new total balance", newTotalLeaveBalance);
+
+        leaveRequest.employee.total_leave_balance = newTotalLeaveBalance;
 
         approvalFlow.status =
           LeaveConstants.LEAVE_STATUS.APPROVED_SENIOR_MANAGER;
