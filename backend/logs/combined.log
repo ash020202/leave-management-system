@@ -2205,3 +2205,368 @@
 [INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
 [INFO] leave-controller-cancelLeave: Attempting to cancel leave_req_id 73 for emp_id 4
 [INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[WARN] login-controller: Invalid credentials attempted
+[WARN] login-controller: Invalid credentials attempted
+[WARN] login-controller: Invalid credentials attempted
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 1
+[ERROR] TypeError: fetch failed
+    at Object.fetch (node:internal/deps/undici/undici:11730:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async fetchPublicHolidays (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/utils/calendarHoliday.js:33:22)
+    at async getPublicHolidays (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/leaveController.js:43:22)
+[INFO] leave-controller-getPublicHolidays: No holidays found for year 2025
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 1
+[INFO] leave-controller-submitLeave: Fetching leave type with id 4
+[ERROR] leave-controller-submitLeave: Invalid floater leave dates
+[INFO] leave-controller-getPublicHolidays: Successfully fetched holidays for year 2025
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 1
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 3
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 3
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 3
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[ERROR] leave-controller-submitLeave: Duplicate leave request: Leave already exists for the selected date range (2025-06-20 to 2025-06-20).
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[ERROR] leave-controller-submitLeave: Leave cannot be applied for weekends or public holidays only
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 3
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 3
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[ERROR] leave-controller-submitLeave: Duplicate leave request: Leave already exists for the selected date range (2025-06-24 to 2025-06-24).
+[INFO] leave-controller-submitLeave: Fetching employee with id 3
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 3
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 3
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-changeLeaveStatus: Processing approval for leave_req_id 90
+[ERROR] leave-controller-changeLeaveStatus: Error processing leave status change: QueryFailedError: invalid input syntax for type integer: "19.5"
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[ERROR] QueryFailedError: column "total_leave_balance" of relation "employees" contains null values
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async PostgresQueryRunner.executeQueries (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-runner\BaseQueryRunner.js:425:13)
+    at async PostgresQueryRunner.addColumn (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:695:9)
+    at async PostgresQueryRunner.changeColumn (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:754:13)
+    at async PostgresQueryRunner.changeColumns (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:1107:13)
+    at async RdbmsSchemaBuilder.updateExistColumns (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:637:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:171:9)
+    at async RdbmsSchemaBuilder.build (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:66:13)
+    at async DataSource.synchronize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:211:9)
+[ERROR] QueryFailedError: column "total_leave_balance" of relation "employees" contains null values
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async PostgresQueryRunner.executeQueries (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-runner\BaseQueryRunner.js:425:13)
+    at async PostgresQueryRunner.addColumn (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:695:9)
+    at async PostgresQueryRunner.addColumns (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:704:13)
+    at async RdbmsSchemaBuilder.addNewColumns (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:570:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:169:9)
+    at async RdbmsSchemaBuilder.build (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:66:13)
+    at async DataSource.synchronize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:211:9)
+    at async DataSource.initialize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:156:17)
+[ERROR] QueryFailedError: column "balance" of relation "leave_balances" contains null values
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async PostgresQueryRunner.executeQueries (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-runner\BaseQueryRunner.js:425:13)
+    at async PostgresQueryRunner.addColumn (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:695:9)
+    at async PostgresQueryRunner.changeColumn (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:754:13)
+    at async PostgresQueryRunner.changeColumns (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:1107:13)
+    at async RdbmsSchemaBuilder.updateExistColumns (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:637:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:171:9)
+    at async RdbmsSchemaBuilder.build (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:66:13)
+    at async DataSource.synchronize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:211:9)
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 3
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-changeLeaveStatus: Processing approval for leave_req_id 91
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[ERROR] leave-controller-submitLeave: Duplicate leave request: Leave already exists for the selected date range (2025-07-16 to 2025-07-17).
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[ERROR] leave-controller-submitLeave: Error processing leave request: ReferenceError: Cannot access 'hasSufficientBalance' before initialization
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays

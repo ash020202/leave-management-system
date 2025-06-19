@@ -84,16 +84,17 @@ export const getFloaterHolidays = async (req, res) => {
 export const submitLeave = async (req, res) => {
   try {
     // Validate request body
-    const { emp_id, leave_type_id, from_date, to_date, reason } =
+    const { emp_id, leave_type_id, from_date, to_date, reason, halfDay } =
       await LeaveReqSchema.validateAsync(req.body, {
         abortEarly: false,
         convert: false,
       });
 
-    // Fetch employee and leave type
-    logger.info(
-      `leave-controller-submitLeave: Fetching employee with id ${emp_id}`
-    );
+    if (halfDay == "full_day")
+      // Fetch employee and leave type
+      logger.info(
+        `leave-controller-submitLeave: Fetching employee with id ${emp_id}`
+      );
     const employee = await findEmpById(emp_id);
     if (!employee) {
       logger.error(
@@ -144,6 +145,19 @@ export const submitLeave = async (req, res) => {
       leaveType.name
     );
 
+    // if(from_date == to_date && halfDay ==["first_half","second_half"] && leaveType.name == LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE){
+    //   return res.status(400).json({
+    //     message: "Floater can be Applied for full day"
+    //   })
+    // }
+
+    // if(from_date == to_date && halfDay !="none" && leaveType.name != LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE){
+    //   totalDays = 0.5;
+    // }
+    if (from_date == to_date && halfDay != "none" && halfDay !== "full_day") {
+      totalDays = 0.5;
+    }
+
     if (leaveType.name === LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE) {
       totalDays = 1;
     }
@@ -174,6 +188,41 @@ export const submitLeave = async (req, res) => {
       });
     }
 
+    const hasSufficientBalance = leaveCount >= totalDays;
+    // Handle sick leave balance update
+    let remainingLeave = 0;
+    if (
+      hasSufficientBalance &&
+      leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+    ) {
+      try {
+        remainingLeave = await updateLeaveBalance(
+          emp_id,
+          leaveType.leave_type_id,
+          totalDays
+        );
+        logger.info(
+          "leave-controller-submitLeave: Updated leave balance success: ",
+          "hasSufficientBalance: ",
+          hasSufficientBalance,
+          "leaveType.name: ",
+          leaveType.name
+        );
+      } catch (error) {
+        logger.error(
+          `leave-controller-submitLeave: Error updating leave balance: ${error}`
+        );
+        console.error("Error updating leave balance:", error);
+        return res
+          .status(500)
+          .send({ error: "Failed to update leave balance" });
+      }
+    } else {
+      return res.status(400).send({
+        error:
+          "Sorry You Have Low balance, Apply sick leave with available balance or Contact your manager for long sick leave",
+      });
+    }
     // Insert leave request
     const insertResult = await insertLeaveRequest(
       emp_id,
@@ -183,7 +232,8 @@ export const submitLeave = async (req, res) => {
       reason,
       leaveStatus,
       assignedManagerId,
-      totalDays
+      totalDays,
+      halfDay
     );
 
     // Handle duplicate leave request
@@ -198,7 +248,6 @@ export const submitLeave = async (req, res) => {
     }
 
     const leaveRequestId = insertResult?.leave_req_id;
-    const hasSufficientBalance = leaveCount >= totalDays;
 
     // Create approval flow entries
     await createApprovalFlowEntries(
@@ -208,33 +257,11 @@ export const submitLeave = async (req, res) => {
       hasSufficientBalance
     );
 
-    // Handle sick leave balance update
-    let remainingLeave = 0;
-    if (
-      leaveCount >= totalDays &&
-      leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
-    ) {
-      try {
-        remainingLeave = await updateLeaveBalance(
-          emp_id,
-          leaveType.leave_type_id,
-          totalDays
-        );
-      } catch (error) {
-        logger.error(
-          `leave-controller-submitLeave: Error updating leave balance: ${error}`
-        );
-        console.error("Error updating leave balance:", error);
-        return res
-          .status(500)
-          .send({ error: "Failed to update leave balance" });
-      }
-    }
-
     // Generate response message
     const message = generateResponseMessage(
       leaveType.name,
       totalDays,
+      halfDay,
       hasSufficientBalance
     );
 

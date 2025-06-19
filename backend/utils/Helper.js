@@ -82,7 +82,8 @@ export const insertLeaveRequest = async (
   reason,
   leaveStatus,
   assignedManagerId,
-  totalDays
+  totalDays,
+  halfDay
 ) => {
   try {
     const checkDuplicate = await getLeaveReqRepo.findOneBy({
@@ -112,6 +113,7 @@ export const insertLeaveRequest = async (
       status: leaveStatus,
       num_of_days: totalDays,
       manager_id: assignedManagerId, // Save the assigned manager ID
+      half_day: halfDay,
     });
 
     const savedLeave = await getLeaveReqRepo.save(leave);
@@ -222,12 +224,21 @@ export async function createApprovalFlowEntries(
 export function generateResponseMessage(
   leaveTypeName,
   totalDays,
+  halfDay,
   hasSufficientBalance
 ) {
+  let totalDayValue = "";
+  if (totalDays < 1) {
+    totalDayValue = halfDay.replace("_", " ");
+  }
   if (hasSufficientBalance) {
     return leaveTypeName === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
-      ? `${leaveTypeName} leave approved and ${totalDays} days deducted from balance.`
-      : `${leaveTypeName} leave request sent to manager for ${totalDays} days.`;
+      ? `${leaveTypeName} leave approved and ${
+          totalDays < 1 ? totalDayValue : totalDays
+        } days deducted from balance.`
+      : `${leaveTypeName} leave request sent to manager for ${
+          totalDays < 1 ? totalDayValue : totalDays
+        } days.`;
   } else {
     return `${leaveTypeName} leave balance insufficient. Leave request forwarded to Manager Approval -> Senior Manager.`;
   }
@@ -383,6 +394,7 @@ export const getApprovalTrailForLeave = async (leave_req_id) => {
       },
       relations: {
         approver: true,
+        leaveRequest: true,
       },
       order: {
         created_at: "ASC",

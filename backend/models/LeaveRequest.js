@@ -37,7 +37,7 @@ export const LeaveRequest = new EntitySchema({
       nullable: true,
     },
     num_of_days: {
-      type: "int",
+      type: "float",
     },
     created_at: {
       type: "timestamp",
@@ -45,6 +45,12 @@ export const LeaveRequest = new EntitySchema({
     },
     manager_id: {
       type: "int", // Add this column to store the assigned manager's ID
+    },
+    half_day: {
+      type: "varchar",
+      nullable: true,
+      default: "none",
+      enum: ["none", "full_day", "first_half", "second_half"],
     },
   },
   relations: {

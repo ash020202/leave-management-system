@@ -1,21 +1,21 @@
 import { Worker } from "bullmq";
 import dotenv from "dotenv";
-import { AppDataSource } from "./db/data-source.js";
+// import { AppDataSource } from "./db/data-source.js";
 import { getEmployeeRepo } from "./repositories/EmployeeRepo.js";
 import { redisConnection } from "./db/redis.js";
 import logger from "./utils/logger.js";
 dotenv.config();
 
-try {
-  await AppDataSource.initialize()
-    .then(() => logger.info("DB connected in worker"))
-    .catch((err) => {
-      logger.error("DB init error in worker", err);
-      process.exit(1);
-    });
-} catch (error) {
-  logger.error(error);
-}
+// try {
+//   await AppDataSource.initialize()
+//     .then(() => logger.info("DB connected in worker"))
+//     .catch((err) => {
+//       logger.error("DB init error in worker", err);
+//       process.exit(1);
+//     });
+// } catch (error) {
+//   logger.error(error);
+// }
 
 const worker = new Worker(
   "employee-bulk-upload",

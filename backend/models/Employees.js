@@ -19,7 +19,7 @@ export const Employee = new EntitySchema({
       type: "varchar",
     },
     total_leave_balance: {
-      type: "int",
+      type: "float",
     },
   },
   relations: {

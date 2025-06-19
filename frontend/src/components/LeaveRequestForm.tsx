@@ -691,12 +691,24 @@ const formSchema = z
       .string()
       .min(5, { message: "Reason must be at least 5 characters" })
       .max(300, { message: "Reason must not exceed 300 characters" }),
+    halfDay: z
+      .enum(["none", "full_day", "first_half", "second_half"])
+      .optional(),
   })
+
   .refine((data) => data.to_date >= data.from_date, {
     message: "End date must be after or equal to start date",
     path: ["to_date"],
-  });
-
+  })
+  .refine(
+    (data) =>
+      data.from_date.getTime() !== data.to_date.getTime() ||
+      data.halfDay !== undefined,
+    {
+      message: "Please select half-day option",
+      path: ["halfDay"],
+    }
+  );
 type FormValues = z.infer<typeof formSchema>;
 
 interface LeaveRequestFormProps {
@@ -945,17 +957,38 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
         toast.error("Invalid leave type selected");
         return;
       }
-      console.log("Submitting leave request with values:", values);
+
       console.log("Selected leave type:", selectedLeaveType.id);
+      let leaveData;
+      let halfDay = values.halfDay;
 
-      const leaveData = {
-        emp_id: user.empId,
-        leave_type_id: selectedLeaveType.id,
-        from_date: format(values.from_date, "yyyy-MM-dd"),
-        to_date: format(values.to_date, "yyyy-MM-dd"),
-        reason: values.reason,
-      };
-
+      // Force full day if leave type is floater
+      if (
+        values.leave_type === "floater_leave" ||
+        values.from_date.toDateString() != values.to_date.toDateString()
+      ) {
+        halfDay = "none";
+      }
+      if (values.from_date.toDateString() === values.to_date.toDateString()) {
+        leaveData = {
+          emp_id: user.empId,
+          leave_type_id: selectedLeaveType.id,
+          from_date: format(values.from_date, "yyyy-MM-dd"),
+          to_date: format(values.to_date, "yyyy-MM-dd"),
+          reason: values.reason,
+          halfDay,
+        };
+      } else {
+        leaveData = {
+          emp_id: user.empId,
+          leave_type_id: selectedLeaveType.id,
+          from_date: format(values.from_date, "yyyy-MM-dd"),
+          to_date: format(values.to_date, "yyyy-MM-dd"),
+          reason: values.reason,
+          halfDay,
+        };
+      }
+      console.log("Submitting leave request with values:", leaveData);
       await requestLeave(leaveData);
       form.reset();
       // toast.info(res);
@@ -1293,6 +1326,40 @@ const LeaveRequestForm = ({ onSuccess }: LeaveRequestFormProps) => {
                 render={() => <FormMessage />}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="halfDay"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Half Day Option</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={
+                      isSubmitting ||
+                      !form.watch("from_date") ||
+                      !form.watch("to_date") ||
+                      form.watch("leave_type") === "floater_leave" ||
+                      form.watch("from_date").toDateString() !==
+                        form.watch("to_date").toDateString()
+                    }
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Half Day Option" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="full_day">Full Day</SelectItem>
+                      <SelectItem value="first_half">First Half</SelectItem>
+                      <SelectItem value="second_half">Second Half</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

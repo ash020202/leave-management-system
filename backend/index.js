@@ -17,7 +17,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/employees", empRoute);
 app.use("/api/leave", leaveRoute);
 
-const port = 5000;
+const port = process.env.PORT;
 
 AppDataSource.initialize()
   .then(() => {

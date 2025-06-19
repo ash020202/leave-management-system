@@ -12,7 +12,7 @@ export const LeaveBalance = new EntitySchema({
       generated: true,
     },
     balance: {
-      type: "int",
+      type: "float",
     },
   },
   relations: {
