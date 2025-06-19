@@ -310,13 +310,6 @@ const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
               Please provide a reason for rejecting this leave request.
             </DialogDescription>
           </DialogHeader>
-          {/* <Textarea
-            placeholder="Enter reason for rejection"
-            value={rejectionReason}
-            onChange={(e) => setRejectionReason(e.target.value)}
-            className="resize-none"
-            disabled={isProcessing}
-          /> */}
           <Textarea
             placeholder="Enter reason for rejection"
             value={rejectionReason}

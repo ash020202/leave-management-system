@@ -18,8 +18,10 @@ export const signup = async (req, res) => {
     );
     const employee = await getEmployeeRepo.findOneBy({ emp_id });
     if (!employee) {
-      logger.error("Manager not found for emp_id: " + emp_id);
-      return res.status(404).json({ message: "Manager not found" });
+      logger.error("Emp not found for emp_id: " + emp_id);
+      return res
+        .status(404)
+        .json({ message: "Employee not found. Please Contact Admin" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = getAuthRepo.create({
