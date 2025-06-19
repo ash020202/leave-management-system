@@ -90,11 +90,11 @@ export const submitLeave = async (req, res) => {
         convert: false,
       });
 
-    if (halfDay == "full_day")
-      // Fetch employee and leave type
-      logger.info(
-        `leave-controller-submitLeave: Fetching employee with id ${emp_id}`
-      );
+    // if (halfDay == "full_day")
+    // Fetch employee and leave type
+    logger.info(
+      `leave-controller-submitLeave: Fetching employee with id ${emp_id}`
+    );
     const employee = await findEmpById(emp_id);
     if (!employee) {
       logger.error(
@@ -113,6 +113,7 @@ export const submitLeave = async (req, res) => {
       );
       return res.status(404).json({ error: "Leave type not found" });
     }
+    // console.log(leaveType.name);
 
     // Validate floater leave dates
     if (leaveType.name === LeaveConstants.LEAVE_TYPES.FLOATER_LEAVE) {
@@ -217,7 +218,10 @@ export const submitLeave = async (req, res) => {
           .status(500)
           .send({ error: "Failed to update leave balance" });
       }
-    } else {
+    } else if (
+      !hasSufficientBalance &&
+      leaveType.name === LeaveConstants.LEAVE_TYPES.SICK_LEAVE
+    ) {
       return res.status(400).send({
         error:
           "Sorry You Have Low balance, Apply sick leave with available balance or Contact your manager for long sick leave",

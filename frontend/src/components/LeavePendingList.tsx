@@ -57,7 +57,14 @@ const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState("");
 
+  const MAX_REASON_LENGTH = 500;
+  const MIN_REASON_LENGTH = 20;
+
+  const isReasonValid =
+    rejectionReason.trim().length >= MIN_REASON_LENGTH &&
+    rejectionReason.trim().length <= MAX_REASON_LENGTH;
   const user = getCurrentUser();
   console.log("user", typeof user.empId);
 
@@ -303,13 +310,35 @@ const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
               Please provide a reason for rejecting this leave request.
             </DialogDescription>
           </DialogHeader>
-          <Textarea
+          {/* <Textarea
             placeholder="Enter reason for rejection"
             value={rejectionReason}
             onChange={(e) => setRejectionReason(e.target.value)}
             className="resize-none"
             disabled={isProcessing}
+          /> */}
+          <Textarea
+            placeholder="Enter reason for rejection"
+            value={rejectionReason}
+            onChange={(e) => {
+              const value = e.target.value;
+              setRejectionReason(value);
+
+              const trimmedLength = value.trim().length;
+
+              if (trimmedLength < MIN_REASON_LENGTH) {
+                setError("Rejection reason must be at least 20 characters.");
+              } else if (trimmedLength > MAX_REASON_LENGTH) {
+                setError("Rejection reason cannot exceed 500 characters.");
+              } else {
+                setError("");
+              }
+            }}
+            className="resize-none"
+            disabled={isProcessing}
           />
+
+          {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
           <DialogFooter>
             <Button
               variant="outline"
@@ -321,7 +350,7 @@ const LeavePendingList = ({ onUpdate }: LeaveApprovalListProps) => {
             <Button
               variant="destructive"
               onClick={handleReject}
-              disabled={isProcessing || !rejectionReason.trim()}
+              disabled={isProcessing || !isReasonValid}
             >
               {isProcessing ? "Processing..." : "Reject Leave"}
             </Button>

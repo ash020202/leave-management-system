@@ -2570,3 +2570,57 @@
 [INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
 [INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
 [INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 3
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] login-controller: login success
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching employee with id 3
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching employee with id 3
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-submitLeave: Fetching employee with id 3
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 3
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 3
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2

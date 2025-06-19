@@ -689,8 +689,8 @@ const formSchema = z
     }),
     reason: z
       .string()
-      .min(5, { message: "Reason must be at least 5 characters" })
-      .max(300, { message: "Reason must not exceed 300 characters" }),
+      .min(20, { message: "Reason must be at least 20 characters" })
+      .max(250, { message: "Reason must not exceed 250 characters" }),
     halfDay: z
       .enum(["none", "full_day", "first_half", "second_half"])
       .optional(),

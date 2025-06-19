@@ -19,7 +19,8 @@ export const LeaveRequest = new EntitySchema({
       type: "date",
     },
     reason: {
-      type: "text",
+      type: "varchar",
+      length: 250,
     },
     status: {
       type: "varchar",
@@ -33,8 +34,9 @@ export const LeaveRequest = new EntitySchema({
       ],
     },
     rejection_reason: {
-      type: "text",
+      type: "varchar",
       nullable: true,
+      length: 500,
     },
     num_of_days: {
       type: "float",
