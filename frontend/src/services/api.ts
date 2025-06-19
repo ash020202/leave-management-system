@@ -61,19 +61,14 @@ export interface LeaveBalance {
 }
 
 // Auth Functions
-export const signUp = async (
-  email: string,
-  password: string,
-  emp_id: string,
-  name: string
-) => {
+export const signUp = async (email: string, password: string) => {
   try {
     const response = await fetch(`${API_URL}/auth/sign-up`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password, emp_id, name }),
+      body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();

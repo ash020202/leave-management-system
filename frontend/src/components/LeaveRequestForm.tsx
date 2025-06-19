@@ -700,15 +700,13 @@ const formSchema = z
     message: "End date must be after or equal to start date",
     path: ["to_date"],
   })
-  .refine(
-    (data) =>
-      data.from_date.getTime() !== data.to_date.getTime() ||
-      data.halfDay !== undefined,
-    {
-      message: "Please select half-day option",
-      path: ["halfDay"],
-    }
-  );
+  .refine((data) => {
+    const isSameDay = data.from_date.getTime() === data.to_date.getTime();
+    const isFloater = data.leave_type === "floater_leave";
+
+    //  Require halfDay only for same-day non-floater leaves
+    return !isSameDay || isFloater || data.halfDay !== undefined;
+  });
 type FormValues = z.infer<typeof formSchema>;
 
 interface LeaveRequestFormProps {

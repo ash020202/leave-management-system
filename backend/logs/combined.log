@@ -2681,3 +2681,238 @@
 [INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 3
 [INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
 [INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[ERROR] EntityPropertyNotFoundError: Property "email" was not found in "Employee". Make sure your query is correct.
+    at SelectQueryBuilder.buildWhere (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\SelectQueryBuilder.js:2471:27)
+    at SelectQueryBuilder.applyFindOptions (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\SelectQueryBuilder.js:1775:40)
+    at SelectQueryBuilder.setFindOptions (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-builder\SelectQueryBuilder.js:71:14)
+    at EntityManager.findOneBy (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\entity-manager\EntityManager.js:621:14)
+    at Repository.findOneBy (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\repository\Repository.js:262:29)
+    at signup (file:///C:/Users/VimalkanthPadmapriya/Desktop/vk/leave-management-system/backend/controllers/authController.js:17:44)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[ERROR] DataTypeNotSupportedError: Data type "string" in "Employee.email" is not supported by "postgres" database.
+    at C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataValidator.js:90:27
+    at Array.forEach (<anonymous>)
+    at EntityMetadataValidator.validate (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataValidator.js:86:18)
+    at C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataValidator.js:38:58
+    at Array.forEach (<anonymous>)
+    at EntityMetadataValidator.validateMany (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\metadata-builder\EntityMetadataValidator.js:38:25)
+    at DataSource.buildMetadatas (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:477:33)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async DataSource.initialize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:144:13)
+[ERROR] QueryFailedError: column "email" of relation "employees" contains null values
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async PostgresQueryRunner.executeQueries (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-runner\BaseQueryRunner.js:425:13)
+    at async PostgresQueryRunner.addColumn (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:695:9)
+    at async PostgresQueryRunner.addColumns (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:704:13)
+    at async RdbmsSchemaBuilder.addNewColumns (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:570:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:169:9)
+    at async RdbmsSchemaBuilder.build (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:66:13)
+    at async DataSource.synchronize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:211:9)
+    at async DataSource.initialize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:156:17)
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[ERROR] QueryFailedError: column "email" of relation "employees" contains null values
+    at PostgresQueryRunner.query (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:216:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async PostgresQueryRunner.executeQueries (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\query-runner\BaseQueryRunner.js:425:13)
+    at async PostgresQueryRunner.addColumn (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:695:9)
+    at async PostgresQueryRunner.changeColumn (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:754:13)
+    at async PostgresQueryRunner.changeColumns (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\driver\postgres\PostgresQueryRunner.js:1107:13)
+    at async RdbmsSchemaBuilder.updateExistColumns (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:637:13)
+    at async RdbmsSchemaBuilder.executeSchemaSyncOperationsInProperOrder (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:171:9)
+    at async RdbmsSchemaBuilder.build (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\schema-builder\RdbmsSchemaBuilder.js:66:13)
+    at async DataSource.synchronize (C:\Users\VimalkanthPadmapriya\Desktop\vk\leave-management-system\backend\node_modules\typeorm\data-source\DataSource.js:211:9)
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[ERROR] Emp not found for emp_id: AbishekBabu@lumel.com
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO] signup-controller: sign up success
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] signup-controller: sign up success
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 12
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to AbishekBabu@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to AbishekB@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to AbishekB@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to AbishekB@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to AbishekB@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to AbishekB@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to abishekb@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[ERROR] Emp not found for emp_id: ArulmuruganRaju@lumel.com
+[INFO] signup-controller: sign up success
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to abishekb@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to abishekb@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to abishekb@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to abishekb@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] emailservice started to send email to abishekb@lumel.com for Abishek Babu
+[INFO] employee-controller-insertEmployees: Employee inserted successfully
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] signup-controller: sign up success
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 24
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO]  DB connected successfully
+[INFO] Server running on port 5000
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 4
+[INFO] leave-controller-submitLeave: Fetching leave type with id 1
+[INFO] leave-controller-submitLeave: Updated leave balance success: 
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 4
+[INFO] leave-controller-submitLeave: Fetching leave type with id 4
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-submitLeave: Fetching employee with id 4
+[INFO] leave-controller-submitLeave: Fetching leave type with id 2
+[INFO] Helper-insertLeaveRequest: leave inserted successfully
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] leave-controller-changeLeaveStatus: Processing approval for leave_req_id 103
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 2
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 1
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 1
+[INFO] leave-controller-changeLeaveStatus: Processing approval for leave_req_id 103
+[INFO] leave-controller-getManagerPendingLeaveRequests: Fetching pending leave requests for manager_id 1
+[INFO] login-controller: login success
+[INFO] employee-controller-getUserLeaveBalance: fetched user leave balance successfully
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4
+[INFO] leave-controller-getFloaterHolidays: Fetching floater holidays
+[INFO] leave-controller-getFloaterHolidays: Successfully fetched floater holidays
+[INFO] leave-controller-getLeaveHistory: Fetching leave history for emp_id 4

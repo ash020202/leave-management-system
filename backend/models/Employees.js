@@ -9,6 +9,11 @@ export const Employee = new EntitySchema({
       type: "int",
       generated: true,
     },
+    email: {
+      type: "varchar",
+      unique: true,
+      nullable: true,
+    },
     emp_name: {
       type: "varchar",
     },

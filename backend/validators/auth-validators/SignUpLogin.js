@@ -1,7 +1,6 @@
 import joi from "joi";
 
 export const SignUpSchema = joi.object({
-  name: joi.string().min(2).required().label("Name"),
   email: joi
     .string()
     .email({ tlds: { allow: false } })
@@ -18,7 +17,6 @@ export const SignUpSchema = joi.object({
       "string.pattern.base":
         "Password must include at least one letter and one number",
     }),
-  emp_id: joi.string().required().label("Employee ID"),
 });
 
 export const LoginSchema = joi.object({

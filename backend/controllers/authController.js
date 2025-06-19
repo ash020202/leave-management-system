@@ -13,12 +13,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export const signup = async (req, res) => {
   try {
-    const { email, password, emp_id } = await SignUpSchema.validateAsync(
-      req.body
-    );
-    const employee = await getEmployeeRepo.findOneBy({ emp_id });
+    const { email, password } = await SignUpSchema.validateAsync(req.body);
+    const employee = await getEmployeeRepo.findOneBy({ email });
     if (!employee) {
-      logger.error("Emp not found for emp_id: " + emp_id);
+      logger.error("Emp not found for emp_id: " + email);
       return res
         .status(404)
         .json({ message: "Employee not found. Please Contact Admin" });

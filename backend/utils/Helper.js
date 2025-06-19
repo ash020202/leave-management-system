@@ -6,6 +6,7 @@ import { LeaveConstants } from "../constants/LeaveConstants.js";
 import { getLeavePolicyRepo } from "../repositories/LeavePolicyRepo.js";
 import { ApprovalFlowRepo } from "../repositories/ApprovalFlowRepo.js";
 import logger from "./logger.js";
+import nodemailer from "nodemailer";
 
 export const calculateWorkingDays = (
   from_date,
@@ -493,6 +494,7 @@ export const leaveBalanceHelper = async (emp_id) => {
 
 export const insertEmpHelper = async (
   emp_name,
+  email,
   department,
   role,
   manager_id,
@@ -511,15 +513,32 @@ export const insertEmpHelper = async (
     // Create the employee entity
     const employee = getEmployeeRepo.create({
       emp_name,
+      email,
       department,
       role,
       manager, // Assign the manager entity
       total_leave_balance,
     });
 
-    // Save the employee
     const insertEmp = await getEmployeeRepo.save(employee);
-    return { message: "Inserted successfully", employee: insertEmp };
+    // Save the employee
+    try {
+      logger.info(
+        `emailservice started to send email to ${email} for ${emp_name}`
+      );
+      await sendEmployeeWelcomeMail(email, emp_name);
+      // console.log("email service ", emailService);
+    } catch (error) {
+      // console.log(error);
+      logger.error(
+        `Email failed to send to ${email} after inserting employee:`,
+        error
+      );
+    }
+    return {
+      message: `Inserted successfully, Mail Sent To ${email}`,
+      employee: insertEmp,
+    };
   } catch (error) {
     logger.error("Helper-insertEmpHelper: Error inserting employee:", error);
     throw new Error("Insert failed");
@@ -652,3 +671,46 @@ export async function carryForwardLeaves() {
     throw error; // Re-throw to handle at higher level if needed
   }
 }
+
+//email service
+
+// export const transporter = nodemailer.createTransport({
+//   service: "gmail", // Or use your custom SMTP
+//   auth: {
+//     user: process.env.MAIL_USERNAME,
+//     pass: process.env.MAIL_PASSWORD,
+//   },
+// });
+
+const transporter = nodemailer.createTransport({
+  // host: "smtp.office365.com",
+  service: "gmail",
+  // port: 587,
+  // secure: false, // use TLS
+  // auth: {
+  //   user: process.env.OUTLOOK_EMAIL,
+  //   pass: process.env.OUTLOOK_PASSWORD,
+  // },
+  auth: {
+    user: process.env.GMAIL_USER, // your Gmail
+    pass: process.env.GMAIL_APP_PASS, // app password
+  },
+});
+
+export const sendEmployeeWelcomeMail = async (toEmail, emp_name) => {
+  const mailOptions = {
+    from: `"HR Team" <${process.env.GMAIL_USER}>`,
+    to: toEmail,
+    subject: "Welcome to the Leave Management System ",
+    html: `
+      <h3>Hello ${emp_name},</h3>
+      <p>You have been added to the Leave Management System.</p>
+      <p>You can now sign up using your official email: <strong>${toEmail}</strong></p>
+      <p>If you have any issues, please contact your manager or HR.</p>
+      <br />
+      <p>Regards,<br/>Lumel Admin Team</p>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+};

@@ -27,12 +27,13 @@ export const getAllEmployees = async (req, res) => {
 };
 
 export const insertEmployees = async (req, res) => {
-  const { emp_name, department, role, manager_id, total_leave_balance } =
+  const { emp_name, email, department, role, manager_id, total_leave_balance } =
     req.body;
 
   try {
     const result = await insertEmpHelper(
       emp_name,
+      email,
       department,
       role,
       manager_id,

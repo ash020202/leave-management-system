@@ -28,7 +28,6 @@ import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z
   .object({
-    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
     email: z
       .string()
       .min(5, { message: "Email must be at least 5 characters" })
@@ -36,7 +35,6 @@ const formSchema = z
       .regex(/^[^\s@]+@[a-zA-Z]{2,}\.[a-z]{2,}$/, {
         message: "Please enter a valid email like john@lumel.com",
       }),
-    emp_id: z.string().min(1, { message: "Employee ID is required" }),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
@@ -60,9 +58,7 @@ const Signup = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
       email: "",
-      emp_id: "",
       password: "",
       confirmPassword: "",
     },
@@ -71,7 +67,7 @@ const Signup = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
-      await signUp(values.email, values.password, values.emp_id, values.name);
+      await signUp(values.email, values.password);
       toast.success("Account created successfully! Please log in.");
       navigate("/");
     } catch (error) {
@@ -97,23 +93,6 @@ const Signup = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="John Doe"
-                        {...field}
-                        disabled={isLoading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -122,23 +101,6 @@ const Signup = () => {
                       <Input
                         placeholder="your.email@company.com"
                         type="email"
-                        {...field}
-                        disabled={isLoading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="emp_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Employee ID</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="EMP1234"
                         {...field}
                         disabled={isLoading}
                       />
